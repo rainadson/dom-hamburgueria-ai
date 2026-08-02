@@ -6,7 +6,8 @@ export enum ConversationState {
   ADDRESS = "ADDRESS",
   PAYMENT = "PAYMENT",
   CONFIRMATION = "CONFIRMATION",
-  FINISHED = "FINISHED"
+  FINISHED = "FINISHED",
+  CANCELLED = "CANCELLED"
 }
 
 export interface Conversation {

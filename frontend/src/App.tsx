@@ -1,7 +1,7 @@
-import Kitchen from "./pages/Kitchen";
+import Admin from "./pages/Admin";
 
 function App() {
-  return <Kitchen />;
+  return <Admin />;
 }
 
 export default App;

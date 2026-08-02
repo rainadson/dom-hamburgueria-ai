@@ -1,135 +1,549 @@
-body{
-    margin:0;
-    background:#f3f4f8;
-    font-family:Arial,Helvetica,sans-serif;
+/* ===================================================
+   TAS AI - KITCHEN DISPLAY SYSTEM
+=================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.header{
-    background:#181818;
-    color:#f5f3f2;;
-    padding:20px 40px;
+body {
+    background: #f4f6f9;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #222;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    width: 100%;
+    min-height: 110px;
+    background: linear-gradient(90deg, #111, #222);
+    color: #fff;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 24px 50px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .25);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 38px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #ff6b00;
+}
+
+.header p {
+    color: #cfcfcf;
+    margin-top: 8px;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.stats {
+
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+
+}
+
+.stat-card {
+
+    width: 150px;
+    height: 110px;
+
+    background: white;
+
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 18px;
+
+    text-align: center;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .12);
+
+    transition: .25s;
+
+}
+
+.stat-card:hover {
+
+    transform: translateY(-3px);
+
+}
+
+.stat-card h2 {
+
+    font-size: 34px;
+
+    margin-bottom: 5px;
+
+}
+
+.stat-card span {
+
+    color: #777;
+
+    font-size: 14px;
+
+}
+
+.pending {
+
+    border-top: 6px solid #ff9800;
+
+}
+
+.preparing {
+
+    border-top: 6px solid #2196F3;
+
+}
+
+.ready {
+
+    border-top: 6px solid #4CAF50;
+
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.kitchen-container {
+
+    width: 100%;
+    padding: 30px;
+    box-sizing: border-box;
+
+}
+
+.orders-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+
+    gap: 25px;
+
+    width: 100%;
+
+}
+
+/* =========================
+   PEDIDO
+========================= */
+
+.order-card {
+    width: 100%;
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    border-left: 8px solid #ddd;
+
+    padding: 22px;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .10);
+
+    transition: .2s;
     display:flex;
-    justify-content:space-between;
-    align-items:center;
+    flex-direction:column;
 }
 
-.logo{
-    color:#ff6b00;
-    font-size:42px;
-    font-weight:700;
+.order-card:hover {
+
+    transform: translateY(-5px);
+
 }
 
-.stats{
-    display:flex;
-    gap:15px;
+.order-card.pending {
+
+    border-left-color: #ff9800;
+
 }
 
-.stat-card{
-    background:white;
-    color:#333;
-    width:110px;
-    border-radius:12px;
-    padding:15px;
-    text-align:center;
-    box-shadow:0 3px 10px rgba(0,0,0,.1);
+.order-card.preparing {
+
+    border-left-color: #2196F3;
+
 }
 
-.stat-card h2{
-    margin:0;
-    font-size:28px;
+.order-card.ready {
+
+    border-left-color: #4CAF50;
+
 }
 
-.pending{
-    border-top:6px solid orange;
+.order-card.delivered {
+
+    border-left-color: #757575;
+
+    opacity: .85;
+
 }
 
-.preparing{
-    border-top:6px solid #1976d2;
+.order-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+    flex-wrap: wrap;
+
 }
 
-.ready{
-    border-top:6px solid #2e7d32;
+.order-header h2 {
+
+    font-size: 26px;
+
 }
 
-.kitchen-container{
-    padding:30px;
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
-    gap:25px;
+/* =========================
+   STATUS
+========================= */
+
+.status {
+
+    padding: 10px 18px;
+
+    border-radius: 30px;
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    letter-spacing: .5px;
+
 }
 
-.order-card{
-    background:white;
-    border-radius:15px;
-    padding:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-    transition:.2s;
+.status.pending {
+
+    background: #ff9800;
+
 }
 
-.order-card:hover{
-    transform:translateY(-5px);
+.status.preparing {
+
+    background: #2196F3;
+
 }
 
-.order-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.status.ready {
+
+    background: #4CAF50;
+
 }
 
-.status{
-    padding:8px 15px;
-    border-radius:30px;
-    color:white;
-    font-weight:bold;
+.status.delivered {
+
+    background: #616161;
+
 }
 
-.status.pending{
-    background:#ff9800;
+/* =========================
+   TIMER
+========================= */
+
+.timer {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    background: #f5f5f5;
+
+    padding: 8px 14px;
+
+    border-radius: 999px;
+
+    font-weight: bold;
+
+    color: #444;
+
 }
 
-.status.preparing{
-    background:#2196f3;
-}
-
-.status.ready{
-    background:#4caf50;
-}
-
-.status.delivered{
-    background:#616161;
-}
+/* =========================
+   LISTA
+========================= */
 
 ul{
-    padding-left:20px;
+    list-style:none;
+    padding:0;
+    margin:20px 0;
 }
 
-.btn{
-    border:none;
-    color:white;
-    padding:12px 18px;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:15px;
+li{
+
+    padding:8px 0;
+
+    border-bottom:1px solid #eee;
+
 }
 
-.btn:hover{
-    opacity:.9;
+/* =========================
+   TOTAL
+========================= */
+
+.order-total {
+
+    margin: 22px 0;
+
+    font-size: 34px;
+
+    font-weight: bold;
+
+    color: #ff6b00;
+
 }
 
-.btn-yellow{
-    background:#ff9800;
+/* =========================
+   BOTÕES
+========================= */
+
+.buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
 }
 
-.btn-green{
-    background:#43a047;
+.btn {
+
+    flex: 1;
+
+    height: 48px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    transition: .2s;
+
 }
 
-.btn-blue{
-    background:#1976d2;
+.btn:hover {
+
+    transform: translateY(-2px);
+
 }
 
-.finished{
-    color:#2e7d32;
-    font-weight:bold;
-    font-size:18px;
+.btn-yellow {
+
+    background: #ff9800;
+
+}
+
+.btn-green {
+
+    background: #43a047;
+
+}
+
+.btn-blue {
+
+    background: #1976d2;
+
+}
+
+.finished {
+
+    color: #2e7d32;
+
+    font-weight: bold;
+
+    font-size: 18px;
+
+}
+
+/* =========================
+   RESPONSIVO TABLET
+========================= */
+
+@media(max-width:900px) {
+
+    .header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+    .stats {
+
+        width: 100%;
+
+        justify-content: space-between;
+
+    }
+
+    .stat-card {
+
+        flex: 1;
+
+        min-width: 150px;
+
+    }
+
+    .orders-grid {
+
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+
+    }
+
+}
+
+/* =========================
+   RESPONSIVO CELULAR
+========================= */
+
+@media(max-width:600px) {
+
+    .header {
+
+        padding: 20px;
+
+        text-align: center;
+
+        align-items: center;
+
+    }
+
+    .logo {
+
+        font-size: 30px;
+
+    }
+
+    .stats {
+
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        width: 100%;
+
+        gap: 12px;
+
+    }
+
+    .stat-card {
+
+        width: 100%;
+
+    }
+
+    .orders-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .order-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+    .buttons {
+
+        flex-direction: column;
+
+    }
+
+    .btn {
+
+        width: 100%;
+
+    }
+
+    .order-total {
+
+        font-size: 28px;
+
+    }
+
+}
+
+/* =========================
+   ANIMAÇÕES
+========================= */
+
+@keyframes fadeIn {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(15px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+.order-card {
+
+    animation: fadeIn .3s ease;
+}
+
+.customer{
+    margin:18px 0;
+    padding:12px 16px;
+    background:#f5f7fb;
+    border-radius:10px;
+    font-size:17px;
+    font-weight:600;
+    color:#333;
 }

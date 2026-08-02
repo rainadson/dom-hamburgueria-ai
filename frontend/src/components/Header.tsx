@@ -15,7 +15,7 @@ export default function Header({
     <header className="header">
 
       <div>
-        <h1 className="logo">🍔 Tas AI Kitchen</h1>
+        <h1 className="logo">🍔 <span>Tas AI Kitchen</span></h1>
         <p>Sistema Inteligente para Restaurantes</p>
       </div>
 

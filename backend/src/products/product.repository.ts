@@ -64,4 +64,51 @@ export class ProductRepository {
 
     return product || null;
   }
+
+  async create(product: any) {
+
+    const { data, error } = await supabase
+      .from("products")
+      .insert(product)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return data;
+  }
+
+  async update(id: number, product: any) {
+
+    const { data, error } = await supabase
+      .from("products")
+      .update(product)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return data;
+  }
+
+  async delete(id: number) {
+
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+  }
+  async findAllAdmin() {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("name");
+
+    if (error) throw error;
+
+    return data;
+  }
 }

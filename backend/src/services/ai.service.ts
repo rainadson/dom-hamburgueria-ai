@@ -1,15 +1,21 @@
 import Groq from "groq-sdk";
-import { SYSTEM_PROMPT } from "../prompts/system.prompt";
+import { buildSystemPrompt } from "../prompts/system.prompt";
 import { OrderService } from "../orders/order.service";
+import { ProductService } from "../products/product.service";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
 const orderService = new OrderService();
+const productService = new ProductService();
 
 export class AIService {
+
   async generateResponse(message: string) {
+
+    // Busca o cardápio do banco
+    const menu = await productService.getMenuPrompt();
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -17,7 +23,7 @@ export class AIService {
       messages: [
         {
           role: "system",
-          content: SYSTEM_PROMPT,
+          content: buildSystemPrompt(menu),
         },
         {
           role: "user",
@@ -47,6 +53,5 @@ export class AIService {
       };
 
     }
-
   }
 }

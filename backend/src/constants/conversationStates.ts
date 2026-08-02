@@ -1,0 +1,17 @@
+export const ConversationStates = {
+
+  GREETING: "GREETING",
+
+  MENU: "MENU",
+
+  WAITING_ORDER: "WAITING_ORDER",
+
+  CONFIRM_ORDER: "CONFIRM_ORDER",
+
+  ADDRESS: "ADDRESS",
+
+  PAYMENT: "PAYMENT",
+
+  FINISHED: "FINISHED"
+
+} as const;

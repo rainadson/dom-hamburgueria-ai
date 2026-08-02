@@ -1,15 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../services/api";
 import Header from "../components/Header";
+import OrderTimer from "../components/OrderTimer";
 import "../styles/kitchen.css";
 
+const notification = new Audio("/sounds/notification.mp3");
+
 export default function Kitchen() {
+
   const [orders, setOrders] = useState<any[]>([]);
+  const previousOrders = useRef<number[]>([]);
 
   async function loadOrders() {
     try {
       const { data } = await api.get("/orders");
+
+      const ids = data.map((o: any) => o.id);
+
+      // Não toca na primeira carga da página
+      if (
+        previousOrders.current.length > 0 &&
+        ids.length > previousOrders.current.length
+      ) {
+        notification.currentTime = 0;
+        notification.play().catch(() => {
+          console.log("Áudio bloqueado pelo navegador.");
+        });
+      }
+
+      previousOrders.current = ids;
+
       setOrders(data);
+
     } catch (error) {
       console.error("Erro ao carregar pedidos:", error);
     }
@@ -22,6 +44,7 @@ export default function Kitchen() {
 
     return () => clearInterval(interval);
   }, []);
+
 
   async function updateStatus(id: number, status: string) {
     try {
@@ -39,72 +62,104 @@ export default function Kitchen() {
     <>
       <Header
         total={orders.length}
-        pending={orders.filter((o) => o.status === "PENDING").length}
-        preparing={orders.filter((o) => o.status === "PREPARING").length}
-        ready={orders.filter((o) => o.status === "READY").length}
+        pending={orders.filter(o => o.status === "PENDING").length}
+        preparing={orders.filter(o => o.status === "PREPARING").length}
+        ready={orders.filter(o => o.status === "READY").length}
       />
 
       <div className="kitchen-container">
-        {orders.map((order) => (
-          <div className="order-card" key={order.id}>
-            <div className="order-header">
-              <h2>Pedido #{order.id}</h2>
-              <span className={`status ${order.status.toLowerCase()}`}>
-                {order.status}
-              </span>
-            </div>
 
-            <p>
-              <strong>Telefone:</strong> {order.customer_phone}
-            </p>
+        <div className="orders-grid">
 
-            <ul>
-              {order.items.map((item: any, index: number) => (
-                <li key={`${order.id}-${index}`}>
-                  {item.quantity}x {item.product}
-                </li>
-              ))}
-            </ul>
+          {orders.map(order => (
 
-            <h3>Total € {Number(order.total).toFixed(2)}</h3>
+            <div
+              key={order.id}
+              className={`order-card ${order.status.toLowerCase()}`}
+            >
+              <div className="order-header">
 
-            <div className="buttons">
-              {order.status === "PENDING" && (
-                <button
-                  className="btn btn-yellow"
-                  onClick={() => updateStatus(order.id, "PREPARING")}
-                >
-                  ▶ Preparando
-                </button>
-              )}
+                <div>
 
-              {order.status === "PREPARING" && (
-                <button
-                  className="btn btn-green"
-                  onClick={() => updateStatus(order.id, "READY")}
-                >
-                  ✔ Pronto
-                </button>
-              )}
+                  <h2>🍔 Pedido #{order.id}</h2>
 
-              {order.status === "READY" && (
-                <button
-                  className="btn btn-blue"
-                  onClick={() => updateStatus(order.id, "DELIVERED")}
-                >
-                  🚚 Entregue
-                </button>
-              )}
+                  <small>
+                    {new Date(order.created_at).toLocaleTimeString("pt-PT")}
+                  </small>
 
-              {order.status === "DELIVERED" && (
-                <span className="finished">
-                  ✅ Pedido Finalizado
+                </div>
+
+                <div className="timer">
+                  ⏱ <OrderTimer createdAt={order.created_at} />
+                </div>
+
+                <span className={`status ${order.status.toLowerCase()}`}>
+                  {order.status}
                 </span>
-              )}
+
+              </div>
+
+              <p className="customer">
+                📞 {order.customer_phone}
+              </p>
+
+              <ul>
+                {order.items.map((item: any, index: number) => (
+                  <li key={`${order.id}-${index}`}>
+                    {item.quantity}x {item.product}
+                  </li>
+                ))}
+              </ul>
+
+              <h3 className="order-total">
+                € {Number(order.total).toFixed(2)}
+              </h3>
+
+              <div className="buttons">
+
+                {order.status === "PENDING" && (
+                  <button
+                    className="btn btn-yellow"
+                    onClick={() => updateStatus(order.id, "PREPARING")}
+                  >
+                    ▶ Preparando
+                  </button>
+                )}
+
+                {order.status === "PREPARING" && (
+                  <button
+                    className="btn btn-green"
+                    onClick={() => updateStatus(order.id, "READY")}
+                  >
+                    ✔ Pronto
+                  </button>
+                )}
+
+                {order.status === "READY" && (
+                  <button
+                    className="btn btn-blue"
+                    onClick={() => updateStatus(order.id, "DELIVERED")}
+                  >
+                    🚚 Entregue
+                  </button>
+                )}
+
+                {order.status === "DELIVERED" && (
+                  <span className="finished">
+                    ✅ Pedido Finalizado
+                  </span>
+                )}
+
+              </div>
+
             </div>
-          </div>
-        ))}
+
+          ))}
+
+        </div>
+
       </div>
+
     </>
   );
 }
