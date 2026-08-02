@@ -1,7 +1,7 @@
-import Admin from "./pages/Admin";
+import Orders from "./pages/Orders";
 
 function App() {
-  return <Admin />;
+  return <Orders />;
 }
 
 export default App;

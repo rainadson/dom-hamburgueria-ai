@@ -53,4 +53,8 @@ export class OrderService {
     });
 
   }
+
+  async getOrders() {
+    return await this.repository.findAll();
+  }
 }

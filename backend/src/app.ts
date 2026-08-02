@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 });
 
 
-app.use("/orders", orderRoutes);
+app.use("/api/orders", orderRoutes);
 app.use("/api", aiRoutes);
 app.use("/api", testRoutes);
 app.use("/api/products", productRoutes);

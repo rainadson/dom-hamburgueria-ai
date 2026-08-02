@@ -38,17 +38,29 @@ export class OrderRepository {
   }
   async updateStatus(id: number, status: string) {
 
-  const { data, error } = await supabase
-    .from("orders")
-    .update({
-      status
-    })
-    .eq("id", id)
-    .select()
-    .single();
+    const { data, error } = await supabase
+      .from("orders")
+      .update({
+        status
+      })
+      .eq("id", id)
+      .select()
+      .single();
 
-  if (error) throw error;
+    if (error) throw error;
 
-  return data;
-}
+    return data;
+  }
+  async findAll() {
+
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    return data;
+
+  }
 }
