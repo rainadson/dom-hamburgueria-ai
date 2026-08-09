@@ -6,6 +6,8 @@ body {
 
 .admin-container {
   padding: 40px;
+  width: 100%;
+  max-width: none;
 }
 
 .admin-header {
@@ -35,6 +37,7 @@ body {
 }
 
 .table-card {
+  width: 100%;
   background: white;
   border-radius: 12px;
   overflow: hidden;

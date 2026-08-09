@@ -1,0 +1,81 @@
+.dashboard-container {
+
+    width: 100%;
+
+    min-width: 0;
+
+}
+
+.dashboard-container h1 {
+
+    margin-bottom: 30px;
+
+}
+
+.cards {
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:25px;
+
+    width:100%;
+
+}
+
+.card {
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 16px;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+
+    transition: .25s;
+
+}
+
+.card:hover {
+
+    transform: translateY(-4px);
+
+}
+
+.card h3 {
+
+    color: #6b7280;
+
+    margin-bottom: 15px;
+
+}
+
+.card h2 {
+
+    font-size: 42px;
+
+    color: #111827;
+
+}
+
+@media(max-width:1200px){
+
+    .cards{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media(max-width:700px){
+
+    .cards{
+
+        grid-template-columns:1fr;
+
+    }
+
+}

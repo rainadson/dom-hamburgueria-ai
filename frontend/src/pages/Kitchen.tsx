@@ -3,6 +3,7 @@ import { api } from "../services/api";
 import Header from "../components/Header";
 import OrderTimer from "../components/OrderTimer";
 import "../styles/kitchen.css";
+import KitchenOrderCard from "../components/KitchenOrderCard";
 
 const notification = new Audio("/sounds/notification.mp3");
 
@@ -58,6 +59,18 @@ export default function Kitchen() {
     }
   }
 
+  const pendingOrders = orders.filter(
+    order => order.status === "PENDING"
+  );
+
+  const preparingOrders = orders.filter(
+    order => order.status === "PREPARING"
+  );
+
+  const readyOrders = orders.filter(
+    order => order.status === "READY"
+  );
+
   return (
     <>
       <Header
@@ -71,93 +84,58 @@ export default function Kitchen() {
 
         <div className="orders-grid">
 
-          {orders.map(order => (
+          <div className="column">
 
-            <div
-              key={order.id}
-              className={`order-card ${order.status.toLowerCase()}`}
-            >
-              <div className="order-header">
+            <h2>🟡 Pending</h2>
 
-                <div>
+            {pendingOrders.map(order => (
 
-                  <h2>🍔 Pedido #{order.id}</h2>
+              <KitchenOrderCard
+                key={order.id}
+                order={order}
+                actionLabel="▶ Preparando"
+                onAction={() => updateStatus(order.id, "PREPARING")}
+              />
 
-                  <small>
-                    {new Date(order.created_at).toLocaleTimeString("pt-PT")}
-                  </small>
+            ))}
 
-                </div>
+          </div>
 
-                <div className="timer">
-                  ⏱ <OrderTimer createdAt={order.created_at} />
-                </div>
+          <div className="column">
 
-                <span className={`status ${order.status.toLowerCase()}`}>
-                  {order.status}
-                </span>
+            <h2>🔵 Preparing</h2>
 
-              </div>
+            {preparingOrders.map(order => (
 
-              <p className="customer">
-                📞 {order.customer_phone}
-              </p>
+              <KitchenOrderCard
+                key={order.id}
+                order={order}
+                actionLabel="✔ Pronto"
+                onAction={() => updateStatus(order.id, "READY")}
+              />
 
-              <ul>
-                {order.items.map((item: any, index: number) => (
-                  <li key={`${order.id}-${index}`}>
-                    {item.quantity}x {item.product}
-                  </li>
-                ))}
-              </ul>
+            ))}
 
-              <h3 className="order-total">
-                € {Number(order.total).toFixed(2)}
-              </h3>
+          </div>
 
-              <div className="buttons">
+          <div className="column">
 
-                {order.status === "PENDING" && (
-                  <button
-                    className="btn btn-yellow"
-                    onClick={() => updateStatus(order.id, "PREPARING")}
-                  >
-                    ▶ Preparando
-                  </button>
-                )}
+            <h2>🟢 Ready</h2>
 
-                {order.status === "PREPARING" && (
-                  <button
-                    className="btn btn-green"
-                    onClick={() => updateStatus(order.id, "READY")}
-                  >
-                    ✔ Pronto
-                  </button>
-                )}
+            {readyOrders.map(order => (
 
-                {order.status === "READY" && (
-                  <button
-                    className="btn btn-blue"
-                    onClick={() => updateStatus(order.id, "DELIVERED")}
-                  >
-                    🚚 Entregue
-                  </button>
-                )}
+              <KitchenOrderCard
+                key={order.id}
+                order={order}
+                actionLabel="🚚 Entregue"
+                onAction={() => updateStatus(order.id, "DELIVERED")}
+              />
 
-                {order.status === "DELIVERED" && (
-                  <span className="finished">
-                    ✅ Pedido Finalizado
-                  </span>
-                )}
+            ))}
 
-              </div>
-
-            </div>
-
-          ))}
+          </div>
 
         </div>
-
       </div>
 
     </>

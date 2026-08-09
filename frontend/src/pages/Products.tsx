@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { api } from "../services/api";
+import { api } from "../services/api.ts";
 import "../styles/admin.css";
-import ProductModal from "../components/ProductModal";
+import ProductModal from "../components/ProductModal.tsx";
 import type { Product } from "../types/product.ts";
 
 export default function Admin() {

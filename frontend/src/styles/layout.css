@@ -1,0 +1,36 @@
+.layout {
+    display: flex;
+    width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    width: calc(100vw - 260px);
+    padding: 30px;
+    background: #f4f6f9;
+    overflow: auto;
+}
+
+.layout.collapsed .content {
+    width: calc(100vw - 80px);
+}
+
+.toggle-sidebar {
+    width: 42px;
+    height: 42px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #2563eb;
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 22px;
+
+    margin-bottom: 20px;
+}

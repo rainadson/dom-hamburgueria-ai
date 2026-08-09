@@ -1,0 +1,191 @@
+/* ===========================================
+   TAS AI - SIDEBAR
+=========================================== */
+
+.sidebar {
+
+    width: 260px;
+    min-width: 260px;
+    min-height: 100vh;
+
+    background: #111827;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 30px 20px;
+
+    transition: all .25s ease;
+
+    overflow: hidden;
+
+}
+
+/* ===========================
+   COLLAPSED
+=========================== */
+
+.sidebar.collapsed {
+
+    width: 80px;
+    min-width: 80px;
+
+}
+
+/* ===========================
+   LOGO
+=========================== */
+
+.sidebar-logo {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 50px;
+
+    text-align: center;
+
+}
+
+.sidebar-logo h2 {
+
+    margin: 0;
+
+    font-size: 34px;
+
+    font-weight: 700;
+
+    color: white;
+
+}
+
+.sidebar-logo h2 span {
+
+    color: #2563eb;
+
+}
+
+.sidebar-logo small {
+
+    margin-top: 6px;
+
+    color: #9ca3af;
+
+    font-size: 14px;
+
+    transition: .25s;
+
+}
+
+/* Oculta subtítulo quando recolhida */
+
+.sidebar.collapsed .sidebar-logo small {
+
+    display: none;
+
+}
+
+/* ===========================
+   MENU
+=========================== */
+
+.sidebar nav {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    width: 100%;
+
+}
+
+.sidebar nav a {
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    width: 100%;
+
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    color: #d1d5db;
+
+    text-decoration: none;
+
+    transition: .2s;
+
+}
+
+.sidebar nav a:hover {
+
+    background: #1f2937;
+
+}
+
+.sidebar nav a.active {
+
+    background: #2563eb;
+
+    color: white;
+
+}
+
+/* ===========================
+   ÍCONES
+=========================== */
+
+.icon {
+
+    width: 24px;
+
+    min-width: 24px;
+
+    font-size: 22px;
+
+    text-align: center;
+
+}
+
+/* ===========================
+   COLLAPSED MENU
+=========================== */
+
+.sidebar.collapsed nav a {
+
+    justify-content: center;
+
+    padding: 16px 0;
+
+}
+
+.sidebar.collapsed nav a span:not(.icon) {
+
+    display: none;
+
+}
+
+/* ===========================
+   SCROLL
+=========================== */
+
+.sidebar::-webkit-scrollbar {
+
+    width: 5px;
+
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+
+    background: rgba(255,255,255,.15);
+
+    border-radius: 10px;
+
+}

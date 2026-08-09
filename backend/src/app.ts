@@ -7,6 +7,7 @@ import productRoutes from "./products/product.routes";
 import webhookRoutes from "./whatsapp/webhook.routes";
 import aiRoutes from "./routes/ai.routes";
 import orderRoutes from "./orders/order.routes";
+import dashboardRoutes from "./routes/dashboard.routes";
 
 const app = express();
 
@@ -28,4 +29,5 @@ app.use("/api", aiRoutes);
 app.use("/api", testRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api", webhookRoutes);
+app.use("/dashboard", dashboardRoutes);
 export default app;

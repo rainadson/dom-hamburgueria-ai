@@ -547,3 +547,37 @@ li{
     font-weight:600;
     color:#333;
 }
+
+.orders-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:24px;
+
+    align-items:start;
+
+}
+
+.column {
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+}
+
+.column h2 {
+
+    text-align: center;
+    background: #111827;
+    color: white;
+
+    padding: 14px;
+
+    border-radius: 12px;
+
+    margin-bottom: 10px;
+
+}
