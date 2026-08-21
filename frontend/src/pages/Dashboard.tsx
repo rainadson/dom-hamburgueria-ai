@@ -24,8 +24,8 @@ export default function Dashboard() {
 
   async function loadDashboard() {
     try {
-      const response = await dashboardService.getDashboard();
-      setData(response);
+      const dashboard = await dashboardService.getDashboard();
+      setData(dashboard);
     } catch (error) {
       console.error(error);
     }
@@ -34,28 +34,28 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
 
-      <h1>📊 Dashboard</h1>
+      <h1>Dashboard</h1>
 
       <div className="cards">
 
         <div className="card">
-          <h3>Pedidos</h3>
+          <h3>📦 Orders</h3>
           <h2>{data.totalOrders}</h2>
         </div>
 
         <div className="card">
-          <h3>Produtos</h3>
-          <h2>{data.totalProducts}</h2>
+          <h3>💶 Revenue</h3>
+          <h2>€ {data.totalRevenue.toFixed(2)}</h2>
         </div>
 
         <div className="card">
-          <h3>Pendentes</h3>
+          <h3>⏳ Pending</h3>
           <h2>{data.pendingOrders}</h2>
         </div>
 
         <div className="card">
-          <h3>Faturamento</h3>
-          <h2>€ {data.totalRevenue.toFixed(2)}</h2>
+          <h3>🍔 Products</h3>
+          <h2>{data.totalProducts}</h2>
         </div>
 
       </div>

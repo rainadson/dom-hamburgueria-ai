@@ -12,19 +12,26 @@ const productService = new ProductService();
 
 export class AIService {
 
-  async generateResponse(message: string) {
+  async generateResponse(
+    message: string,
+    history: any[] = []
+  ) {
 
-    // Busca o cardápio do banco
+    // Busca o cardápio atual
     const menu = await productService.getMenuPrompt();
 
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "openai/gpt-oss-120b",
       temperature: 0,
+
       messages: [
         {
           role: "system",
           content: buildSystemPrompt(menu),
         },
+
+        ...history,
+
         {
           role: "user",
           content: message,
@@ -32,14 +39,21 @@ export class AIService {
       ],
     });
 
-    const content = completion.choices[0].message.content;
+    const content =
+      completion.choices[0].message.content;
 
     try {
 
-      const result = JSON.parse(content || "{}");
+      const result =
+        JSON.parse(content || "{}");
 
       if (result.items) {
-        result.order = await orderService.calculate(result.items);
+
+        result.order =
+          await orderService.calculate(
+            result.items
+          );
+
       }
 
       return result;

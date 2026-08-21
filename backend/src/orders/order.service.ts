@@ -16,16 +16,20 @@ export class OrderService {
       console.log("================================");
       console.log("Item recebido:", item);
 
-      const product = await this.products.findByName(item.product);
+      const product =
+        await this.products.findByName(item.product);
 
       console.log("Produto encontrado:", product);
 
       if (!product) {
+
         console.log("Produto NÃO encontrado");
+
         continue;
       }
 
-      const subtotal = Number(product.price) * item.quantity;
+      const subtotal =
+        Number(product.price) * item.quantity;
 
       total += subtotal;
 
@@ -44,17 +48,49 @@ export class OrderService {
     };
   }
 
-  async saveOrder(phone: string, order: any) {
+  async saveOrder(
+    phone: string,
+    order: any
+  ) {
 
     return await this.repository.createOrder({
-      customer_phone: phone,
-      total: order.total,
-      items: order.items,
-    });
 
+      customer_name:
+        order.customer_name,
+
+      customer_phone:
+        phone,
+
+      delivery_type:
+        order.delivery_type,
+
+      address:
+        order.address,
+
+      payment_method:
+        order.payment_method,
+
+      amount_paid:
+        order.amount_paid,
+
+      change:
+        order.change,
+
+      delivery_fee:
+        order.delivery_fee || 0,
+
+      total:
+        order.total,
+
+      items:
+        order.items,
+
+    });
   }
 
   async getOrders() {
+
     return await this.repository.findAll();
+
   }
 }

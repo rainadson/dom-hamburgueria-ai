@@ -21,7 +21,9 @@ export default function KitchenOrderCard({
           <h2>🍔 Pedido #{order.id}</h2>
 
           <small>
-            {new Date(order.created_at).toLocaleTimeString("pt-PT")}
+            {new Date(
+              `${order.created_at.replace(" ", "T")}Z`
+            ).toLocaleTimeString("pt-PT")}
           </small>
         </div>
 
@@ -59,8 +61,8 @@ export default function KitchenOrderCard({
               order.status === "PENDING"
                 ? "btn btn-yellow"
                 : order.status === "PREPARING"
-                ? "btn btn-green"
-                : "btn btn-blue"
+                  ? "btn btn-green"
+                  : "btn btn-blue"
             }
             onClick={onAction}
           >

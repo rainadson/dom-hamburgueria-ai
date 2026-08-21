@@ -1,0 +1,45 @@
+.recent-orders{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.recent-orders h2{
+
+    margin-bottom:20px;
+
+}
+
+.recent-order{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 0;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.recent-order:last-child{
+
+    border-bottom:none;
+
+}
+
+.recent-order p{
+
+    color:#6b7280;
+
+    margin-top:4px;
+
+}

@@ -58,4 +58,16 @@ export class ConversationRepository {
     if (error) throw error;
   }
 
+  async updateHistory(id: number, history: any[]) {
+    const { error } = await supabase
+      .from("conversations")
+      .update({
+        history,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", id);
+
+    if (error) throw error;
+  }
+
 }

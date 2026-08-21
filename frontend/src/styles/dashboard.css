@@ -1,80 +1,162 @@
+/* ===========================================
+   DASHBOARD
+=========================================== */
+
 .dashboard-container {
 
     width: 100%;
-
-    min-width: 0;
 
 }
 
 .dashboard-container h1 {
 
-    margin-bottom: 30px;
+    margin-bottom: 35px;
+
+    font-size: 34px;
+
+    font-weight: 700;
 
 }
+
+/* ===========================
+   GRID
+=========================== */
 
 .cards {
 
-    display:grid;
+    display: grid;
 
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 
-    gap:25px;
-
-    width:100%;
+    gap: 25px;
 
 }
 
-.card {
+/* ===========================
+   CARD
+=========================== */
+
+.dashboard-card {
 
     background: white;
 
-    padding: 30px;
+    border-radius: 18px;
 
-    border-radius: 16px;
+    padding: 25px;
 
-    box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+    box-shadow: 0 10px 25px rgba(0,0,0,.08);
 
     transition: .25s;
 
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    min-height: 170px;
+
 }
 
-.card:hover {
+.dashboard-card:hover {
 
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+
+    box-shadow: 0 15px 35px rgba(0,0,0,.12);
 
 }
 
-.card h3 {
+/* ===========================
+   HEADER
+=========================== */
+
+.dashboard-card-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+}
+
+.dashboard-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: white;
+
+    flex-shrink: 0;
+
+}
+
+/* ===========================
+   TEXTOS
+=========================== */
+
+.dashboard-title {
+
+    display: block;
+
+    font-size: 15px;
 
     color: #6b7280;
 
-    margin-bottom: 15px;
+    font-weight: 600;
 
 }
 
-.card h2 {
+.dashboard-subtitle {
+
+    margin-top: 4px;
+
+    font-size: 13px;
+
+    color: #9ca3af;
+
+}
+
+.dashboard-value {
+
+    margin-top: 25px;
 
     font-size: 42px;
+
+    font-weight: 700;
 
     color: #111827;
 
 }
 
-@media(max-width:1200px){
+/* ===========================
+   RESPONSIVO
+=========================== */
 
-    .cards{
+@media (max-width: 1200px) {
 
-        grid-template-columns:repeat(2,1fr);
+    .cards {
+
+        grid-template-columns: repeat(2,1fr);
 
     }
 
 }
 
-@media(max-width:700px){
+@media (max-width: 768px) {
 
-    .cards{
+    .cards {
 
-        grid-template-columns:1fr;
+        grid-template-columns: 1fr;
 
     }
 

@@ -189,3 +189,44 @@
     border-radius: 10px;
 
 }
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+.logout-button {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 14px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: transparent;
+    color: #d1d5db;
+
+    font-size: 15px;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.logout-button:hover {
+    background: #1f2937;
+    color: white;
+}
+
+.sidebar.collapsed .logout-button {
+    justify-content: center;
+}
+
+.sidebar.collapsed .logout-button .icon {
+    margin: 0;
+}
