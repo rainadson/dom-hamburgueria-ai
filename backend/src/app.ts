@@ -8,6 +8,7 @@ import webhookRoutes from "./whatsapp/webhook.routes";
 import aiRoutes from "./routes/ai.routes";
 import orderRoutes from "./orders/order.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
+import { requireAuth } from "./middlewares/auth.middleware";
 
 const app = express();
 
@@ -24,10 +25,10 @@ app.get("/", (req, res) => {
 });
 
 
-app.use("/api/orders", orderRoutes);
+app.use("/api/orders", requireAuth, orderRoutes);
 app.use("/api", aiRoutes);
 app.use("/api", testRoutes);
-app.use("/api/products", productRoutes);
+app.use("/api/products", requireAuth, productRoutes);
 app.use("/api", webhookRoutes);
-app.use("/dashboard", dashboardRoutes);
+app.use("/api/dashboard", requireAuth, dashboardRoutes);
 export default app;

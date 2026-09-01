@@ -4,7 +4,7 @@ export interface DashboardData {
   totalOrders: number;
   totalProducts: number;
   pendingOrders: number;
-  totalRevenue: number;
+  totalRevenue?: number;
 }
 
 export const dashboardService = {

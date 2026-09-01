@@ -5,13 +5,16 @@ type Props = {
 };
 
 function parseCreatedAt(createdAt: string) {
-  const normalized = createdAt.includes("T")
-    ? createdAt
-    : createdAt.replace(" ", "T");
+  const normalized = createdAt.trim().replace(" ", "T");
 
-  // O Supabase está retornando a data sem timezone.
-  // Tratamos o valor como UTC.
-  return new Date(`${normalized}Z`).getTime();
+  // Timestamps do Supabase normalmente já incluem UTC (Z ou +00:00).
+  // Só acrescentamos Z quando o campo vier sem informação de fuso.
+  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(normalized);
+  const timestamp = new Date(
+    hasTimezone ? normalized : `${normalized}Z`
+  ).getTime();
+
+  return Number.isNaN(timestamp) ? Date.now() : timestamp;
 }
 
 export default function OrderTimer({

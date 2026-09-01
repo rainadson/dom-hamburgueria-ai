@@ -3,7 +3,7 @@ import { supabase } from "../database/supabase";
 
 const router = Router();
 
-router.get("/", async (_, res) => {
+router.get("/", async (req, res) => {
 
     try {
 
@@ -20,28 +20,30 @@ router.get("/", async (_, res) => {
             .select("*", { count: "exact", head: true })
             .eq("status", "PENDING");
 
-        const { data: revenueData } = await supabase
-            .from("orders")
-            .select("total")
-            .eq("status", "DELIVERED");
-
-        const totalRevenue =
-            revenueData?.reduce(
-                (sum, order) => sum + Number(order.total),
-                0
-            ) ?? 0;
-
-        res.json({
+        const dashboard = {
 
             totalOrders: totalOrders ?? 0,
 
             totalProducts: totalProducts ?? 0,
 
-            pendingOrders: pendingOrders ?? 0,
+            pendingOrders: pendingOrders ?? 0
+        };
 
-            totalRevenue
+        if (req.auth?.role === "ADMIN") {
+            const { data: revenueData } = await supabase
+                .from("orders")
+                .select("total")
+                .eq("status", "DELIVERED");
 
-        });
+            const totalRevenue =
+                revenueData?.reduce(
+                    (sum, order) => sum + Number(order.total), 0
+                ) ?? 0;
+
+            return res.json({ ...dashboard, totalRevenue });
+        }
+
+        res.json(dashboard);
 
     } catch (error: any) {
 

@@ -312,18 +312,44 @@ li{
 }
 
 /* =========================
-   TOTAL
+   ENTREGA / RETIRADA
 ========================= */
 
-.order-total {
+.delivery-info {
 
-    margin: 22px 0;
+    margin: 4px 0 2px;
 
-    font-size: 34px;
+    padding: 14px 16px;
 
-    font-weight: bold;
+    background: #f5f7fb;
 
-    color: #ff6b00;
+    border-radius: 10px;
+
+    color: #333;
+
+}
+
+.delivery-info strong {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+}
+
+.delivery-info p {
+
+    margin: 0 0 8px;
+
+    white-space: pre-line;
+
+}
+
+.delivery-info a {
+
+    color: #1565c0;
+
+    font-weight: 600;
 
 }
 
@@ -498,12 +524,6 @@ li{
     .btn {
 
         width: 100%;
-
-    }
-
-    .order-total {
-
-        font-size: 28px;
 
     }
 

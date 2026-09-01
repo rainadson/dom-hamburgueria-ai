@@ -12,6 +12,16 @@ export default function KitchenOrderCard({
   actionLabel,
   onAction,
 }: Props) {
+  const createdAt = order.created_at.trim().replace(" ", "T");
+  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(createdAt);
+  const createdAtLabel = new Date(
+    hasTimezone ? createdAt : `${createdAt}Z`
+  ).toLocaleTimeString("pt-PT");
+  const isDelivery = order.delivery_type === "DELIVERY";
+  const mapsUrl = order.address
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.address)}`
+    : null;
+
   return (
     <div className={`order-card ${order.status.toLowerCase()}`}>
 
@@ -21,9 +31,7 @@ export default function KitchenOrderCard({
           <h2>🍔 Pedido #{order.id}</h2>
 
           <small>
-            {new Date(
-              `${order.created_at.replace(" ", "T")}Z`
-            ).toLocaleTimeString("pt-PT")}
+            {createdAtLabel}
           </small>
         </div>
 
@@ -38,7 +46,7 @@ export default function KitchenOrderCard({
       </div>
 
       <p className="customer">
-        📞 {order.customer_phone}
+        👤 {order.customer_name?.trim() || "Cliente não identificado"}
       </p>
 
       <ul>
@@ -49,9 +57,20 @@ export default function KitchenOrderCard({
         ))}
       </ul>
 
-      <h3 className="order-total">
-        € {Number(order.total).toFixed(2)}
-      </h3>
+      <section className="delivery-info" aria-label="Informações de entrega">
+        <strong>{isDelivery ? "🚚 Entrega" : "🛍️ Retirada no local"}</strong>
+
+        {isDelivery && order.address && (
+          <>
+            <p>{order.address}</p>
+            {mapsUrl && (
+              <a href={mapsUrl} target="_blank" rel="noreferrer">
+                Abrir rota no mapa
+              </a>
+            )}
+          </>
+        )}
+      </section>
 
       <div className="buttons">
 

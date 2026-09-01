@@ -638,6 +638,26 @@ export class ConversationService {
       )
     ) {
 
+      const aiResult =
+        await this.aiService.generateResponse(
+          message,
+          conversation.history || []
+        );
+
+      const currentItems =
+        conversation.order_draft?.items || [];
+
+      const order =
+        await this.orderService.calculate([
+          ...currentItems,
+          ...(aiResult.items || [])
+        ]);
+
+      await this.repository.updateDraft(
+        conversation.id,
+        order
+      );
+
       await this.repository.updateState(
         conversation.id,
         ConversationState.MENU_DRINK
@@ -656,7 +676,7 @@ export class ConversationService {
         reply,
         {
           intent: "MENU_ACCEPTED",
-          order: conversation.order_draft
+          order
         }
       );
     }

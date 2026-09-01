@@ -9,7 +9,7 @@ interface DashboardData {
   totalOrders: number;
   totalProducts: number;
   pendingOrders: number;
-  totalRevenue: number;
+  totalRevenue?: number;
 }
 
 export default function Dashboard() {
@@ -104,7 +104,7 @@ export default function Dashboard() {
 
         {/* FATURAMENTO — SOMENTE ADMIN */}
 
-        {isAdmin && (
+        {isAdmin && data.totalRevenue !== undefined && (
 
           <div className="dashboard-card">
 
