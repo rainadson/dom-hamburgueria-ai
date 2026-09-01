@@ -4,7 +4,6 @@ import { authService } from "../services/auth.service";
 import "../styles/login.css";
 
 export default function Login() {
-
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -12,69 +11,67 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   async function handleLogin(e: React.FormEvent) {
-
     e.preventDefault();
 
     try {
-
       setLoading(true);
 
       await authService.login(email, password);
 
       navigate("/dashboard");
-
     } catch (error) {
-
       alert("Email ou senha inválidos.");
-
       console.error(error);
-
     } finally {
-
       setLoading(false);
-
     }
-
   }
 
   return (
-
     <div className="login-page">
+      <div className="login-overlay" />
 
-      <form
-        className="login-card"
-        onSubmit={handleLogin}
-      >
+      <form className="login-card" onSubmit={handleLogin}>
+        <div className="login-brand">
+          <div className="brand-icon">🍔</div>
 
-        <h1>Tas AI</h1>
+          <h1>Dom AI</h1>
 
-        <p>Dom Hamburgueria</p>
+          <p>Dom Hamburgueria</p>
+        </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div className="login-form">
+          <label htmlFor="email">Email</label>
 
-        <input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <input
+            id="email"
+            type="email"
+            placeholder="Digite seu email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <button
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? "Entrando..." : "Entrar"}
-        </button>
+          <label htmlFor="password">Senha</label>
 
+          <input
+            id="password"
+            type="password"
+            placeholder="Digite sua senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Entrando..." : "Entrar"}
+          </button>
+        </div>
+
+        <small className="login-footer">
+          Desenvolvido por AOS Tecnologia
+        </small>
       </form>
-
     </div>
-
   );
-
 }

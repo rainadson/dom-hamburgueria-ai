@@ -34,4 +34,26 @@ export const authService = {
 
   },
 
+  async getProfile() {
+
+    const user = await this.getUser();
+
+    if (!user) {
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .select("id, user_id, name, role")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar perfil:", error);
+      return null;
+    }
+
+    return data;
+  },
+
 };

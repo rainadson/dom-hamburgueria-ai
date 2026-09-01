@@ -7,7 +7,6 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ collapsed }: SidebarProps) {
-
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -23,35 +22,57 @@ export default function Sidebar({ collapsed }: SidebarProps) {
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
 
       <div className="sidebar-logo">
+
         <h2>
-          Tas {!collapsed && <span>AI</span>}
+          Dom <span>AI</span>
         </h2>
 
         {!collapsed && (
-          <small>Restaurant OS</small>
+          <small>Dom Hamburgueria</small>
         )}
+
       </div>
 
-      <nav>
+      <nav className="sidebar-nav">
 
         <NavLink to="/dashboard">
-          <span className="icon">📊</span>
+          <span className="icon">▦</span>
           {!collapsed && <span>Dashboard</span>}
         </NavLink>
 
         <NavLink to="/orders">
           <span className="icon">📦</span>
-          {!collapsed && <span>Orders</span>}
+          {!collapsed && <span>Pedidos</span>}
         </NavLink>
 
         <NavLink to="/products">
           <span className="icon">🍔</span>
-          {!collapsed && <span>Products</span>}
+          {!collapsed && <span>Produtos</span>}
         </NavLink>
 
         <NavLink to="/kitchen">
           <span className="icon">👨‍🍳</span>
-          {!collapsed && <span>Kitchen</span>}
+          {!collapsed && <span>Cozinha</span>}
+        </NavLink>
+
+        <NavLink to="/clients" className="future-link">
+          <span className="icon">👥</span>
+          {!collapsed && <span>Clientes</span>}
+        </NavLink>
+
+        <NavLink to="/whatsapp" className="future-link">
+          <span className="icon">◉</span>
+          {!collapsed && <span>WhatsApp</span>}
+        </NavLink>
+
+        <NavLink to="/reports" className="future-link">
+          <span className="icon">▮</span>
+          {!collapsed && <span>Relatórios</span>}
+        </NavLink>
+
+        <NavLink to="/settings" className="future-link">
+          <span className="icon">⚙</span>
+          {!collapsed && <span>Configurações</span>}
         </NavLink>
 
       </nav>
