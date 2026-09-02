@@ -1,5 +1,5 @@
 import { isAcai, validateToppings } from "../products/acai-toppings";
-import { menuBase, menuDrink, pendingMenu } from "../products/menu-combos";
+import { menuBase, menuDrink, pendingMenu, menuBurgers } from "../products/menu-combos";
 import { OrderRepository } from "./order.repository";
 import { ProductRepository } from "../products/product.repository";
 
@@ -33,6 +33,22 @@ export class OrderService {
       });
     }
     return { items: orderItems, total: totalCents / 100 };
+  }
+
+  async menuOffer(items: any[]): Promise<string | null> {
+    const offers: string[] = [];
+    for (const name of new Set(items.map(item => item.product))) {
+      if (!menuBurgers.includes(name)) continue;
+      const menu = await this.products.findByName(`Menu ${name}`);
+      if (!menu || menuBase(menu.name) !== name) continue;
+      const burger = items.find(item => item.product === name);
+      const extra = Math.round(Number(menu.price) * 100) - Math.round(Number(burger.price) * 100);
+      if (!Number.isFinite(extra) || extra < 0) continue;
+      const money = (cents: number) => (cents / 100).toFixed(2).replace(".", ",");
+      offers.push(`${name}: +€ ${money(extra)} por unidade (Menu por € ${money(Math.round(Number(menu.price) * 100))})`);
+    }
+    if (!offers.length) return null;
+    return `Pode transformar em Menu, com batata frita e Coca-Cola normal ou Zero em lata:\n${offers.join("\n")}\n${offers.length === 1 ? "Deseja transformar em Menu?" : "Quais destes hambúrgueres deseja transformar em Menu?"}`;
   }
 
   async upgradeMenus(currentItems: any[], upgrades: any[]) {

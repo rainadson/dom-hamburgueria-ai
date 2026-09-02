@@ -25,6 +25,7 @@ function setup(state, lastQuestion, modelResult, checkout_step) {
     };
     service.aiService = { generateResponse: async (...args) => { calls.push(args); return modelResult; } };
     service.orderService = {
+        menuOffer: async () => null,
         calculate: async (items) => ({ items, total: 5 }),
         upgradeMenus: async (_, upgrades) => upgrades.every(item => item.product.startsWith('Menu ')) ? {items: upgrades, total: 12.49} : null,
         saveOrder: async () => { throw new Error('Unexpected order submission'); },

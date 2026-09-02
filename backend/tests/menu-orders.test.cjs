@@ -72,3 +72,36 @@ test('saving an incomplete menu is blocked even outside conversation flow',async
  const service=calculator();service.repository={createOrder:async()=>{throw Error('Repository must not be called')}};
  await assert.rejects(service.saveOrder('test',{items:[{product:'Menu Dom Tradicional',quantity:1}]}),/Escolha o refrigerante/);
 });
+
+for (const name of menuBurgers) {
+ test(`${name}: offers available menu even when model forgets`,async()=>{
+  const f=flow('WAITING_ORDER',[],{intent:'ORDER',items:[{product:name,quantity:2}],reply:'Deseja mais alguma coisa?'});
+  const result=await f.service.processMessage('test',`dois ${name}`);
+  assert.equal(f.conversation.state,'MENU_OFFER');
+  assert.match(result.ai.reply,/3,50 por unidade/);assert.match(result.ai.reply,/normal ou Zero/);
+  assert.equal(f.conversation.order_draft.items.length,1);
+  assert.equal(f.conversation.order_draft.total,catalog.find(p=>p.name===name).price*2);
+ });
+}
+test('explicit menu refusal overrides even model offer',async()=>{
+ const f=flow('WAITING_ORDER',[],{intent:'MENU_OFFER',items:[{product:'Dom Tradicional',quantity:1}],reply:'Quer menu?'});
+ const result=await f.service.processMessage('test','um Dom Tradicional sem menu');
+ assert.equal(f.conversation.state,'UPSELL');assert.doesNotMatch(result.ai.reply,/menu/i);
+});
+test('unavailable menu is not offered even if model suggests it',async()=>{
+ const f=flow('WAITING_ORDER',[],{intent:'MENU_OFFER',items:[{product:'Dom Tradicional',quantity:1}],reply:'Quer menu?'});
+ f.service.orderService.products={findByName:async name=>catalog.find(p=>p.name===name&&!name.startsWith('Menu '))};
+ const result=await f.service.processMessage('test','um Dom Tradicional');
+ assert.equal(f.conversation.state,'UPSELL');assert.doesNotMatch(result.ai.reply,/menu/i);
+});
+test('adding a drink after refusing does not reoffer an existing burger',async()=>{
+ const f=flow('UPSELL',[{product:'Dom Tradicional',quantity:1}],{intent:'ORDER',items:[{product:'Coca-Cola (lata)',quantity:1}]});
+ await f.service.processMessage('test','uma coca');assert.equal(f.conversation.state,'UPSELL');
+});
+test('multiple burgers offer only available counterparts with catalog prices',async()=>{
+ const service=calculator();
+ service.products={findByName:async name=>name==='Menu Dom Tradicional'?{name,price:13.99}:null};
+ const offer=await service.menuOffer([{product:'Dom Tradicional',price:8.99},{product:'Dom Coalho',price:9.99}]);
+ assert.match(offer,/5,00 por unidade/);assert.match(offer,/13,99/);assert.doesNotMatch(offer,/Coalho/);
+ assert.equal(await service.menuOffer([{product:'Combo família',price:35.99},{product:'Menu Dom Tradicional',price:12.49}]),null);
+});

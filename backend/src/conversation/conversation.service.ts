@@ -786,59 +786,11 @@ export class ConversationService {
     }
 
     // ==========================================
-    // 14. OFERTA DE MENU
-    // ==========================================
-
-    if (
-      aiResult.intent ===
-      "MENU_OFFER"
-    ) {
-
-      const currentItems =
-        conversation.order_draft?.items || [];
-
-      const order =
-        await this.orderService.calculate([
-          ...currentItems,
-          ...(aiResult.items || [])
-        ]);
-
-      await this.repository.updateDraft(
-        conversation.id,
-        order
-      );
-
-      await this.repository.updateState(
-        conversation.id,
-        ConversationState.MENU_OFFER
-      );
-
-      const reply =
-        aiResult.reply ||
-        "Você gostaria de transformar seu pedido em Menu?";
-
-      await this.saveHistory(
-        conversation,
-        message,
-        reply
-      );
-
-      return this.response(
-        reply,
-        {
-          intent: "MENU_OFFER",
-          order
-        }
-      );
-    }
-
-    // ==========================================
     // 15. PEDIDO / ADIÇÃO DE PRODUTO
     // ==========================================
 
     if (
-      aiResult.intent ===
-      "ORDER"
+      (aiResult.intent === "ORDER" || aiResult.intent === "MENU_OFFER")
     ) {
 
       const currentItems =
@@ -869,43 +821,12 @@ export class ConversationService {
       // DETECTAR OFERTA DE MENU
       // ========================================
 
-      const aiReply =
-        String(
-          aiResult.reply || ""
-        ).toLowerCase();
-
-      const isMenuOffer =
-        !newItems.some((item: any) => menuBase(item.product)) &&
-        aiReply.includes("menu") &&
-        (
-          aiReply.includes("transformar") ||
-          aiReply.includes("batata") ||
-          aiReply.includes("refrigerante")
-        );
-
-      if (isMenuOffer) {
-
-        await this.repository.updateState(
-          conversation.id,
-          ConversationState.MENU_OFFER
-        );
-
-        const reply =
-          aiResult.reply;
-
-        await this.saveHistory(
-          conversation,
-          message,
-          reply
-        );
-
-        return this.response(
-          reply,
-          {
-            intent: "MENU_OFFER",
-            order
-          }
-        );
+      const declinesMenu = /\b(?:sem menu|nao (?:quero|desejo) (?:o |um )?menu|(?:so|somente|apenas) (?:o |os |um )?hamburguer(?:es)?)\b/.test(normalizeShortReply(message));
+      const offer = declinesMenu ? null : await this.orderService.menuOffer(order.items.slice(currentItems.length));
+      if (offer) {
+        await this.repository.updateState(conversation.id, ConversationState.MENU_OFFER);
+        await this.saveHistory(conversation, message, offer);
+        return this.response(offer, { intent: "MENU_OFFER", order });
       }
 
       // ========================================
@@ -918,7 +839,7 @@ export class ConversationService {
       );
 
       const reply =
-        (aiResult.reply?.includes("?") ? aiResult.reply :
+        (!declinesMenu && aiResult.intent !== "MENU_OFFER" && !/menu/i.test(aiResult.reply || "") && aiResult.reply?.includes("?") ? aiResult.reply :
           "Perfeito! Deseja acrescentar mais alguma coisa ao seu pedido?");
 
       await this.saveHistory(
