@@ -45,6 +45,23 @@ export class ConversationService {
         .toLowerCase()
         .trim();
 
+    const menuRequest = ["cardapio", "ver cardapio", "quero ver o cardapio", "manda o cardapio", "envia o cardapio", "pode enviar o cardapio", "foto do cardapio", "menu", "ver menu"].includes(normalizeShortReply(message));
+    const firstGreeting = !conversation.history?.length && !conversation.order_draft?.items?.length &&
+      ["oi", "ola", "bom dia", "boa tarde", "boa noite"].includes(normalizeShortReply(message));
+    if (menuRequest || firstGreeting) {
+      const lastQuestion = [...(conversation.history || [])].reverse().find((entry: any) => entry.role === "assistant")?.content;
+      const reply = "Aqui está o cardápio da Dom Hamburgueria! 🍔\nO Menu inclui batata e Coca-Cola normal ou Zero em lata por mais € 3,50. O açaí inclui até 2 toppings.\n\n" +
+        (conversation.order_draft?.items?.length && lastQuestion ? lastQuestion : "O que deseja pedir?");
+      if (!conversation.order_draft?.items?.length && !conversation.order_draft?.checkout_step) {
+        await this.repository.updateState(conversation.id, ConversationState.WAITING_ORDER);
+      }
+      await this.saveHistory(conversation, message, reply);
+      return this.response(reply, { intent: "CATALOG", image: {
+        url: "https://dom-hamburgueria-ai.vercel.app/cardapio-dom-2026-09.png",
+        alt: "Cardápio Dom Hamburgueria", mimeType: "image/png"
+      }});
+    }
+
     // Cancelar é um comando do rascunho, inclusive durante nome, morada e bebida.
     if (this.isCancellation(normalizeShortReply(message)) &&
         (conversation.order_draft?.items?.length || conversation.order_draft?.checkout_step)) {

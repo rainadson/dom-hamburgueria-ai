@@ -6,6 +6,7 @@ interface Message {
   id: number;
   sender: "customer" | "bot";
   text: string;
+  image?: { url: string; alt: string };
 }
 
 export default function Demo() {
@@ -59,6 +60,7 @@ export default function Demo() {
           id: Date.now() + 1,
           sender: "bot",
           text: reply,
+          image: data?.ai?.image,
         };
 
         setMessages((current) => [
@@ -131,6 +133,11 @@ export default function Demo() {
                   : "bot-message"
               }`}
             >
+              {message.image && (
+                <a href={message.image.url} target="_blank" rel="noreferrer">
+                  <img src={message.image.url} alt={message.image.alt} className="demo-menu-image" />
+                </a>
+              )}
               {message.text.split("\n").map((line, index) => (
                 <span key={index}>
                   {line}
