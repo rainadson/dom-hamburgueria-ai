@@ -4,7 +4,7 @@ Execute na pasta `backend`:
 
 ```powershell
 npm run build
-node --test tests/conversation-context.test.cjs tests/upsell-completion.test.cjs tests/menu-orders.test.cjs tests/acai-toppings.test.cjs
+node --test tests/conversation-context.test.cjs tests/upsell-completion.test.cjs tests/menu-orders.test.cjs tests/acai-toppings.test.cjs tests/checkout-flow.test.cjs
 ```
 
 Os testes locais usam o backend compilado, respostas simuladas da IA e repositórios em memória. Não gravam pedidos, não acessam o banco e não chamam o modelo.

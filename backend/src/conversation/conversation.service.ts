@@ -45,6 +45,23 @@ export class ConversationService {
         .toLowerCase()
         .trim();
 
+    // Cancelar é um comando do rascunho, inclusive durante nome, morada e bebida.
+    if (this.isCancellation(normalizeShortReply(message)) &&
+        (conversation.order_draft?.items?.length || conversation.order_draft?.checkout_step)) {
+      await this.repository.updateDraft(conversation.id, {});
+      await this.repository.updateState(conversation.id, ConversationState.CANCELLED);
+      const reply = "Tudo bem! O pedido foi cancelado. 😊";
+      await this.saveHistory(conversation, message, reply);
+      return this.response(reply);
+    }
+
+    // Recusar uma confirmação não autoriza criar nem apagar o pedido.
+    if (conversation.state === ConversationState.CONFIRMATION && this.isNegative(message)) {
+      const reply = "O pedido ainda não foi confirmado. Para cancelar, diga Cancelar. Para confirmar os dados apresentados, diga Sim.";
+      await this.saveHistory(conversation, message, reply);
+      return this.response(reply);
+    }
+
     if (pendingMenu(conversation.order_draft?.items)) {
       if (this.isFinishedAdding(normalizedMessage)) {
         const reply = menuDrinkQuestion(conversation.order_draft.items);
@@ -1081,6 +1098,8 @@ export class ConversationService {
   private isConfirmation(
     message: string
   ): boolean {
+
+    message = normalizeShortReply(message);
 
     return [
       "sim",
