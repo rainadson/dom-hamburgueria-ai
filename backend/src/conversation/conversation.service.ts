@@ -1,3 +1,4 @@
+import { normalizeShortReply } from "./conversation.context";
 import { ConversationRepository } from "./conversation.repository";
 import { ConversationState } from "./conversation.types";
 import { AIService } from "../services/ai.service";
@@ -641,8 +642,16 @@ export class ConversationService {
       const aiResult =
         await this.aiService.generateResponse(
           message,
-          conversation.history || []
+          conversation.history || [],
+          { state: conversation.state, order_draft: conversation.order_draft }
         );
+
+      // A IA precisa resolver a última oferta antes de aceitar a resposta curta.
+      if (aiResult.intent !== "MENU_ACCEPTED" || !aiResult.items?.length) {
+        const reply = aiResult.reply || "Você gostaria de transformar seu pedido em Menu?";
+        await this.saveHistory(conversation, message, reply);
+        return this.response(reply, { intent: "QUESTION" });
+      }
 
       const currentItems =
         conversation.order_draft?.items || [];
@@ -728,7 +737,8 @@ export class ConversationService {
       const aiResult =
         await this.aiService.generateResponse(
           message,
-          conversation.history || []
+          conversation.history || [],
+          { state: conversation.state, order_draft: conversation.order_draft }
         );
 
       const newItems =
@@ -806,8 +816,8 @@ export class ConversationService {
     // ==========================================
 
     if (
-      conversation.state ===
-      ConversationState.UPSELL
+      (conversation.state === ConversationState.UPSELL ||
+        conversation.state === ConversationState.MENU_OFFER)
     ) {
 
       // --------------------------
@@ -863,7 +873,8 @@ export class ConversationService {
     const aiResult =
       await this.aiService.generateResponse(
         message,
-        conversation.history || []
+        conversation.history || [],
+        { state: conversation.state, order_draft: conversation.order_draft }
       );
 
     // ==========================================
@@ -991,7 +1002,8 @@ export class ConversationService {
       );
 
       const reply =
-        "Perfeito! Deseja acrescentar mais alguma coisa ao seu pedido?";
+        (aiResult.reply?.includes("?") ? aiResult.reply :
+          "Perfeito! Deseja acrescentar mais alguma coisa ao seu pedido?");
 
       await this.saveHistory(
         conversation,
@@ -1146,11 +1158,18 @@ export class ConversationService {
     message: string
   ): boolean {
 
+    message = normalizeShortReply(message);
+
     return [
       "sim",
       "quero",
       "aceito",
       "pode ser",
+      "beleza",
+      "esse mesmo",
+      "manda",
+      "coloca",
+      "adiciona",
       "pode colocar",
       "claro",
       "quero o menu",
@@ -1171,11 +1190,17 @@ export class ConversationService {
     message: string
   ): boolean {
 
+    message = normalizeShortReply(message);
+
     return [
       "não",
       "nao",
       "não quero",
       "nao quero",
+      "nao precisa",
+      "deixa",
+      "deixa assim",
+      "nao obrigado",
       "sem menu",
       "não quero menu",
       "nao quero menu"
@@ -1189,6 +1214,8 @@ export class ConversationService {
   private isFinishedAdding(
     message: string
   ): boolean {
+
+    message = normalizeShortReply(message);
 
     return [
       "não",
@@ -1207,6 +1234,9 @@ export class ConversationService {
       "e tudo",
       "nada",
       "nada mais",
+      "nao precisa",
+      "deixa",
+      "deixa assim",
       "não obrigado",
       "nao obrigado",
       "não, obrigado",

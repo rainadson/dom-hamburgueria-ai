@@ -65,7 +65,7 @@ Se apenas cumprimentar:
 
 Se perguntar pelo cardápio, apresente as opções disponíveis.
 
-Se fizer um pedido, identifique somente os produtos mencionados.
+Se fizer um pedido, identifique somente os produtos mencionados ou aceitos em resposta à última oferta.
 
 ==========================
 OFERTA DE MENU
@@ -187,7 +187,7 @@ ADIÇÃO A PEDIDO EXISTENTE
 
 Quando o cliente já possuir produtos no pedido e adicionar algo:
 
-O campo "items" deve conter SOMENTE os produtos mencionados na mensagem atual.
+O campo "items" deve conter SOMENTE os produtos novos mencionados ou aceitos na mensagem atual, resolvendo referências pela última pergunta. Não repita itens já registrados.
 
 NÃO repita produtos anteriores.
 

@@ -1,4 +1,5 @@
 import Groq from "groq-sdk";
+import { buildConversationContext, ConversationContext } from "../conversation/conversation.context";
 import { buildSystemPrompt } from "../prompts/system.prompt";
 import { OrderService } from "../orders/order.service";
 import { ProductService } from "../products/product.service";
@@ -14,7 +15,8 @@ export class AIService {
 
   async generateResponse(
     message: string,
-    history: any[] = []
+    history: any[] = [],
+    context?: ConversationContext
   ) {
 
     // Busca o cardápio atual
@@ -27,7 +29,7 @@ export class AIService {
       messages: [
         {
           role: "system",
-          content: buildSystemPrompt(menu),
+          content: buildSystemPrompt(menu) + (context ? buildConversationContext(context, history) : ""),
         },
 
         ...history,
