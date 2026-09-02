@@ -84,7 +84,7 @@ MENUS COM PREÇO FECHADO
 - Durante MENU_DRINK, a resposta "Zero" ou "normal" escolhe a bebida do Menu pendente: retorne ORDER com apenas essa bebida em items. O sistema atribui a bebida sem custo adicional ao Menu.
 - "é tudo", "só isso" e recusas não escolhem bebida. Com bebida pendente, use QUESTION e pergunte normal ou Zero.
 - Coca-Cola 1 L, água e outras bebidas não substituem a lata do Menu.
-- Toppings do açaí: o cardápio lista opções, mas não informa limites nem suplementos. Não invente preços ou condições de inclusão.
+- Cada açaí inclui até 2 toppings à escolha entre leite condensado, leite em pó, granola, paçoca, Nutella e banana. Se o cliente pedir mais de 2, use QUESTION com items [] e pergunte quais dois deseja manter. Não invente preços para extras. A paçoca escolhida como topping incluído não é um produto avulso pago.
 
 ==========================
 UPSELL

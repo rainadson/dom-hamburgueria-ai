@@ -107,13 +107,13 @@
   },
   {
     "name": "Açaí 350 ml",
-    "description": "350 ml. Toppings indicados no cardápio: leite condensado, leite em pó, granola, paçoca, Nutella e banana. Quantidades e eventuais suplementos não especificados.",
+    "description": "350 ml. Inclui até 2 toppings à escolha: leite condensado, leite em pó, granola, paçoca, Nutella e banana.",
     "category": "Sobremesas",
     "price": 8.99
   },
   {
     "name": "Açaí M 200 ml",
-    "description": "200 ml. Toppings indicados no cardápio: leite condensado, leite em pó, granola, paçoca, Nutella e banana. Quantidades e eventuais suplementos não especificados.",
+    "description": "200 ml. Inclui até 2 toppings à escolha: leite condensado, leite em pó, granola, paçoca, Nutella e banana.",
     "category": "Sobremesas",
     "price": 4.49
   },
