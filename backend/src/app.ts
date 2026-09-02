@@ -10,6 +10,8 @@ import orderRoutes from "./orders/order.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import { requireAuth } from "./middlewares/auth.middleware";
 
+import conversationRoutes from "./conversation/conversation.routes";
+
 const app = express();
 
 app.use(cors());
@@ -25,6 +27,7 @@ app.get("/", (req, res) => {
 });
 
 
+app.use("/api/conversations", requireAuth, conversationRoutes);
 app.use("/api/orders", requireAuth, orderRoutes);
 app.use("/api", aiRoutes);
 app.use("/api", testRoutes);

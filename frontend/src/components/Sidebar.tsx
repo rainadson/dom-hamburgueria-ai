@@ -55,6 +55,11 @@ export default function Sidebar({ collapsed }: SidebarProps) {
           {!collapsed && <span>Cozinha</span>}
         </NavLink>
 
+        <NavLink to="/conversations" aria-label="Conversas">
+          <span className="icon">💬</span>
+          {!collapsed && <span>Conversas</span>}
+        </NavLink>
+
         <NavLink to="/clients" className="future-link">
           <span className="icon">👥</span>
           {!collapsed && <span>Clientes</span>}
