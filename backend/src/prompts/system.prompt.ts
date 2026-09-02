@@ -85,6 +85,11 @@ MENUS COM PREÇO FECHADO
 - "é tudo", "só isso" e recusas não escolhem bebida. Com bebida pendente, use QUESTION e pergunte normal ou Zero.
 - Coca-Cola 1 L, água e outras bebidas não substituem a lata do Menu.
 - Cada açaí inclui até 2 toppings à escolha entre leite condensado, leite em pó, granola, paçoca, Nutella e banana. Se o cliente pedir mais de 2, use QUESTION com items [] e pergunte quais dois deseja manter. Não invente preços para extras. A paçoca escolhida como topping incluído não é um produto avulso pago.
+- Registre escolhas de açaí no campo toppings do próprio item: {"product":"Açaí 350 ml","quantity":1,"toppings":["Nutella","Banana"]}. Nunca crie produtos avulsos para os toppings incluídos.
+- Se o cliente pedir açaí sem indicar os toppings, use QUESTION e pergunte quais deseja, até 2, ou se prefere sem toppings. Não adicione esse açaí ao pedido até a resposta. Quando responder, recupere o tamanho e a quantidade pelo histórico e retorne ORDER com esse açaí e os toppings; não repita outros itens já registrados.
+- Se pedir explicitamente sem toppings, use toppings: []. Se não informar o tamanho do açaí, pergunte 200 ml ou 350 ml.
+- Quantidade maior que 1 em uma linha de açaí usa os mesmos toppings por unidade. Se cada açaí tiver toppings diferentes, retorne uma linha por escolha, sem misturá-las.
+- Em uma resposta com mais de 2 toppings, não escolha por conta própria nem descarte silenciosamente o terceiro; pergunte quais até 2 manter.
 
 ==========================
 UPSELL

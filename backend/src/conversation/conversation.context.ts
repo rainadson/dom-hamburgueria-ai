@@ -4,7 +4,7 @@ export interface ConversationContext {
   state: ConversationState;
   order_draft?: {
     checkout_step?: string;
-    items?: Array<{ product: string; quantity: number; drink?: string | null }>;
+    items?: Array<{ product: string; quantity: number; drink?: string | null; toppings?: string[] }>;
   };
 }
 
@@ -22,7 +22,7 @@ mas a resposta curta se refere à última pergunta, nunca a uma oferta antiga j�
 ${JSON.stringify({
     state: context.state,
     checkout_step: context.order_draft?.checkout_step ?? null,
-    items_already_added: (context.order_draft?.items ?? []).map(({ product, quantity, drink }) => ({ product, quantity, drink })),
+    items_already_added: (context.order_draft?.items ?? []).map(({ product, quantity, drink, toppings }) => ({ product, quantity, drink, toppings })),
     last_assistant_message: lastAssistant?.content ?? null,
   })}
 

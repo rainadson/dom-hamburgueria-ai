@@ -1,4 +1,5 @@
 import Groq from "groq-sdk";
+import { InvalidToppingsError } from "../products/acai-toppings";
 import { buildConversationContext, ConversationContext } from "../conversation/conversation.context";
 import { buildSystemPrompt } from "../prompts/system.prompt";
 import { OrderService } from "../orders/order.service";
@@ -60,7 +61,10 @@ export class AIService {
 
       return result;
 
-    } catch {
+    } catch (error) {
+      if (error instanceof InvalidToppingsError) {
+        return { intent: "QUESTION", reply: error.message, items: [] };
+      }
 
       return {
         intent: "ERROR",

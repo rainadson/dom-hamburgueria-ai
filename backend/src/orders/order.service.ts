@@ -1,3 +1,4 @@
+import { isAcai, validateToppings } from "../products/acai-toppings";
 import { menuBase, menuDrink, pendingMenu } from "../products/menu-combos";
 import { OrderRepository } from "./order.repository";
 import { ProductRepository } from "../products/product.repository";
@@ -18,6 +19,7 @@ export class OrderService {
       const product = await this.products.findByName(item.product);
       if (!product) throw new Error(`Produto indisponível ou ambíguo: ${item.product}`);
       const priceCents = Math.round(Number(product.price) * 100);
+      const toppings = isAcai(product.name) ? validateToppings(item.toppings) : undefined;
       const base = menuBase(product.name);
       const drink = menuDrink(item.drink);
       if (base && item.drink && !drink) throw new Error("Bebida não permitida no Menu.");
@@ -26,6 +28,7 @@ export class OrderService {
       orderItems.push({
         id: product.id, product: product.name, quantity: item.quantity,
         price: priceCents / 100, subtotal: subtotalCents / 100,
+        ...(toppings !== undefined ? { toppings, components: [toppings.length ? `Toppings: ${toppings.join(" + ")}` : "Sem toppings"] } : {}),
         ...(base ? { drink: drink || null, components: [base, "Batata frita", drink || "Refrigerante por escolher"] } : {}),
       });
     }
@@ -59,6 +62,10 @@ export class OrderService {
   ) {
 
     if (pendingMenu(order.items)) throw new Error("Escolha o refrigerante de cada Menu antes de confirmar.");
+
+    for (const item of order.items || []) {
+      if (isAcai(item.product)) validateToppings(item.toppings);
+    }
 
     return await this.repository.createOrder({
 

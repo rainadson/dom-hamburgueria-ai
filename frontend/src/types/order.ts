@@ -5,6 +5,7 @@ export interface OrderItem {
     price: number;
     subtotal: number;
     components?: string[];
+    toppings?: string[];
     drink?: string | null;
 }
 
