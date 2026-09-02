@@ -1,3 +1,4 @@
+import { menuBase, menuDrink, pendingMenu, menuDrinkQuestion } from "../products/menu-combos";
 import { normalizeShortReply } from "./conversation.context";
 import { ConversationRepository } from "./conversation.repository";
 import { ConversationState } from "./conversation.types";
@@ -43,6 +44,40 @@ export class ConversationService {
       message
         .toLowerCase()
         .trim();
+
+    if (pendingMenu(conversation.order_draft?.items)) {
+      if (this.isFinishedAdding(normalizedMessage)) {
+        const reply = menuDrinkQuestion(conversation.order_draft.items);
+        await this.saveHistory(conversation, message, reply);
+        return this.response(reply, { intent: "MENU_DRINK" });
+      }
+      const history = conversation.history || [];
+      const ai = await this.aiService.generateResponse(message, history,
+        { state: ConversationState.MENU_DRINK, order_draft: conversation.order_draft });
+      const choices = (ai.items || []).map((item: any) => menuDrink(item.drink || item.product)).filter(Boolean);
+      const choice = choices.length > 0 && new Set(choices).size === 1 ? choices[0] : undefined;
+      // Encerramento e recusas nunca escolhem uma bebida por conta própria.
+      if (!choice || this.isFinishedAdding(normalizedMessage)) {
+        const reply = menuDrinkQuestion(conversation.order_draft.items);
+        await this.saveHistory(conversation, message, reply);
+        return this.response(reply, { intent: "MENU_DRINK" });
+      }
+      let assigned = false;
+      const items = conversation.order_draft.items.map((item: any) => {
+        if (!assigned && menuBase(item.product) && !menuDrink(item.drink)) {
+          assigned = true;
+          return { ...item, drink: choice };
+        }
+        return item;
+      });
+      const order = await this.orderService.calculate(items);
+      await this.repository.updateDraft(conversation.id, order);
+      const nextPending = pendingMenu(order.items);
+      await this.repository.updateState(conversation.id, nextPending ? ConversationState.MENU_DRINK : ConversationState.CONFIRMATION);
+      const reply = nextPending ? menuDrinkQuestion(order.items) : this.buildOrderConfirmation(order);
+      await this.saveHistory(conversation, message, reply);
+      return this.response(reply, { intent: nextPending ? "MENU_DRINK" : "CONFIRMATION", order });
+    }
 
     // ==========================================
     // 1. CHECKOUT — NOME
@@ -628,196 +663,19 @@ export class ConversationService {
     }
 
     // ==========================================
-    // 9. MENU ACEITO
+    // ENCERRAMENTO DOS ADICIONAIS — ANTES DE OFERTAS E ESCOLHAS
     // ==========================================
 
     if (
-      conversation.state ===
-      ConversationState.MENU_OFFER &&
-      this.isPositive(
-        normalizedMessage
+      !conversation.order_draft?.checkout_step &&
+      (
+        conversation.state === ConversationState.UPSELL ||
+        (
+          (conversation.state === ConversationState.MENU_OFFER ||
+            conversation.state === ConversationState.MENU_DRINK) &&
+          this.isExplicitlyFinishedAdding(normalizedMessage)
+        )
       )
-    ) {
-
-      const aiResult =
-        await this.aiService.generateResponse(
-          message,
-          conversation.history || [],
-          { state: conversation.state, order_draft: conversation.order_draft }
-        );
-
-      // A IA precisa resolver a última oferta antes de aceitar a resposta curta.
-      if (aiResult.intent !== "MENU_ACCEPTED" || !aiResult.items?.length) {
-        const reply = aiResult.reply || "Você gostaria de transformar seu pedido em Menu?";
-        await this.saveHistory(conversation, message, reply);
-        return this.response(reply, { intent: "QUESTION" });
-      }
-
-      const currentItems =
-        conversation.order_draft?.items || [];
-
-      const order =
-        await this.orderService.calculate([
-          ...currentItems,
-          ...(aiResult.items || [])
-        ]);
-
-      await this.repository.updateDraft(
-        conversation.id,
-        order
-      );
-
-      await this.repository.updateState(
-        conversation.id,
-        ConversationState.MENU_DRINK
-      );
-
-      const reply =
-        "Perfeito! Qual refrigerante você gostaria de escolher?";
-
-      await this.saveHistory(
-        conversation,
-        message,
-        reply
-      );
-
-      return this.response(
-        reply,
-        {
-          intent: "MENU_ACCEPTED",
-          order
-        }
-      );
-    }
-
-    // ==========================================
-    // 10. MENU RECUSADO
-    // ==========================================
-
-    if (
-      conversation.state ===
-      ConversationState.MENU_OFFER &&
-      this.isNegative(
-        normalizedMessage
-      )
-    ) {
-
-      await this.repository.updateState(
-        conversation.id,
-        ConversationState.UPSELL
-      );
-
-      const reply =
-        "Tudo bem! Deseja acrescentar mais alguma coisa ao seu pedido?";
-
-      await this.saveHistory(
-        conversation,
-        message,
-        reply
-      );
-
-      return this.response(
-        reply,
-        {
-          intent: "UPSELL",
-          order: conversation.order_draft
-        }
-      );
-    }
-
-    // ==========================================
-    // 11. ESCOLHA DO REFRIGERANTE
-    // ==========================================
-
-    if (
-      conversation.state ===
-      ConversationState.MENU_DRINK
-    ) {
-
-      const aiResult =
-        await this.aiService.generateResponse(
-          message,
-          conversation.history || [],
-          { state: conversation.state, order_draft: conversation.order_draft }
-        );
-
-      const newItems =
-        aiResult.items || [];
-
-      // --------------------------
-      // NÃO IDENTIFICOU REFRIGERANTE
-      // --------------------------
-
-      if (
-        newItems.length === 0
-      ) {
-
-        const reply =
-          "Qual refrigerante você gostaria de escolher?";
-
-        await this.saveHistory(
-          conversation,
-          message,
-          reply
-        );
-
-        return this.response(reply);
-      }
-
-      // --------------------------
-      // ADICIONAR REFRIGERANTE
-      // --------------------------
-
-      const currentItems =
-        conversation.order_draft?.items || [];
-
-      const order =
-        await this.orderService.calculate([
-          ...currentItems,
-          ...newItems
-        ]);
-
-      await this.repository.updateDraft(
-        conversation.id,
-        order
-      );
-
-      // IMPORTANTE:
-      // Depois do refrigerante o sistema
-      // vai DIRETO para o resumo.
-      //
-      // Não pergunta upsell aqui.
-
-      await this.repository.updateState(
-        conversation.id,
-        ConversationState.CONFIRMATION
-      );
-
-      const reply =
-        this.buildOrderConfirmation(order);
-
-      await this.saveHistory(
-        conversation,
-        message,
-        reply
-      );
-
-      return this.response(
-        reply,
-        {
-          intent: "CONFIRMATION",
-          order
-        }
-      );
-    }
-
-    // ==========================================
-    // 12. UPSELL
-    // ==========================================
-
-    if (
-      (conversation.state === ConversationState.UPSELL ||
-        conversation.state === ConversationState.MENU_OFFER)
     ) {
 
       // --------------------------
@@ -867,6 +725,41 @@ export class ConversationService {
     }
 
     // ==========================================
+    // 10. MENU RECUSADO
+    // ==========================================
+
+    if (
+      conversation.state ===
+      ConversationState.MENU_OFFER &&
+      this.isNegative(
+        normalizedMessage
+      )
+    ) {
+
+      await this.repository.updateState(
+        conversation.id,
+        ConversationState.UPSELL
+      );
+
+      const reply =
+        "Tudo bem! Deseja acrescentar mais alguma coisa ao seu pedido?";
+
+      await this.saveHistory(
+        conversation,
+        message,
+        reply
+      );
+
+      return this.response(
+        reply,
+        {
+          intent: "UPSELL",
+          order: conversation.order_draft
+        }
+      );
+    }
+
+    // ==========================================
     // 13. IA
     // ==========================================
 
@@ -876,6 +769,21 @@ export class ConversationService {
         conversation.history || [],
         { state: conversation.state, order_draft: conversation.order_draft }
       );
+
+    if (aiResult.intent === "MENU_ACCEPTED") {
+      const order = await this.orderService.upgradeMenus(conversation.order_draft?.items || [], aiResult.items || []);
+      if (!order) {
+        const reply = "Qual hambúrguer do seu pedido deseja transformar em Menu?";
+        await this.saveHistory(conversation, message, reply);
+        return this.response(reply, { intent: "QUESTION" });
+      }
+      await this.repository.updateDraft(conversation.id, order);
+      const pending = pendingMenu(order.items);
+      await this.repository.updateState(conversation.id, pending ? ConversationState.MENU_DRINK : ConversationState.CONFIRMATION);
+      const reply = pending ? menuDrinkQuestion(order.items) : this.buildOrderConfirmation(order);
+      await this.saveHistory(conversation, message, reply);
+      return this.response(reply, { intent: pending ? "MENU_DRINK" : "CONFIRMATION", order });
+    }
 
     // ==========================================
     // 14. OFERTA DE MENU
@@ -950,6 +858,13 @@ export class ConversationService {
         order
       );
 
+      if (pendingMenu(order.items)) {
+        await this.repository.updateState(conversation.id, ConversationState.MENU_DRINK);
+        const reply = menuDrinkQuestion(order.items);
+        await this.saveHistory(conversation, message, reply);
+        return this.response(reply, { intent: "MENU_DRINK", order });
+      }
+
       // ========================================
       // DETECTAR OFERTA DE MENU
       // ========================================
@@ -960,6 +875,7 @@ export class ConversationService {
         ).toLowerCase();
 
       const isMenuOffer =
+        !newItems.some((item: any) => menuBase(item.product)) &&
         aiReply.includes("menu") &&
         (
           aiReply.includes("transformar") ||
@@ -1211,40 +1127,30 @@ export class ConversationService {
   // FINALIZAR UPSELL
   // ==========================================
 
-  private isFinishedAdding(
-    message: string
-  ): boolean {
-
-    message = normalizeShortReply(message);
-
+  private isExplicitlyFinishedAdding(message: string): boolean {
     return [
-      "não",
-      "nao",
-      "não quero",
-      "nao quero",
-      "não quero mais",
-      "nao quero mais",
-      "é só isso",
       "e so isso",
-      "só isso",
       "so isso",
-      "isso é tudo",
       "isso e tudo",
-      "é tudo",
       "e tudo",
-      "nada",
       "nada mais",
-      "nao precisa",
-      "deixa",
+      "nao quero mais",
       "deixa assim",
-      "não obrigado",
-      "nao obrigado",
-      "não, obrigado",
-      "nao, obrigado",
       "pode fechar",
       "pode finalizar",
       "pode fechar o pedido"
-    ].includes(message);
+    ].includes(normalizeShortReply(message));
+  }
+
+  private isFinishedAdding(message: string): boolean {
+    return this.isExplicitlyFinishedAdding(message) || [
+      "nao",
+      "nao quero",
+      "nada",
+      "nao precisa",
+      "deixa",
+      "nao obrigado"
+    ].includes(normalizeShortReply(message));
   }
 
   // ==========================================
@@ -1364,6 +1270,8 @@ export class ConversationService {
 
         text +=
           `• ${item.quantity}x ${item.product}\n`;
+        if (item.components?.length) text += `  ${item.components.join(" + ")}\n`;
+
 
         text +=
           `€ ${Number(
@@ -1439,6 +1347,8 @@ export class ConversationService {
 
         text +=
           `• ${item.quantity}x ${item.product}\n`;
+        if (item.components?.length) text += `  ${item.components.join(" + ")}\n`;
+
 
         text +=
           `€ ${Number(

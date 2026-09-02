@@ -1,3 +1,4 @@
+import { normalizeProduct } from "./menu-combos";
 import { supabase } from "../database/supabase";
 
 export class ProductRepository {
@@ -28,41 +29,20 @@ export class ProductRepository {
 
   async findByName(name: string) {
 
-    const search = name
-      .toLowerCase()
-      .replace(/[-–—]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    const { data, error } = await supabase
-      .from("products")
-      .select("*");
-
+    const { data, error } = await supabase.from("products").select("*").eq("active", true);
     if (error) throw error;
-
-    console.log("Produtos do banco:");
-    console.log(data);
-
-    const product = data.find((p: any) => {
-
-      const productName = p.name
-        .toLowerCase()
-        .replace(/[-–—]/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-
-      console.log(`Comparando "${productName}" com "${search}"`);
-
-      return (
-        productName === search ||
-        productName.includes(search) ||
-        search.includes(productName)
-      );
-    });
-
-    console.log("Encontrado:", product);
-
-    return product || null;
+    const aliases: Record<string, string> = {
+      "coca cola": "Coca-Cola (lata)",
+      "coca cola zero": "Coca-Cola Zero (lata)",
+      "coca cola de 1l": "Coca-Cola 1 L"
+    };
+    const search = normalizeProduct(aliases[normalizeProduct(name)] || name);
+    if (!search) return null;
+    const exact = data.find((p: any) => normalizeProduct(p.name) === search);
+    if (exact) return exact;
+    // Uma busca parcial nunca pode confundir um hambúrguer com seu Menu.
+    const matches = data.filter((p: any) => normalizeProduct(p.name).includes(search));
+    return matches.length === 1 ? matches[0] : null;
   }
 
   async create(product: any) {

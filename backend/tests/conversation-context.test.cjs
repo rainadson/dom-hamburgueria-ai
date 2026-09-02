@@ -26,6 +26,7 @@ function setup(state, lastQuestion, modelResult, checkout_step) {
     service.aiService = { generateResponse: async (...args) => { calls.push(args); return modelResult; } };
     service.orderService = {
         calculate: async (items) => ({ items, total: 5 }),
+        upgradeMenus: async (_, upgrades) => upgrades.every(item => item.product.startsWith('Menu ')) ? {items: upgrades, total: 12.49} : null,
         saveOrder: async () => { throw new Error('Unexpected order submission'); },
     };
     return { service, conversation, calls };
@@ -61,10 +62,10 @@ for (const answer of ['não', 'Não, obrigado!', 'não precisa', 'deixa', 'deixa
 });
 for (const answer of ['Beleza!', 'esse mesmo', 'manda', 'coloca', 'adiciona']) {
     (0, node_test_1.test)(`menu acceptance ${answer} keeps existing menu flow`, async () => {
-        const f = setup(conversation_types_1.ConversationState.MENU_OFFER, 'Quer transformar em Menu?', { intent: 'MENU_ACCEPTED', items: [{ product: 'Batata', quantity: 1 }] });
+        const f = setup(conversation_types_1.ConversationState.MENU_OFFER, 'Quer transformar em Menu?', { intent: 'MENU_ACCEPTED', items: [{ product: 'Menu Dom Tradicional', quantity: 1 }] });
         await f.service.processMessage('test', answer);
         strict_1.default.equal(f.conversation.state, conversation_types_1.ConversationState.MENU_DRINK);
-        strict_1.default.equal(f.conversation.order_draft.items.length, 2);
+        strict_1.default.equal(f.conversation.order_draft.items.length, 1);
     });
 }
 (0, node_test_1.test)('é tudo ends menu offer without adding accompaniments', async () => {

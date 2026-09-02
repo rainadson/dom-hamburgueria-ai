@@ -53,6 +53,7 @@ export default function KitchenOrderCard({
         {order.items.map((item, index) => (
           <li key={`${order.id}-${index}`}>
             {item.quantity}x {item.product}
+            {item.components?.length ? <div><small>{item.components.join(" + ")}</small></div> : null}
           </li>
         ))}
       </ul>

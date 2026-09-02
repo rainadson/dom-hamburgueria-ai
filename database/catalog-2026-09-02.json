@@ -1,0 +1,180 @@
+[
+  {
+    "id": 10,
+    "name": "Mini coxinhas",
+    "description": "10 unidades.",
+    "category": "Entradas",
+    "price": 3.99
+  },
+  {
+    "id": 11,
+    "name": "Bolinhos de queijo",
+    "description": "10 unidades.",
+    "category": "Entradas",
+    "price": 3.99
+  },
+  {
+    "id": 5,
+    "name": "Batata frita",
+    "description": "Porção simples.",
+    "category": "Entradas",
+    "price": 3.99
+  },
+  {
+    "id": 12,
+    "name": "Batata com cheddar e cebola frita",
+    "description": "Batata com cheddar e cebola frita.",
+    "category": "Entradas",
+    "price": 5.99
+  },
+  {
+    "id": 14,
+    "name": "Dom Tradicional",
+    "description": "Pão, hambúrguer bovino, queijo cheddar, salada, batata palha e maionese especial.",
+    "category": "Hambúrgueres",
+    "price": 8.99
+  },
+  {
+    "id": 15,
+    "name": "Dom Cheddar Duplo",
+    "description": "Pão, 2x hambúrguer bovino, 2x queijo cheddar, molho cheddar, cebola frita e maionese especial.",
+    "category": "Hambúrgueres",
+    "price": 9.99
+  },
+  {
+    "name": "Dom Calabeso",
+    "description": "Pão, hambúrguer bovino, queijo cheddar, salada, calabresa e maionese especial.",
+    "category": "Hambúrgueres",
+    "price": 9.99
+  },
+  {
+    "name": "Dom Coalho",
+    "description": "Pão, hambúrguer bovino, queijo coalho, mel, orégãos, bacon, cebola frita e maionese especial.",
+    "category": "Hambúrgueres",
+    "price": 9.99
+  },
+  {
+    "name": "Dom Chicken Bacon",
+    "description": "Pão, alface, hambúrguer panado de frango, queijo cheddar, bacon e maionese especial.",
+    "category": "Hambúrgueres",
+    "price": 8.99
+  },
+  {
+    "name": "Dom Doce de Leite",
+    "description": "Pão, doce de leite, hambúrguer bovino e 2x queijo coalho.",
+    "category": "Hambúrgueres",
+    "price": 9.99
+  },
+  {
+    "name": "Dom X-tudo Brasil",
+    "description": "Pão, 2x hambúrguer bovino, 2x queijo cheddar, salada, bacon, fiambre, ovo, batata palha e maionese especial.",
+    "category": "Hambúrgueres",
+    "price": 12.99
+  },
+  {
+    "name": "Combo família",
+    "description": "6 hambúrgueres (pão, carne, queijo cheddar e maionese especial) e 800 g de batata com cheddar e cebola frita. Não inclui bebidas.",
+    "category": "Combos",
+    "price": 35.99
+  },
+  {
+    "id": 2,
+    "name": "Coca-Cola (lata)",
+    "description": "Coca-Cola em lata.",
+    "category": "Bebidas",
+    "price": 2.5
+  },
+  {
+    "id": 3,
+    "name": "Coca-Cola Zero (lata)",
+    "description": "Coca-Cola Zero em lata.",
+    "category": "Bebidas",
+    "price": 2.5
+  },
+  {
+    "id": 4,
+    "name": "Coca-Cola 1 L",
+    "description": "Coca-Cola de 1 litro.",
+    "category": "Bebidas",
+    "price": 3.99
+  },
+  {
+    "id": 13,
+    "name": "Água 50 cl",
+    "description": "Água de 50 cl.",
+    "category": "Bebidas",
+    "price": 2.0
+  },
+  {
+    "name": "Açaí 350 ml",
+    "description": "350 ml. Toppings indicados no cardápio: leite condensado, leite em pó, granola, paçoca, Nutella e banana. Quantidades e eventuais suplementos não especificados.",
+    "category": "Sobremesas",
+    "price": 8.99
+  },
+  {
+    "name": "Açaí M 200 ml",
+    "description": "200 ml. Toppings indicados no cardápio: leite condensado, leite em pó, granola, paçoca, Nutella e banana. Quantidades e eventuais suplementos não especificados.",
+    "category": "Sobremesas",
+    "price": 4.49
+  },
+  {
+    "name": "Pão brioche com doce de leite",
+    "description": "Pão brioche com doce de leite.",
+    "category": "Sobremesas",
+    "price": 4.0
+  },
+  {
+    "name": "Pão brioche com Nutella",
+    "description": "Pão brioche com Nutella.",
+    "category": "Sobremesas",
+    "price": 4.0
+  },
+  {
+    "name": "Paçoca",
+    "description": "Paçoca.",
+    "category": "Sobremesas",
+    "price": 1.0
+  },
+  {
+    "name": "Menu Dom Tradicional",
+    "category": "Menus",
+    "price": 12.49,
+    "description": "Dom Tradicional + batata frita + Coca-Cola normal ou Zero em lata à escolha. Preço fechado; inclui os três componentes."
+  },
+  {
+    "name": "Menu Dom Cheddar Duplo",
+    "category": "Menus",
+    "price": 13.49,
+    "description": "Dom Cheddar Duplo + batata frita + Coca-Cola normal ou Zero em lata à escolha. Preço fechado; inclui os três componentes."
+  },
+  {
+    "name": "Menu Dom Calabeso",
+    "category": "Menus",
+    "price": 13.49,
+    "description": "Dom Calabeso + batata frita + Coca-Cola normal ou Zero em lata à escolha. Preço fechado; inclui os três componentes."
+  },
+  {
+    "name": "Menu Dom Coalho",
+    "category": "Menus",
+    "price": 13.49,
+    "description": "Dom Coalho + batata frita + Coca-Cola normal ou Zero em lata à escolha. Preço fechado; inclui os três componentes."
+  },
+  {
+    "name": "Menu Dom Chicken Bacon",
+    "category": "Menus",
+    "price": 12.49,
+    "description": "Dom Chicken Bacon + batata frita + Coca-Cola normal ou Zero em lata à escolha. Preço fechado; inclui os três componentes."
+  },
+  {
+    "name": "Menu Dom Doce de Leite",
+    "category": "Menus",
+    "price": 13.49,
+    "description": "Dom Doce de Leite + batata frita + Coca-Cola normal ou Zero em lata à escolha. Preço fechado; inclui os três componentes."
+  },
+  {
+    "name": "Menu Dom X-tudo Brasil",
+    "category": "Menus",
+    "price": 16.49,
+    "description": "Dom X-tudo Brasil + batata frita + Coca-Cola normal ou Zero em lata à escolha. Preço fechado; inclui os três componentes."
+  }
+]

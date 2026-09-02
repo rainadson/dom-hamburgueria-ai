@@ -96,6 +96,7 @@ export default function OrderDetailsModal({
 
                             <span>
                                 {item.quantity} × {item.product}
+                                {item.components?.length ? <><br /><small>{item.components.join(" + ")}</small></> : null}
                             </span>
 
                             <strong>

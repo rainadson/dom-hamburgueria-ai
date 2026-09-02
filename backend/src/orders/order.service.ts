@@ -1,3 +1,4 @@
+import { menuBase, menuDrink, pendingMenu } from "../products/menu-combos";
 import { OrderRepository } from "./order.repository";
 import { ProductRepository } from "../products/product.repository";
 
@@ -8,50 +9,56 @@ export class OrderService {
 
   async calculate(items: any[]) {
 
-    let total = 0;
+    let totalCents = 0;
     const orderItems = [];
-
     for (const item of items) {
-
-      console.log("================================");
-      console.log("Item recebido:", item);
-
-      const product =
-        await this.products.findByName(item.product);
-
-      console.log("Produto encontrado:", product);
-
-      if (!product) {
-
-        console.log("Produto NÃO encontrado");
-
-        continue;
+      if (!Number.isSafeInteger(item.quantity) || item.quantity <= 0) {
+        throw new Error("Quantidade inválida.");
       }
-
-      const subtotal =
-        Number(product.price) * item.quantity;
-
-      total += subtotal;
-
+      const product = await this.products.findByName(item.product);
+      if (!product) throw new Error(`Produto indisponível ou ambíguo: ${item.product}`);
+      const priceCents = Math.round(Number(product.price) * 100);
+      const base = menuBase(product.name);
+      const drink = menuDrink(item.drink);
+      if (base && item.drink && !drink) throw new Error("Bebida não permitida no Menu.");
+      const subtotalCents = priceCents * item.quantity;
+      totalCents += subtotalCents;
       orderItems.push({
-        id: product.id,
-        product: product.name,
-        quantity: item.quantity,
-        price: Number(product.price),
-        subtotal
+        id: product.id, product: product.name, quantity: item.quantity,
+        price: priceCents / 100, subtotal: subtotalCents / 100,
+        ...(base ? { drink: drink || null, components: [base, "Batata frita", drink || "Refrigerante por escolher"] } : {}),
       });
     }
+    return { items: orderItems, total: totalCents / 100 };
+  }
 
-    return {
-      items: orderItems,
-      total
-    };
+  async upgradeMenus(currentItems: any[], upgrades: any[]) {
+    if (!upgrades?.length) return null;
+    const remaining = currentItems.map(item => ({ ...item }));
+    const menus = [];
+    for (const upgrade of upgrades) {
+      const product = await this.products.findByName(upgrade.product);
+      const base = product && menuBase(product.name);
+      if (!base || !Number.isSafeInteger(upgrade.quantity) || upgrade.quantity <= 0) return null;
+      let needed = upgrade.quantity;
+      for (const item of remaining) {
+        if (item.product !== base) continue;
+        const taken = Math.min(item.quantity, needed);
+        item.quantity -= taken;
+        needed -= taken;
+      }
+      if (needed) return null;
+      menus.push({ product: product.name, quantity: upgrade.quantity, drink: upgrade.drink });
+    }
+    return this.calculate([...remaining.filter(item => item.quantity > 0), ...menus]);
   }
 
   async saveOrder(
     phone: string,
     order: any
   ) {
+
+    if (pendingMenu(order.items)) throw new Error("Escolha o refrigerante de cada Menu antes de confirmar.");
 
     return await this.repository.createOrder({
 

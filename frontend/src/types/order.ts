@@ -4,6 +4,8 @@ export interface OrderItem {
     quantity: number;
     price: number;
     subtotal: number;
+    components?: string[];
+    drink?: string | null;
 }
 
 export interface Order {
