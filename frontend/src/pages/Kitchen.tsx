@@ -21,7 +21,7 @@ export default function Kitchen() {
     const arrivals = createOrderArrivalTracker();
     const loop = createRefreshLoop<any[]>({
       read: async (signal) => {
-        const { data } = await api.get("/orders", { signal, timeout: 15000 });
+        const { data } = await api.get("/orders/kitchen", { signal, timeout: 15000 });
         return data;
       },
       receive: (data) => {

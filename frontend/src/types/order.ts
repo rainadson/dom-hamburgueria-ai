@@ -22,3 +22,13 @@ export interface Order {
     created_at: string;
     items: OrderItem[];
 }
+
+export interface KitchenOrder {
+    id: number;
+    customer_name: string | null;
+    delivery_type: string | null;
+    address: string | null;
+    status: string;
+    created_at: string;
+    items: Array<Pick<OrderItem, "id" | "product" | "quantity" | "components" | "toppings" | "drink">>;
+}

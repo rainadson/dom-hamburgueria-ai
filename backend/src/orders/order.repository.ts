@@ -77,7 +77,7 @@ export class OrderRepository {
     let query = supabase.from("orders").update({status}).eq("store_id", this.storeId).eq("id", id);
     // Comparação no mesmo UPDATE: não há intervalo entre ler e gravar.
     if (expectedStatus !== undefined) query = query.eq("status", expectedStatus);
-    const {data,error} = await query.select().maybeSingle();
+    const {data,error} = await query.select("id,status").maybeSingle();
     if (error) throw error;
     if (!data) throw new OrderStatusError(expectedStatus === undefined ? 404 : 409,
       expectedStatus === undefined ? "Pedido não encontrado." : "O pedido mudou. Atualize e confira o estado antes de tentar novamente.");

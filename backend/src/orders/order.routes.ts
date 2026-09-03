@@ -4,6 +4,7 @@ import { ManualOrderService, ManualOrderError } from "./manual-order.service";
 import { Router } from "express";
 import { supabase } from "../database/supabase";
 import { OrderRepository, OrderStatusError } from "../orders/order.repository";
+import { kitchenOrder, operationalOrder } from "./order-view";
 
 const router = Router();
 router.get("/manual/capabilities", (_req,res)=>res.json({submit_enabled:process.env.MANUAL_ORDER_SUBMIT_ENABLED==="true"}));
@@ -32,12 +33,20 @@ router.post("/manual/preview", async (req, res) => {
   catch(error) { return res.status(error instanceof ManualOrderError ? 400 : 500).json({message:error instanceof ManualOrderError ? error.message : "Não foi possível preparar o pedido."}); }
 });
 
+router.get("/kitchen", async (req, res) => {
+  const {data,error}=await supabase.from("orders")
+    .select("id,customer_name,delivery_type,address,status,created_at,items")
+    .eq("store_id",req.auth!.storeId).order("created_at",{ascending:false});
+  if(error)return res.status(500).json({message:"Não foi possível carregar a cozinha."});
+  return res.json((data || []).map(kitchenOrder));
+});
+
 
 router.get("/", async (req, res) => {
 
   const { data, error } = await supabase
     .from("orders")
-    .select("*")
+    .select("id,customer_name,customer_phone,total,delivery_fee,payment_method,delivery_type,address,status,created_at,items")
     .eq("store_id",req.auth!.storeId)
     .order("created_at", { ascending: false });
 
@@ -45,7 +54,7 @@ router.get("/", async (req, res) => {
     return res.status(500).json({message:"Não foi possível listar os pedidos."});
   }
 
-  res.json(data);
+  res.json((data || []).map(operationalOrder));
 });
 router.patch("/:id/status", async (req, res) => {
   try {

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { deliverySummary } from "../services/delivery-summary";
 import OrderTimer from "./OrderTimer";
-import type { Order } from "../types/order";
+import type { KitchenOrder } from "../types/order";
 
 interface Props {
-  order: Order;
+  order: KitchenOrder;
   actionLabel: string;
   onAction: () => void;
   updating?: boolean;

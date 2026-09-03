@@ -8,7 +8,7 @@ export class ProductRepository {
   async findAll() {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("id,name,description,category,price,active,created_at")
       .eq("store_id", this.storeId)
       .eq("active", true)
       .order("name");
@@ -21,7 +21,7 @@ export class ProductRepository {
   async findById(id: number) {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("id,name,description,category,price,active,created_at")
       .eq("store_id", this.storeId)
       .eq("id", id)
       .single();
@@ -33,7 +33,7 @@ export class ProductRepository {
 
   async findByName(name: string) {
 
-    const { data, error } = await supabase.from("products").select("*").eq("store_id", this.storeId).eq("active", true);
+    const { data, error } = await supabase.from("products").select("id,name,description,category,price,active,created_at").eq("store_id", this.storeId).eq("active", true);
     if (error) throw error;
     const aliases: Record<string, string> = {
       "coca cola": "Coca-Cola (lata)",
@@ -90,7 +90,7 @@ export class ProductRepository {
   async findAllAdmin() {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("id,name,description,category,price,active,created_at")
       .eq("store_id", this.storeId)
       .order("name");
 

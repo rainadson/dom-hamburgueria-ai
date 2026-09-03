@@ -217,3 +217,9 @@ Após a migração, todas as seis consultas com chave pública retornaram 401. A
 Criada a tabela `stores` e associadas as tabelas operacionais e os perfis atuais à Dom Hamburgueria por `store_id` obrigatório. A migração foi aplicada com sucesso em produção, preservando todos os registros. Telefones de conversas passam a ser únicos por loja, permitindo o mesmo cliente em lojas diferentes.
 
 O backend agora obtém a loja do perfil autenticado e filtra por ela produtos, pedidos, clientes derivados, conversas, handoff e indicadores; criações recebem a mesma loja. Perfil sem loja válida é recusado. Locks de conversa também incluem a loja. Não foi criada uma segunda loja nem interface de gestão. Testes simulam duas lojas e confirmam filtros distintos; validação final de build, publicação e produção segue neste bloco.
+
+## 03/09/2026 — TASK-0122: respostas por finalidade
+
+A Cozinha passa a usar resposta própria sem telefone, pagamento, totais, preços, troco ou metadados internos. Pedidos mantém telefone e resumo financeiro necessários ao atendimento, excluindo valor entregue, troco, `store_id` e campos internos de idempotência. Atualização de estado devolve apenas ID/estado; catálogo deixa de expor `store_id`. Dashboard já restringia faturamento ao ADMIN e Conversas já excluía o rascunho integral.
+
+Contratos puros verificam os campos permitidos e proíbem dados privados em cada resposta. Backend e frontend compilados; suíte completa com 146 aprovações, 8 testes externos ignorados e zero falhas. Próximo: publicação e validação das telas Pedidos/Cozinha em produção sem alterar pedidos.
