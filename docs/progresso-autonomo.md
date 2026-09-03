@@ -142,3 +142,9 @@ Dois testes de composição/exclusão de campos e compilação frontend aprovado
 Fase 14 auditada em docs/configuracoes-pendentes.md: tabela settings só encontrada no SQL de referência, sem interface/rota; faltam dados oficiais, horário, regra de entrega e confirmação de meios de pagamento. Nenhuma configuração real alterada ou inventada. Multi-loja requer projeto/migração de associações e permissões, ainda pendentes.
 
 Teste HTTP local do estado valida ausência/token inválido 401, ADMIN e LOJA 200, papel desconhecido 403, conflito 409 e erro interno sem detalhes de banco. Complementa testes de repositório; não chama produção nem valida RLS. Testes relevantes aprovados. Próximo: continuar auditoria 0117–0124 nos endpoints existentes e registar dependências de ativação sem repetir pedido de publicação.
+
+## 03/09/2026 — revisão de acessos 0117–0124
+
+Achado relevante: webhook legado público retorna conversa inteira por telefone; chat público processa o fluxo real; test-db público expõe produtos. Verificado estaticamente no código local e ee4763d, sem exploração em produção. Proposta concreta em docs/revisao-acessos.md: desativar montagem do webhook legado/test-db e exigir autenticação existente no chat. Isto restringe acessos e pode afetar demo anónima, portanto depende de aprovação explícita dado o limite de não alterar permissões. Utilizador notificado. Nenhuma restrição aplicada ou push realizado.
+
+Separadamente, pedidos devolvem campos financeiros para ambas as roles; regras operacionais precisam de revisão antes de filtrar. RLS/multiloja permanecem não verificados. Próximo trabalho independente: validação de entradas/erros existentes sem mudar autorização e auditoria de logs/configuração sem revelar secrets.
