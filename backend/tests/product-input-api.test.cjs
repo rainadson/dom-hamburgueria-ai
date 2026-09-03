@@ -5,7 +5,7 @@ const router=require('../dist/products/product.routes').default;
 test('product HTTP validation accepts UI payloads and prevents invalid repository writes',async()=>{
  const proto=ProductRepository.prototype;const originals={create:proto.create,update:proto.update,delete:proto.delete};let writes=[];
  proto.create=async data=>{writes.push(data);return {id:1,...data};};proto.update=async(id,data)=>{writes.push(data);return {id,...data};};proto.delete=async id=>writes.push(id);
- const express=require('express');const app=express();app.use(express.json());app.use('/products',router);
+ const express=require('express');const app=express();app.use(express.json());app.use((req,_res,next)=>{req.auth={id:'admin',role:'ADMIN'};next();});app.use('/products',router);
  const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));const base=`http://127.0.0.1:${server.address().port}/products`;
  const send=(method,path,body)=>fetch(base+path,{method,headers:{'content-type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)})});
  try{

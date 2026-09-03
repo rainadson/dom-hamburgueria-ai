@@ -1,3 +1,4 @@
+import { requireRole } from "../middlewares/auth.middleware";
 import { ProductInputError } from "./product-input";
 import { Router } from "express";
 import { ProductService } from "./product.service";
@@ -37,7 +38,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Criar produto
-router.post("/", async (req, res) => {
+router.post("/", requireRole("ADMIN"), async (req, res) => {
   try {
     const product = await service.createProduct(req.body);
     res.status(201).json(product);
@@ -49,7 +50,7 @@ router.post("/", async (req, res) => {
 });
 
 // Atualizar produto
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireRole("ADMIN"), async (req, res) => {
   try {
     const product = await service.updateProduct(
       Number(req.params.id),
@@ -65,7 +66,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Excluir produto
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireRole("ADMIN"), async (req, res) => {
   try {
     await service.deleteProduct(Number(req.params.id));
 

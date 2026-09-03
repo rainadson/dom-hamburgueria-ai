@@ -199,3 +199,9 @@ Neste ponto, blocos restantes exigem informação/autorização ou estado extern
 ## 03/09/2026 — TASK-0117: rotas antigas protegidas com autorização
 
 Após autorização explícita, removida montagem de test-db e webhook legado; chat real agora exige requireAuth ADMIN/LOJA. Demo frontend já era protegida e envia sessão Supabase. Teste HTTP local cobre recusas, papéis autorizados e 404 dos legados, sem banco/IA reais. Nenhuma role, credencial ou RLS alterada. Próximo: suíte/build, commit/push e verificação de deploy; não testar chat válido em produção para não criar conversa ou consumir IA.
+
+## 03/09/2026 — TASK-0118: matriz ADMIN/LOJA
+
+Criado middleware requireRole. Leitura do catálogo permanece para ambos por ser usada no pedido manual; criação/edição/exclusão ficam ADMIN, com 403 para LOJA. Interface oculta Produtos e redireciona acesso direto de LOJA, mas segurança está no backend. Pedidos/cozinha, conversas/handoff, demo e status WhatsApp permanecem para ambos conforme uso operacional e decisão anterior. Matriz e limites em docs/permissoes-admin-loja.md.
+
+Testes locais cobrem LOJA lendo sem gravar e ADMIN nas três mutações. Ainda falta TASK-0122 para respostas financeiras por finalidade e TASK-0120/0121 para RLS/multiloja; não consideradas concluídas aqui. Próximo: builds/suíte, publicação e validação de 403 sem mutação real.

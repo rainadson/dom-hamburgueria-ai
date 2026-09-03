@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import "../styles/sidebar.css";
+import { useAuth } from "../context/AuthContext";
 import { authService } from "../services/auth.service";
 
 interface SidebarProps {
@@ -8,6 +9,7 @@ interface SidebarProps {
 
 export default function Sidebar({ collapsed }: SidebarProps) {
   const navigate = useNavigate();
+  const {profile} = useAuth();
 
   async function handleLogout() {
     try {
@@ -45,10 +47,10 @@ export default function Sidebar({ collapsed }: SidebarProps) {
           {!collapsed && <span>Pedidos</span>}
         </NavLink>
 
-        <NavLink to="/products">
+        {profile?.role === "ADMIN" && <NavLink to="/products">
           <span className="icon">🍔</span>
           {!collapsed && <span>Produtos</span>}
-        </NavLink>
+        </NavLink>}
 
         <NavLink to="/kitchen">
           <span className="icon">👨‍🍳</span>

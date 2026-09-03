@@ -58,3 +58,11 @@ export async function requireAuth(
 
   next();
 }
+
+export function requireRole(...roles: UserRole[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.auth) return res.status(401).json({message:"Autenticação necessária."});
+    if (!roles.includes(req.auth.role)) return res.status(403).json({message:"Seu perfil não pode realizar esta operação."});
+    next();
+  };
+}
