@@ -77,3 +77,12 @@ Próximo: persistência da caixa de entrada com ID de evento/mensagem, deduplica
 Criado armazenamento de envelopes assinados com hash canónico, inserção que ignora duplicados sem sobrescrever estado e propagação de falha de banco para impedir confirmação de recebimento prematura. Três testes locais cobrem identidade, tamanho/formato, duplicação e indisponibilidade. SQL proposto em database/whatsapp-inbox-migration.sql; não aplicado. Inclui RLS sem políticas de navegador e precisará de revisão antes de qualquer execução; nenhuma permissão real foi alterada.
 
 Isto deduplica envelopes equivalentes, NÃO garante processamento único de cada mensagem em envelopes distintos. Ainda faltam deduplicação por ID da mensagem, consumo recuperável com lease, transação de efeitos e coordenação com envio. Não ligar MetaInbox ao webhook nem confirmar configuração externa enquanto o consumidor estiver ausente. O estado da integração continua não conectado. Próximo: contratos de normalização e IDs de mensagens com documentação primária; manter integrações e migrações desativadas.
+
+
+## 03/09/2026 — normalização de mensagens Meta
+
+Preparado parser puro de lotes: separa textos recebidos de recibos de entrega, exige WABA e phone_number_id esperados, preserva ID/remetente/timestamp, deduplica IDs equivalentes dentro do lote e rejeita conflitos. Mídia e outros tipos são identificados como não processáveis: não são convertidos em pedidos por legenda. Envelope original permanece na caixa de entrada proposta. Sem execução de IA, download ou resposta.
+
+Referências primárias: [payload oficial Meta](https://www.postman.com/meta/whatsapp-business-platform/folder/vzaxn16/webhook-payload-reference) e [exemplo oficial de texto](https://www.postman.com/meta/whatsapp-business-platform/request/yw0wjm1/received-text-message-with-show-security-notifications). Cinco testes locais verificam lotes, IDs, isolamento de destino, mídia e dados inválidos. Não equivale a integração real nem prova suporte a todos os tipos atuais de mensagem.
+
+Próximo passo: armazenamento de IDs normalizados e consumidor com recuperação/efeitos idempotentes. Não ligar ao chat atual enquanto ele puder gravar pedidos antes de confirmar o processamento do evento na mesma transação. Permanecem pendentes conta Meta, número, migrações e validação externa; o código novo continua local.
