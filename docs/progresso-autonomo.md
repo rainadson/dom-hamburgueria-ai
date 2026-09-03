@@ -136,3 +136,9 @@ Roadmap original recuperado da conversa Dom Ai (6a678d96-e8e4-83eb-8440-0f0cf5ad
 0098 informações de entrega e 0099 mapa já presentes na cozinha: não refeitos. TASK-0100 preparada: botão copia resumo operacional para o atendente colar na conversa do entregador. Inclui nome, morada, itens/componentes e mapa; não inclui telefone, preços ou pagamento. Exige clique explícito e informa que nada foi enviado automaticamente. Entrega sem morada e retirada não oferecem cópia. Não é integração de envio WhatsApp.
 
 Dois testes de composição/exclusão de campos e compilação frontend aprovados. Clipboard ainda não validado visualmente no navegador. Sem envios externos, pedidos ou publicação. 0101–0102: estado DELIVERED e ação final já existem; auditar fluxo de entrega antes de acrescentar estados novos. Próximo: revisar fase 14 (0103–0109), identificando decisões/configuração pendentes sem inventar dados da loja ou pagamentos.
+
+## 03/09/2026 — auditoria de configurações e contrato HTTP de status
+
+Fase 14 auditada em docs/configuracoes-pendentes.md: tabela settings só encontrada no SQL de referência, sem interface/rota; faltam dados oficiais, horário, regra de entrega e confirmação de meios de pagamento. Nenhuma configuração real alterada ou inventada. Multi-loja requer projeto/migração de associações e permissões, ainda pendentes.
+
+Teste HTTP local do estado valida ausência/token inválido 401, ADMIN e LOJA 200, papel desconhecido 403, conflito 409 e erro interno sem detalhes de banco. Complementa testes de repositório; não chama produção nem valida RLS. Testes relevantes aprovados. Próximo: continuar auditoria 0117–0124 nos endpoints existentes e registar dependências de ativação sem repetir pedido de publicação.
