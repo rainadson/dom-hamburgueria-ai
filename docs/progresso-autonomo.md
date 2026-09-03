@@ -93,3 +93,8 @@ Próximo passo: armazenamento de IDs normalizados e consumidor com recuperação
 Proposta SQL separada para gravar IDs normalizados e concluir extração do envelope numa transação. Reentregas em envelopes diferentes preservam a mensagem existente e o seu estado; conteúdo conflitante causa rollback do lote. Mídia fica UNSUPPORTED. Adaptador isolado exige envelope previamente persistido e propaga falhas, sem chamar IA ou cozinha. Não está ligado ao webhook.
 
 Migração NÃO aplicada: regras de acesso apenas propostas, sem alteração de permissões reais. Testes do adaptador cobrem identidade estável entre envelopes, falha de armazenamento e validação antes da chamada. Não provam transações/concor­rência PostgreSQL: essas verificações continuam pendentes numa base de testes. Ainda faltam consumidor, efeitos atómicos e transporte; COMPLETED do envelope representa apenas extração, não atendimento da mensagem. Próximo: validar esquema num PostgreSQL isolado disponível e desenhar consumo sem repetir efeitos.
+
+## 03/09/2026 — verificação consolidada e publicação pendente
+Frontend compilado; suíte local: 117 testes aprovados, 8 testes externos ignorados, zero falhas. Backend compilado no bloco anterior. Docker instalado mas serviço indisponível mesmo após verificação autorizada; migrações continuam sem validação PostgreSQL real.
+Tentativa de push dos cinco commits WhatsApp até dab284e rejeitada pela revisão automática: autorização anterior limitada aos cinco commits já publicados. Nova aprovação solicitada ao utilizador, sem contorno do bloqueio. Produção permanece ee4763d. Transporte e migrações continuam inativos. Trabalho local independente pode continuar enquanto a publicação aguarda.
+
