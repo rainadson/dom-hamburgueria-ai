@@ -25,3 +25,12 @@ test('failed read keeps previous data and schedules recovery',async()=>{
  await s.loop.refresh();fail=true;await s.loop.refresh();assert.deepEqual(s.received,['orders']);assert.equal(s.failures(),1);
  assert.equal([...s.timers.values()][0].delay,5000);s.loop.stop();
 });
+
+test('stopped detail reader cannot overwrite a replacement reader or report late failure',async()=>{
+ let reject;const old=setup(()=>new Promise((_resolve,r)=>reject=r));
+ const pending=old.loop.refresh();old.loop.stop();
+ const fresh=setup(async()=> 'new conversation after action');await fresh.loop.refresh();
+ reject(Error('late aborted request'));await pending;
+ assert.equal(old.failures(),0);assert.equal(old.timers.size,0);assert.deepEqual(old.received,[]);
+ assert.deepEqual(fresh.received,['new conversation after action']);fresh.loop.stop();
+});

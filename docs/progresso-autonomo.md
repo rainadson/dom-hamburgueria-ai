@@ -110,3 +110,9 @@ Isto é consulta periódica, não Supabase Realtime: TASK-0093 permanece parcial
 Cozinha passa a reutilizar leituras coordenadas: consulta após três segundos, atualização ao recuperar foco, cancelamento ao sair e nova leitura após alteração de estado mesmo se outra consulta estiver em curso. Erros apresentam aviso mantendo dados anteriores. Corrigida deteção de novos IDs para avisar também quando a cozinha estava vazia ou o tamanho da lista permanece igual; primeira carga continua silenciosa. Áudio segue sujeito à autorização do navegador.
 
 Validação local: testes de chegada de pedidos e ciclo de atualização, mais compilação frontend. Sem testes na cozinha real, sem pedidos, sem push. TASK-0094 continua parcial: consulta periódica implementada, Realtime e validação operacional ainda pendentes. Aprovação de publicação continua a mesma pendência já comunicada. Próximo bloco: rever atualização da central de conversas e estados entre telas (0095–0097), preservando rascunhos humanos.
+
+## 03/09/2026 — TASK-0095 parcial: atualização das conversas
+
+Lista e histórico reutilizam leituras coordenadas e atualizam ao recuperar foco. Histórico suspende consultas enquanto assumir/retomar/guardar resposta está em curso; respostas antigas são ignoradas e, após sucesso, o estado é novamente consultado. Falha dessa consulta fica visível sem apresentar o estado anterior como confirmação da ação. Texto digitado mantém-se durante atualizações e ações, limpando apenas ao trocar de conversa. Nenhuma resposta foi enviada.
+
+Teste adicional cobre falha tardia de leitor substituído; quatro testes do ciclo aprovados e frontend compilado. Sem validação visual integrada neste bloco, nem publicação. TASK-0095 parcial: polling e proteção de concorrência locais, Realtime ainda pendente. Próximo: avaliar TASK-0096–0097 e dependências de Realtime, sem mudar permissões; publicação continua aguardando a aprovação já solicitada.

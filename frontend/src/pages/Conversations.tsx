@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createRefreshLoop } from "../services/refresh-loop";
 import { api } from "../services/api";
 import "../styles/conversations.css";
 type Summary = {id:number;name:string|null;phone:string;state:string;updated_at:string};
@@ -10,19 +11,38 @@ export default function Conversations(){
  const [items,setItems]=useState<Summary[]>([]);const [total,setTotal]=useState(0);
  const [selected,setSelected]=useState<number|null>(null);const [detail,setDetail]=useState<Detail|null>(null);
  const [error,setError]=useState("");const [detailError,setDetailError]=useState("");const [loading,setLoading]=useState(true);
- useEffect(()=>{let stopped=false;let timer:ReturnType<typeof setTimeout>;const controller=new AbortController();
+ useEffect(()=>{
   setLoading(true);
-  async function load(){try{const {data}=await api.get('/conversations',{params:{search,page},signal:controller.signal});if(!stopped){setItems(data.items);setTotal(data.total);setError("");}}catch{if(!stopped)setError("Não foi possível atualizar as conversas. Tentaremos novamente automaticamente.");}finally{if(!stopped){setLoading(false);timer=setTimeout(load,10000);}}}
-  const debounce=setTimeout(load,300);return()=>{stopped=true;controller.abort();clearTimeout(debounce);clearTimeout(timer);};
+  const loop=createRefreshLoop<{items:Summary[];total:number}>({
+   read:async signal=>{const {data}=await api.get('/conversations',{params:{search,page},signal});return data;},
+   receive:data=>{setItems(data.items);setTotal(data.total);setError("");setLoading(false);},
+   failure:()=>{setError("Não foi possível atualizar as conversas. Tentaremos novamente automaticamente.");setLoading(false);},
+   delay:10000,
+  });
+  const onFocus=()=>{void loop.refresh();};
+  window.addEventListener('focus',onFocus);
+  const debounce=setTimeout(()=>{void loop.refresh();},300);
+  return()=>{clearTimeout(debounce);loop.stop();window.removeEventListener('focus',onFocus);};
  },[search,page]);
- useEffect(()=>{setDetail(null);setDetailError("");setReply("");setActionMessage("");if(selected===null)return;let stopped=false;let timer:ReturnType<typeof setTimeout>;const controller=new AbortController();
-  async function load(){try{const {data}=await api.get(`/conversations/${selected}`,{signal:controller.signal});if(!stopped){setDetail(data);setDetailError("");}}catch{if(!stopped)setDetailError("Não foi possível atualizar esta conversa.");}finally{if(!stopped)timer=setTimeout(load,5000);}}
-  load();return()=>{stopped=true;controller.abort();clearTimeout(timer);};
- },[selected]);
+ useEffect(()=>{setDetail(null);setDetailError("");setReply("");setActionMessage("");},[selected]);
+ useEffect(()=>{
+  // Suspende leituras durante ações: uma resposta antiga não pode desfazer o estado revisto.
+  if(selected===null||busy)return;
+  const loop=createRefreshLoop<Detail>({
+   read:async signal=>{const {data}=await api.get(`/conversations/${selected}`,{signal});return data;},
+   receive:data=>{setDetail(data);setDetailError("");},
+   failure:()=>setDetailError("Não foi possível atualizar esta conversa."),
+   delay:5000,
+  });
+  const onFocus=()=>{void loop.refresh();};
+  window.addEventListener('focus',onFocus);
+  void loop.refresh();
+  return()=>{loop.stop();window.removeEventListener('focus',onFocus);};
+ },[selected,busy]);
  async function act(action:"take"|"resume"|"draft") {
   if(selected===null||busy)return;
   const id=selected;setBusy(true);setActionMessage("");
-  try{await api.post(`/conversations/${id}/${action}`,action==='draft'?{text:reply}:{});const {data}=await api.get(`/conversations/${id}`);setDetail(data);setActionMessage(action==='draft'?"Resposta guardada. Não foi enviada ao cliente.":action==='take'?"Atendimento assumido. A IA está pausada.":"IA retomada.");}
+  try{await api.post(`/conversations/${id}/${action}`,action==='draft'?{text:reply}:{});setDetail(null);setActionMessage(action==='draft'?"Resposta guardada. Não foi enviada ao cliente.":action==='take'?"Atendimento assumido. A IA está pausada.":"IA retomada.");}
   catch(error:any){setActionMessage(error.response?.data?.message||"Não foi possível concluir a ação. Verifique o estado antes de tentar novamente.");}
   finally{setBusy(false);}
  }
