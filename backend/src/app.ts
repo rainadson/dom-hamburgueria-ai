@@ -8,6 +8,7 @@ import aiRoutes from "./routes/ai.routes";
 import orderRoutes from "./orders/order.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import { requireAuth } from "./middlewares/auth.middleware";
+import { apiNotFound } from "./middlewares/not-found.middleware";
 
 import conversationRoutes from "./conversation/conversation.routes";
 
@@ -35,5 +36,6 @@ app.use("/api/chat", requireAuth);
 app.use("/api", aiRoutes);
 app.use("/api/products", requireAuth, productRoutes);
 app.use("/api/dashboard", requireAuth, dashboardRoutes);
+app.use("/api", apiNotFound);
 app.use(handleApiError);
 export default app;

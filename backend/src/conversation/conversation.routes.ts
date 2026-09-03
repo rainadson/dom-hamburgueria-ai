@@ -14,8 +14,9 @@ router.get("/", async (req, res) => {
   return res.json({items:(data || []).map(row=>({id:row.id,phone:row.phone,state:row.state,updated_at:row.updated_at,name:row.order_draft?.customer_name || null,handoff:row.order_draft?.handoff?{active:!!row.order_draft.handoff.active,owner_id:row.order_draft.handoff.owner_id}:null})),total:count || 0});
 });
 router.get("/:id", async (req,res)=>{
-  if (!/^\d+$/.test(String(req.params.id))) return res.status(400).json({message:"Conversa inválida."});
-  const {data,error}=await supabase.from("conversations").select("id,phone,state,updated_at,history,order_draft").eq("id",req.params.id).maybeSingle();
+  const id = Number(req.params.id);
+  if (!/^\d+$/.test(String(req.params.id)) || !Number.isSafeInteger(id) || id <= 0) return res.status(400).json({message:"Conversa inválida."});
+  const {data,error}=await supabase.from("conversations").select("id,phone,state,updated_at,history,order_draft").eq("id",id).maybeSingle();
   if(error)return res.status(500).json({message:"Não foi possível carregar o histórico."});
   if(!data)return res.status(404).json({message:"Conversa não encontrada."});
   return res.json({id:data.id,phone:data.phone,state:data.state,updated_at:data.updated_at,name:data.order_draft?.customer_name || null,handoff:data.order_draft?.handoff || null,can_manage:!data.order_draft?.handoff?.active || data.order_draft.handoff.owner_id===req.auth?.id,
