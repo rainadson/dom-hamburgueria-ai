@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { orderService } from "../services/order.service";
 import "../styles/orders.css";
@@ -47,6 +48,7 @@ export default function Orders() {
             <div className="orders-header">
 
                 <h1>📦 Orders</h1>
+                <Link to="/orders/new">Preparar pedido manual</Link>
 
             </div>
 

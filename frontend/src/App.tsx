@@ -9,6 +9,7 @@ import Products from "./pages/Products";
 import Orders from "./pages/Orders";
 import Kitchen from "./pages/Kitchen";
 import Conversations from "./pages/Conversations";
+import ManualOrder from "./pages/ManualOrder";
 import Demo from "./pages/Demo";
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
       >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/orders/new" element={<ManualOrder />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/kitchen" element={<Kitchen />} />
         <Route path="/conversations" element={<Conversations />} />
