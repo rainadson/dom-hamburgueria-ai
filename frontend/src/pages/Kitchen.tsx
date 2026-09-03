@@ -11,6 +11,9 @@ const notification = new Audio("/sounds/notification.mp3");
 export default function Kitchen() {
 
   const [orders, setOrders] = useState<any[]>([]);
+  const pendingActions = useRef(new Set<number>());
+  const [updating, setUpdating] = useState<number[]>([]);
+  const [actionErrors, setActionErrors] = useState<Record<number, string>>({});
   const [refreshError, setRefreshError] = useState(false);
   const refresh = useRef<() => void>(() => {});
 
@@ -18,7 +21,7 @@ export default function Kitchen() {
     const arrivals = createOrderArrivalTracker();
     const loop = createRefreshLoop<any[]>({
       read: async (signal) => {
-        const { data } = await api.get("/orders", { signal });
+        const { data } = await api.get("/orders", { signal, timeout: 15000 });
         return data;
       },
       receive: (data) => {
@@ -46,14 +49,21 @@ export default function Kitchen() {
   }, []);
 
   async function updateStatus(id: number, status: string) {
+    if (pendingActions.current.has(id)) return;
+    pendingActions.current.add(id);
+    setUpdating([...pendingActions.current]);
+    setActionErrors(errors => ({ ...errors, [id]: "" }));
     try {
-      await api.patch(`/orders/${id}/status`, {
-        status,
-      });
-
+      await api.patch(`/orders/${id}/status`, { status });
+    } catch {
+      setActionErrors(errors => ({
+        ...errors,
+        [id]: "Não foi possível confirmar a alteração. Confira o estado atualizado antes de tentar novamente.",
+      }));
+    } finally {
+      pendingActions.current.delete(id);
+      setUpdating([...pendingActions.current]);
       refresh.current();
-    } catch (error) {
-      console.error(error);
     }
   }
 
@@ -92,6 +102,8 @@ export default function Kitchen() {
               <KitchenOrderCard
                 key={order.id}
                 order={order}
+                updating={updating.includes(order.id)}
+                actionError={actionErrors[order.id]}
                 actionLabel="▶ Preparando"
                 onAction={() => updateStatus(order.id, "PREPARING")}
               />
@@ -109,6 +121,8 @@ export default function Kitchen() {
               <KitchenOrderCard
                 key={order.id}
                 order={order}
+                updating={updating.includes(order.id)}
+                actionError={actionErrors[order.id]}
                 actionLabel="✔ Pronto"
                 onAction={() => updateStatus(order.id, "READY")}
               />
@@ -126,6 +140,8 @@ export default function Kitchen() {
               <KitchenOrderCard
                 key={order.id}
                 order={order}
+                updating={updating.includes(order.id)}
+                actionError={actionErrors[order.id]}
                 actionLabel="🚚 Entregue"
                 onAction={() => updateStatus(order.id, "DELIVERED")}
               />

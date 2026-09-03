@@ -5,12 +5,16 @@ interface Props {
   order: Order;
   actionLabel: string;
   onAction: () => void;
+  updating?: boolean;
+  actionError?: string;
 }
 
 export default function KitchenOrderCard({
   order,
   actionLabel,
   onAction,
+  updating = false,
+  actionError,
 }: Props) {
   const createdAt = order.created_at.trim().replace(" ", "T");
   const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(createdAt);
@@ -73,6 +77,7 @@ export default function KitchenOrderCard({
         )}
       </section>
 
+      {actionError && <p role="alert">{actionError}</p>}
       <div className="buttons">
 
         {actionLabel ? (
@@ -84,9 +89,10 @@ export default function KitchenOrderCard({
                   ? "btn btn-green"
                   : "btn btn-blue"
             }
+            disabled={updating}
             onClick={onAction}
           >
-            {actionLabel}
+            {updating ? "Atualizando…" : actionLabel}
           </button>
         ) : (
           <span className="finished">

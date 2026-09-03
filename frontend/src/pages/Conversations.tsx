@@ -14,7 +14,7 @@ export default function Conversations(){
  useEffect(()=>{
   setLoading(true);
   const loop=createRefreshLoop<{items:Summary[];total:number}>({
-   read:async signal=>{const {data}=await api.get('/conversations',{params:{search,page},signal});return data;},
+   read:async signal=>{const {data}=await api.get('/conversations',{params:{search,page},signal,timeout:15000});return data;},
    receive:data=>{setItems(data.items);setTotal(data.total);setError("");setLoading(false);},
    failure:()=>{setError("Não foi possível atualizar as conversas. Tentaremos novamente automaticamente.");setLoading(false);},
    delay:10000,
@@ -29,7 +29,7 @@ export default function Conversations(){
   // Suspende leituras durante ações: uma resposta antiga não pode desfazer o estado revisto.
   if(selected===null||busy)return;
   const loop=createRefreshLoop<Detail>({
-   read:async signal=>{const {data}=await api.get(`/conversations/${selected}`,{signal});return data;},
+   read:async signal=>{const {data}=await api.get(`/conversations/${selected}`,{signal,timeout:15000});return data;},
    receive:data=>{setDetail(data);setDetailError("");},
    failure:()=>setDetailError("Não foi possível atualizar esta conversa."),
    delay:5000,

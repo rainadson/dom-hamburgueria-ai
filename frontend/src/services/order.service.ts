@@ -3,7 +3,7 @@ import { api } from "./api";
 class OrderService {
 
     async getOrders(signal?: AbortSignal) {
-        const { data } = await api.get("/orders", { signal });
+        const { data } = await api.get("/orders", { signal, timeout: 15000 });
         return data;
     }
 

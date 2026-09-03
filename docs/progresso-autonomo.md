@@ -116,3 +116,9 @@ Validação local: testes de chegada de pedidos e ciclo de atualização, mais c
 Lista e histórico reutilizam leituras coordenadas e atualizam ao recuperar foco. Histórico suspende consultas enquanto assumir/retomar/guardar resposta está em curso; respostas antigas são ignoradas e, após sucesso, o estado é novamente consultado. Falha dessa consulta fica visível sem apresentar o estado anterior como confirmação da ação. Texto digitado mantém-se durante atualizações e ações, limpando apenas ao trocar de conversa. Nenhuma resposta foi enviada.
 
 Teste adicional cobre falha tardia de leitor substituído; quatro testes do ciclo aprovados e frontend compilado. Sem validação visual integrada neste bloco, nem publicação. TASK-0095 parcial: polling e proteção de concorrência locais, Realtime ainda pendente. Próximo: avaliar TASK-0096–0097 e dependências de Realtime, sem mudar permissões; publicação continua aguardando a aprovação já solicitada.
+
+## 03/09/2026 — TASK-0096 parcial: confirmação de estado na cozinha
+
+Ações de cozinha agora bloqueiam cliques repetidos no mesmo pedido durante a requisição, mostram Atualizando e apresentam erro no cartão quando a resposta não confirma a alteração. A lista é relida também após erro, porque uma falha de rede pode ocorrer depois da gravação. Não repete automaticamente escritas. As consultas periódicas de pedidos/cozinha/conversas ganham limite de 15 segundos para que uma leitura sem resposta não suspenda indefinidamente as próximas consultas.
+
+Compilação frontend e testes locais do ciclo/chegada de pedidos aprovados. Nenhuma alteração de estado real executada. Isto não resolve concorrência entre operadores no backend nem implementa Realtime; 0096–0097 continuam parciais. Não foram alteradas permissões, publicações Supabase ou produção. Próximo: auditoria do contrato de atualização de estado para detetar conflitos entre operadores, antes de considerar sincronização concluída.
