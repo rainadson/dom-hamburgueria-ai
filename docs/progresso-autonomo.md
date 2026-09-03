@@ -148,3 +148,9 @@ Teste HTTP local do estado valida ausência/token inválido 401, ADMIN e LOJA 20
 Achado relevante: webhook legado público retorna conversa inteira por telefone; chat público processa o fluxo real; test-db público expõe produtos. Verificado estaticamente no código local e ee4763d, sem exploração em produção. Proposta concreta em docs/revisao-acessos.md: desativar montagem do webhook legado/test-db e exigir autenticação existente no chat. Isto restringe acessos e pode afetar demo anónima, portanto depende de aprovação explícita dado o limite de não alterar permissões. Utilizador notificado. Nenhuma restrição aplicada ou push realizado.
 
 Separadamente, pedidos devolvem campos financeiros para ambas as roles; regras operacionais precisam de revisão antes de filtrar. RLS/multiloja permanecem não verificados. Próximo trabalho independente: validação de entradas/erros existentes sem mudar autorização e auditoria de logs/configuração sem revelar secrets.
+
+## 03/09/2026 — TASK-0123 parcial: entrada do chat
+
+Chat e webhook legado rejeitam objetos/arrays/números em telefone ou mensagem, valores vazios e tamanhos acima de 20/4000 caracteres antes de chamar serviços. Texto válido permanece intacto; não normaliza identidades existentes. Erros inesperados do chat deixam de devolver detalhes do provedor e de imprimir objeto completo nos logs. Não altera autenticação nem corrige o acesso público já comunicado.
+
+Build backend e teste HTTP local aprovados, com serviços simulados: entradas inválidas não alcançam persistência, texto válido preservado e falhas sem detalhe privado. Sem chamadas de IA/banco real ou produção. Próximo: revisar erros restantes e logs; alterações de autorização e publicação continuam aguardando as aprovações solicitadas.
