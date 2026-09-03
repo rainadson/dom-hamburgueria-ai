@@ -70,3 +70,10 @@ Fábrica de webhook Meta implementada e testada localmente, NÃO montada em app.
 Fontes primárias consultadas: [documentação do SDK mantido originalmente pela Meta](https://whatsapp.github.io/WhatsApp-Nodejs-SDK/api-reference/webhooks/start/) descreve challenge e assinatura; o SDK está arquivado e NÃO foi instalado. [Coleção oficial Meta no Postman](https://www.postman.com/meta/whatsapp-business-platform/folder/lboq68h/webhooks) confirma a necessidade de configuração de Webhooks no Meta App. Implementação local usa módulos Node/Express já existentes, sem depender de versão Graph API.
 
 Próximo: persistência da caixa de entrada com ID de evento/mensagem, deduplicação e processamento recuperável. Antes de montar, configurar o caminho antes de express.json e verificar assinatura no ambiente real. Não reconhecer entregas com 200 sem armazenamento durável. 0085 permanece parcial e 0086–0089 ainda sem transporte ativo. Nenhuma alteração de conta, token, permissão ou produção nesta execução.
+
+
+## 03/09/2026 — caixa de entrada WhatsApp preparada
+
+Criado armazenamento de envelopes assinados com hash canónico, inserção que ignora duplicados sem sobrescrever estado e propagação de falha de banco para impedir confirmação de recebimento prematura. Três testes locais cobrem identidade, tamanho/formato, duplicação e indisponibilidade. SQL proposto em database/whatsapp-inbox-migration.sql; não aplicado. Inclui RLS sem políticas de navegador e precisará de revisão antes de qualquer execução; nenhuma permissão real foi alterada.
+
+Isto deduplica envelopes equivalentes, NÃO garante processamento único de cada mensagem em envelopes distintos. Ainda faltam deduplicação por ID da mensagem, consumo recuperável com lease, transação de efeitos e coordenação com envio. Não ligar MetaInbox ao webhook nem confirmar configuração externa enquanto o consumidor estiver ausente. O estado da integração continua não conectado. Próximo: contratos de normalização e IDs de mensagens com documentação primária; manter integrações e migrações desativadas.
