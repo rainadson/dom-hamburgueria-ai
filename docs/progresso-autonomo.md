@@ -154,3 +154,9 @@ Separadamente, pedidos devolvem campos financeiros para ambas as roles; regras o
 Chat e webhook legado rejeitam objetos/arrays/números em telefone ou mensagem, valores vazios e tamanhos acima de 20/4000 caracteres antes de chamar serviços. Texto válido permanece intacto; não normaliza identidades existentes. Erros inesperados do chat deixam de devolver detalhes do provedor e de imprimir objeto completo nos logs. Não altera autenticação nem corrige o acesso público já comunicado.
 
 Build backend e teste HTTP local aprovados, com serviços simulados: entradas inválidas não alcançam persistência, texto válido preservado e falhas sem detalhe privado. Sem chamadas de IA/banco real ou produção. Próximo: revisar erros restantes e logs; alterações de autorização e publicação continuam aguardando as aprovações solicitadas.
+
+## 03/09/2026 — TASK-0130/0131 parcial: erros e logs
+
+Adicionado tratamento final de erros Express com JSON genérico para falhas inesperadas e respostas claras para JSON inválido/corpo demasiado grande. Pedidos/test-db/Dashboard deixam de devolver objetos de erro internos; produtos deixam de imprimir erros completos. Removidos logs de arranque de URL/presença de chave Supabase (não havia impressão do valor da chave). Dashboard agora rejeita falhas de consulta em vez de mostrar contagens/faturamento zero como se fossem dados válidos.
+
+Build backend e dois testes HTTP locais aprovados: exceção assíncrona, JSON inválido, limite de corpo e indicadores indisponíveis. Nenhuma alteração em credenciais/permissões/produção. Isso não substitui observabilidade com correlação, backup nem revisão completa de secrets; os acessos públicos continuam aguardando autorização específica. Próximo: consolidar testes locais e inventário de dependências restantes, com revisão de validação visual e produção pendente.

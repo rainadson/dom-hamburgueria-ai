@@ -1,3 +1,4 @@
+import { handleApiError } from "./middlewares/error.middleware";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -37,4 +38,5 @@ app.use("/api", testRoutes);
 app.use("/api/products", requireAuth, productRoutes);
 app.use("/api", webhookRoutes);
 app.use("/api/dashboard", requireAuth, dashboardRoutes);
+app.use(handleApiError);
 export default app;

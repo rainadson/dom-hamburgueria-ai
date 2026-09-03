@@ -7,18 +7,20 @@ router.get("/", async (req, res) => {
 
     try {
 
-        const { count: totalOrders } = await supabase
+        const { count: totalOrders, error: ordersError } = await supabase
             .from("orders")
             .select("*", { count: "exact", head: true });
 
-        const { count: totalProducts } = await supabase
+        const { count: totalProducts, error: productsError } = await supabase
             .from("products")
             .select("*", { count: "exact", head: true });
 
-        const { count: pendingOrders } = await supabase
+        const { count: pendingOrders, error: pendingError } = await supabase
             .from("orders")
             .select("*", { count: "exact", head: true })
             .eq("status", "PENDING");
+
+        if (ordersError || productsError || pendingError) throw Error("Indicadores indisponíveis.");
 
         const dashboard = {
 
@@ -30,10 +32,12 @@ router.get("/", async (req, res) => {
         };
 
         if (req.auth?.role === "ADMIN") {
-            const { data: revenueData } = await supabase
+            const { data: revenueData, error: revenueError } = await supabase
                 .from("orders")
                 .select("total")
                 .eq("status", "DELIVERED");
+
+            if (revenueError) throw Error("Faturamento indisponível.");
 
             const totalRevenue =
                 revenueData?.reduce(
@@ -48,7 +52,7 @@ router.get("/", async (req, res) => {
     } catch (error: any) {
 
         res.status(500).json({
-            message: error.message
+            message: "Não foi possível carregar os indicadores."
         });
 
     }
