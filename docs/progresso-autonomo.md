@@ -195,3 +195,7 @@ Verificação final local: backend compilado; 144 casos, 136 aprovados, 8 extern
 
 Neste ponto, blocos restantes exigem informação/autorização ou estado externo: aprovação para publicar os commits locais; decisão para restringir webhook/test-db/chat públicos; Meta App/número e teste real; PostgreSQL isolado e aprovação de migrações/ativação manual; dados/regras da loja e pagamento; decisões/migrações de multiloja/RLS; domínio, backup e monitorização; validações reais finais. Não há mais implementação independente de baixo risco que cumpra requisitos existentes sem inventar configuração ou alterar permissões. Automação pausada conforme instrução, sem declarar o plano concluído. Retomar após respostas/aprovações usando docs/validacao-final-pendente.md.
 
+
+## 03/09/2026 — TASK-0117: rotas antigas protegidas com autorização
+
+Após autorização explícita, removida montagem de test-db e webhook legado; chat real agora exige requireAuth ADMIN/LOJA. Demo frontend já era protegida e envia sessão Supabase. Teste HTTP local cobre recusas, papéis autorizados e 404 dos legados, sem banco/IA reais. Nenhuma role, credencial ou RLS alterada. Próximo: suíte/build, commit/push e verificação de deploy; não testar chat válido em produção para não criar conversa ou consumir IA.

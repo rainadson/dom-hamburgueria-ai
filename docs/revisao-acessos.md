@@ -20,3 +20,9 @@ Análise estática do código local e do commit ee4763d, último deploy verifica
 Impacto: demonstração anónima e consumidores do webhook legado deixarão de funcionar. Não muda roles nem credenciais, mas restringe acesso atual a endpoints. A instrução autónoma proíbe alterar permissões; por isso esta restrição depende de aprovação explícita. Nenhuma das três mudanças foi aplicada neste bloco.
 
 TASK-0117–0124 permanecem parciais. Publicação geral já tem aprovação pendente; este achado acrescenta uma decisão específica de segurança, não é uma nova tentativa de push.
+
+## Correção autorizada e aplicada localmente
+
+O utilizador autorizou seguir com a TASK-0117. A montagem de `/api/webhook` legado e `/api/test-db` foi removida; ambos passam a 404. `/api/chat` usa `requireAuth` e aceita somente perfis ADMIN/LOJA. A página `/demo` já estava dentro de `ProtectedRoute` e usa o mesmo cliente autenticado, portanto continua disponível aos operadores. Os arquivos legados permanecem no repositório por enquanto para preservar histórico/testes, mas não são montados pela aplicação.
+
+Teste HTTP local comprova 401 sem token/token inválido, 403 para papel desconhecido, 200 para ADMIN/LOJA e zero chamadas à conversa antes da autenticação; GET/POST dos endpoints removidos retornam 404. Produção precisa de publicação e teste sem credenciais depois da suíte completa.
