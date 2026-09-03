@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../services/api";
 import Header from "../components/Header";
-import OrderTimer from "../components/OrderTimer";
+import { createRefreshLoop } from "../services/refresh-loop";
+import { createOrderArrivalTracker } from "../services/order-arrivals";
 import "../styles/kitchen.css";
 import KitchenOrderCard from "../components/KitchenOrderCard";
 
@@ -10,42 +11,39 @@ const notification = new Audio("/sounds/notification.mp3");
 export default function Kitchen() {
 
   const [orders, setOrders] = useState<any[]>([]);
-  const previousOrders = useRef<number[]>([]);
-
-  async function loadOrders() {
-    try {
-      const { data } = await api.get("/orders");
-
-      const ids = data.map((o: any) => o.id);
-
-      // Não toca na primeira carga da página
-      if (
-        previousOrders.current.length > 0 &&
-        ids.length > previousOrders.current.length
-      ) {
-        notification.currentTime = 0;
-        notification.play().catch(() => {
-          console.log("Áudio bloqueado pelo navegador.");
-        });
-      }
-
-      previousOrders.current = ids;
-
-      setOrders(data);
-
-    } catch (error) {
-      console.error("Erro ao carregar pedidos:", error);
-    }
-  }
+  const [refreshError, setRefreshError] = useState(false);
+  const refresh = useRef<() => void>(() => {});
 
   useEffect(() => {
-    loadOrders();
-
-    const interval = setInterval(loadOrders, 3000);
-
-    return () => clearInterval(interval);
+    const arrivals = createOrderArrivalTracker();
+    const loop = createRefreshLoop<any[]>({
+      read: async (signal) => {
+        const { data } = await api.get("/orders", { signal });
+        return data;
+      },
+      receive: (data) => {
+        if (arrivals.receive(data.map(order => order.id))) {
+          notification.currentTime = 0;
+          notification.play().catch(() => {
+            console.log("Áudio bloqueado pelo navegador.");
+          });
+        }
+        setOrders(data);
+        setRefreshError(false);
+      },
+      failure: () => setRefreshError(true),
+      delay: 3000,
+    });
+    refresh.current = loop.refresh;
+    const onFocus = () => { void loop.refresh(); };
+    window.addEventListener("focus", onFocus);
+    void loop.refresh();
+    return () => {
+      loop.stop();
+      refresh.current = () => {};
+      window.removeEventListener("focus", onFocus);
+    };
   }, []);
-
 
   async function updateStatus(id: number, status: string) {
     try {
@@ -53,7 +51,7 @@ export default function Kitchen() {
         status,
       });
 
-      loadOrders();
+      refresh.current();
     } catch (error) {
       console.error(error);
     }
@@ -81,6 +79,7 @@ export default function Kitchen() {
       />
 
       <div className="kitchen-container">
+        {refreshError && <p role="status">Não foi possível atualizar a cozinha. Os pedidos podem estar desatualizados. Tentaremos novamente automaticamente.</p>}
 
         <div className="orders-grid">
 

@@ -104,3 +104,9 @@ Tentativa de push dos cinco commits WhatsApp até dab284e rejeitada pela revisã
 Enquanto publicação/Meta/banco aguardam dependências, avançado bloco independente do plano. A lista de pedidos só carregava ao abrir; agora consulta a cada cinco segundos após terminar a leitura e ao recuperar foco. Atualização após mudança de estado é preservada mesmo com leitura em curso; desmontagem cancela a requisição e ignora resultados tardios. Erros mantêm a lista anterior e mostram aviso. Mantém API autenticada existente e permissões. Modal aberto conserva a revisão do operador; não substitui os seus campos durante edição.
 
 Isto é consulta periódica, não Supabase Realtime: TASK-0093 permanece parcial. Três testes cobrem sobreposição, desmontagem e recuperação. Sem pedidos reais, sem publicação e sem nova tentativa de contornar bloqueio. Próximo: aplicar coordenação equivalente à cozinha e avaliar atualização de estados entre telas.
+
+## 03/09/2026 — TASK-0094 parcial: atualização da cozinha
+
+Cozinha passa a reutilizar leituras coordenadas: consulta após três segundos, atualização ao recuperar foco, cancelamento ao sair e nova leitura após alteração de estado mesmo se outra consulta estiver em curso. Erros apresentam aviso mantendo dados anteriores. Corrigida deteção de novos IDs para avisar também quando a cozinha estava vazia ou o tamanho da lista permanece igual; primeira carga continua silenciosa. Áudio segue sujeito à autorização do navegador.
+
+Validação local: testes de chegada de pedidos e ciclo de atualização, mais compilação frontend. Sem testes na cozinha real, sem pedidos, sem push. TASK-0094 continua parcial: consulta periódica implementada, Realtime e validação operacional ainda pendentes. Aprovação de publicação continua a mesma pendência já comunicada. Próximo bloco: rever atualização da central de conversas e estados entre telas (0095–0097), preservando rascunhos humanos.
