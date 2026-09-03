@@ -33,7 +33,8 @@ export class AIService {
           content: buildSystemPrompt(menu) + (context ? buildConversationContext(context, history) : ""),
         },
 
-        ...history,
+        ...history.filter(entry => ["user", "assistant"].includes(entry.role))
+          .map(entry => ({ role: entry.role, content: entry.content })),
 
         {
           role: "user",

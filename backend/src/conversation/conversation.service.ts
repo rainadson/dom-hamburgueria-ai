@@ -1,3 +1,4 @@
+import { withConversationLock } from "./conversation-lock";
 import { menuBase, menuDrink, pendingMenu, menuDrinkQuestion } from "../products/menu-combos";
 import { normalizeShortReply } from "./conversation.context";
 import { ConversationRepository } from "./conversation.repository";
@@ -32,13 +33,19 @@ export class ConversationService {
   // PROCESSAR MENSAGEM
   // ==========================================
 
-  async processMessage(
-    phone: string,
-    message: string
-  ) {
+  async processMessage(phone: string, message: string) {
+    return withConversationLock(phone, () => this.processUnlocked(phone, message));
+  }
+
+  private async processUnlocked(phone: string, message: string) {
 
     const conversation =
       await this.getOrCreate(phone);
+
+    if (conversation.order_draft?.handoff?.active) {
+      await this.saveHistory(conversation, message, "");
+      return this.response("", { intent: "HUMAN_WAITING", paused: true });
+    }
 
     const normalizedMessage =
       message
