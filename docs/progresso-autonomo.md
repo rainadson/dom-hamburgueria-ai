@@ -183,3 +183,9 @@ Três testes locais cobrem payload completo da interface, entradas inválidas e 
 Teste HTTP local confirmou 400 para entradas inválidas antes de qualquer escrita e compatibilidade de criação, atualização parcial e payload completo da interface, sem regravar id/created_at. Quatro testes de produtos aprovados no conjunto. Nenhum produto real alterado. Inventário em docs/validacao-final-pendente.md diferencia testes locais, integração real, publicação e dependências até 0149; plano não concluído.
 
 Próximo: carga básica local com dependências simuladas (0148) e auditoria de arquivos versionados (0124), sem produção e sem leitura/exposição de valores secretos. Aprovações de publicação e acesso continuam pendentes.
+
+## 03/09/2026 — TASK-0124 e 0148 parciais
+
+Auditoria de nomes rastreados não encontrou env/chaves/certificados nomeados; referências de ambiente documentadas em exemplos sem valores, mantendo service role somente no backend e envio manual false. Limites em docs/revisao-secrets.md: histórico, deploy, logs e rotação não verificados.
+
+Carga básica isolada: 200 leituras de produtos e 200 chats inválidos, em lotes paralelos de 20, com repositório em memória; todas leituras 200, entradas 400 e zero chamadas ao serviço de conversa. A primeira tentativa com 400 conexões simultâneas excedeu o ambiente local Windows e falhou com conexão recusada; não contou como resultado da aplicação. Não mede latência nem substitui carga do banco/Render/Meta; produção não foi acessada. TASK-0148 parcial. Próximo: executar suíte consolidada após os últimos contratos e rever se resta trabalho independente de baixo risco antes de aguardar aprovações/dependências.
