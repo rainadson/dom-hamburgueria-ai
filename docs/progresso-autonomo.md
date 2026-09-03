@@ -205,3 +205,9 @@ Após autorização explícita, removida montagem de test-db e webhook legado; c
 Criado middleware requireRole. Leitura do catálogo permanece para ambos por ser usada no pedido manual; criação/edição/exclusão ficam ADMIN, com 403 para LOJA. Interface oculta Produtos e redireciona acesso direto de LOJA, mas segurança está no backend. Pedidos/cozinha, conversas/handoff, demo e status WhatsApp permanecem para ambos conforme uso operacional e decisão anterior. Matriz e limites em docs/permissoes-admin-loja.md.
 
 Testes locais cobrem LOJA lendo sem gravar e ADMIN nas três mutações. Ainda falta TASK-0122 para respostas financeiras por finalidade e TASK-0120/0121 para RLS/multiloja; não consideradas concluídas aqui. Próximo: builds/suíte, publicação e validação de 403 sem mutação real.
+
+## 03/09/2026 — TASK-0120: RLS dos dados operacionais
+
+Confirmado em produção que a chave pública conseguia consultar diretamente `products`, `orders`, `conversations`, `order_items`, `settings` e `user_profiles`. Aplicada migração idempotente que habilita RLS e revoga os privilégios de `anon` e `authenticated` nas tabelas operacionais existentes, sem criar políticas de acesso direto pelo navegador. O backend mantém acesso por `service_role`, guardada apenas no servidor.
+
+Após a migração, todas as seis consultas com chave pública retornaram 401. A API de saúde permaneceu 200 e o painel LOJA autenticado continuou carregando os indicadores pelo backend. O esquema de criação também passa a habilitar RLS e revogar acesso público por padrão. Nenhum registro, pedido, produto ou autenticação foi alterado. Isolamento multiloja permanece na TASK-0121.

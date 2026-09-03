@@ -55,3 +55,13 @@ CREATE TABLE settings (
     delivery_fee NUMERIC(10,2),
     pix_key TEXT
 );
+
+-- Dados operacionais são acessados somente pela API do backend.
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+
+REVOKE ALL PRIVILEGES ON TABLE products, conversations, orders, order_items, settings
+FROM anon, authenticated;
