@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { deliverySummary } from "../services/delivery-summary";
 import OrderTimer from "./OrderTimer";
 import type { Order } from "../types/order";
 
@@ -16,6 +18,19 @@ export default function KitchenOrderCard({
   updating = false,
   actionError,
 }: Props) {
+  const [copyMessage, setCopyMessage] = useState("");
+  const [copying, setCopying] = useState(false);
+  const summary = deliverySummary(order);
+  async function copyDelivery() {
+    if (!summary || copying) return;
+    setCopying(true);
+    try {
+      await navigator.clipboard.writeText(summary);
+      setCopyMessage("Dados copiados. Cole na conversa com o entregador. Nada foi enviado automaticamente.");
+    } catch {
+      setCopyMessage("Não foi possível copiar. Selecione e copie os dados exibidos no pedido.");
+    } finally { setCopying(false); }
+  }
   const createdAt = order.created_at.trim().replace(" ", "T");
   const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(createdAt);
   const createdAtLabel = new Date(
@@ -75,6 +90,8 @@ export default function KitchenOrderCard({
             )}
           </>
         )}
+        {summary && <button type="button" disabled={copying} onClick={copyDelivery}>Copiar dados para entregador</button>}
+        {copyMessage && <p role="status">{copyMessage}</p>}
       </section>
 
       {actionError && <p role="alert">{actionError}</p>}

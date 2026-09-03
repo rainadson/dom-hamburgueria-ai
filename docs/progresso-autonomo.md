@@ -128,3 +128,11 @@ Compilação frontend e testes locais do ciclo/chegada de pedidos aprovados. Nen
 Atualização aceita expected_status e aplica comparação no mesmo UPDATE do banco. Se o estado já mudou, devolve 409 sem sobrescrever. Cozinha e modal enviam estado revisto; modal mostra falhas e impede repetição enquanto aguarda. IDs e estados passam por validação. Chamadores antigos sem expected_status continuam compatíveis, sem proteção contra concorrência; não foi criada regra nova de transições ou permissão. Comparação por estado não deteta cenário ABA (estado mudou e voltou ao mesmo valor).
 
 Testes locais simulam disputa entre dois operadores e rejeição de entradas inválidas. Não substituem teste integrado em PostgreSQL. Builds backend/frontend e testes relevantes verificados; nenhuma mudança em pedidos reais ou publicação. Realtime segue pendente, não confundir CAS com eventos em tempo real. Próximo: consolidar auditoria 0093–0097 e seguir bloco de entrega existente, mantendo pendências externas explícitas.
+
+## 03/09/2026 — conferência do roadmap original e entrega
+
+Roadmap original recuperado da conversa Dom Ai (6a678d96-e8e4-83eb-8440-0f0cf5adce95). Correção de numeração dos registos acima: 0093 = Realtime Supabase; 0094 = atualizar pedidos; 0095 = atualizar cozinha; 0096 = atualizar conversas; 0097 = atualizar status. Os títulos anteriores deslocaram números; trabalho descrito continua válido, sem declarar 0093 concluída. Polling local cobre 0094–0097 parcialmente; Realtime/validação operacional pendentes.
+
+0098 informações de entrega e 0099 mapa já presentes na cozinha: não refeitos. TASK-0100 preparada: botão copia resumo operacional para o atendente colar na conversa do entregador. Inclui nome, morada, itens/componentes e mapa; não inclui telefone, preços ou pagamento. Exige clique explícito e informa que nada foi enviado automaticamente. Entrega sem morada e retirada não oferecem cópia. Não é integração de envio WhatsApp.
+
+Dois testes de composição/exclusão de campos e compilação frontend aprovados. Clipboard ainda não validado visualmente no navegador. Sem envios externos, pedidos ou publicação. 0101–0102: estado DELIVERED e ação final já existem; auditar fluxo de entrega antes de acrescentar estados novos. Próximo: revisar fase 14 (0103–0109), identificando decisões/configuração pendentes sem inventar dados da loja ou pagamentos.
