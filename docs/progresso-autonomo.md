@@ -86,3 +86,10 @@ Preparado parser puro de lotes: separa textos recebidos de recibos de entrega, e
 Referências primárias: [payload oficial Meta](https://www.postman.com/meta/whatsapp-business-platform/folder/vzaxn16/webhook-payload-reference) e [exemplo oficial de texto](https://www.postman.com/meta/whatsapp-business-platform/request/yw0wjm1/received-text-message-with-show-security-notifications). Cinco testes locais verificam lotes, IDs, isolamento de destino, mídia e dados inválidos. Não equivale a integração real nem prova suporte a todos os tipos atuais de mensagem.
 
 Próximo passo: armazenamento de IDs normalizados e consumidor com recuperação/efeitos idempotentes. Não ligar ao chat atual enquanto ele puder gravar pedidos antes de confirmar o processamento do evento na mesma transação. Permanecem pendentes conta Meta, número, migrações e validação externa; o código novo continua local.
+
+
+## 03/09/2026 — armazenamento por ID de mensagem preparado
+
+Proposta SQL separada para gravar IDs normalizados e concluir extração do envelope numa transação. Reentregas em envelopes diferentes preservam a mensagem existente e o seu estado; conteúdo conflitante causa rollback do lote. Mídia fica UNSUPPORTED. Adaptador isolado exige envelope previamente persistido e propaga falhas, sem chamar IA ou cozinha. Não está ligado ao webhook.
+
+Migração NÃO aplicada: regras de acesso apenas propostas, sem alteração de permissões reais. Testes do adaptador cobrem identidade estável entre envelopes, falha de armazenamento e validação antes da chamada. Não provam transações/concor­rência PostgreSQL: essas verificações continuam pendentes numa base de testes. Ainda faltam consumidor, efeitos atómicos e transporte; COMPLETED do envelope representa apenas extração, não atendimento da mensagem. Próximo: validar esquema num PostgreSQL isolado disponível e desenhar consumo sem repetir efeitos.
