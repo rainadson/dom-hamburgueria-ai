@@ -1,3 +1,4 @@
+import { ManualOrderSubmit, ManualSubmitError } from "./manual-order-submit";
 import { uniqueCustomers } from "./manual-customers";
 import { ManualOrderService, ManualOrderError } from "./manual-order.service";
 import { Router } from "express";
@@ -8,6 +9,15 @@ const repository = new OrderRepository();
 
 const router = Router();
 const manualOrders = new ManualOrderService();
+const manualSubmit = new ManualOrderSubmit();
+router.post("/manual/confirm", async (req,res)=>{
+  if(process.env.MANUAL_ORDER_SUBMIT_ENABLED!=="true") return res.status(503).json({message:"O envio de pedidos manuais ainda não está disponível."});
+  if(!req.auth)return res.status(401).json({message:"Autenticação necessária."});
+  if(req.body?.confirmed!==true)return res.status(400).json({message:"Confirme a revisão do pedido."});
+  try{return res.json(await manualSubmit.submit(req.auth.id,req.body.request_id,req.body.order,req.body.reviewed_total));}
+  catch(error){return res.status(error instanceof ManualSubmitError?error.status:error instanceof ManualOrderError?400:500).json({message:error instanceof ManualSubmitError||error instanceof ManualOrderError?error.message:"Não foi possível confirmar o pedido."});}
+});
+
 router.get("/manual/customers", async (req, res) => {
   const search = String(req.query.search || "").trim();
   if (search.length < 2) return res.json({items:[]});
