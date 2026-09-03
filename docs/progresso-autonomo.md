@@ -166,3 +166,8 @@ Build backend e dois testes HTTP locais aprovados: exceção assíncrona, JSON i
 Suíte completa executada com backend compilado: 139 casos, 131 aprovados, 8 externos ignorados, zero falhas. Verificação real de tipos frontend com tsconfig.app.json aprovada; a chamada inicial sobre tsconfig.json raiz não verificava fontes por conter apenas references. README dos testes atualizado para evitar falsa validação futura. Sem nova publicação ou execução de modelos.
 
 Pendências materiais mantidas: autorização de publicação e restrição de rotas públicas, Meta/numero, banco isolado para migrações, dados/regras da loja, RLS/multiloja, backup/monitorização e validação final real. Ainda há trabalho local seguro: validação visual isolada dos componentes modificados e revisão de inputs de produtos. Próximo bloco: visualização local com dados fictícios, sem usar autenticação ou API de produção.
+
+## 03/09/2026 — componentes de cozinha no navegador local
+Página temporária carregou KitchenOrderCard real com dois pedidos fictícios, sem importar API/autenticação. Árvore de acessibilidade confirmou: itens/observação/morada/mapa e botão de cópia na entrega; retirada sem mapa/cópia; aviso de falha visível e botão Atualizando desativado. Telefone e valores não aparecem. Isto valida renderização/semântica no navegador; não inclui screenshot, avaliação responsiva completa, clipboard real ou alterações de estado.
+Servidor local encerrado e os dois arquivos temporários removidos. Produção, mensagens e pedidos reais intocados. Próximo: validação de entradas do CRUD de produtos, preservando o payload da interface e catálogo atual; aprovações anteriores continuam pendentes.
+
