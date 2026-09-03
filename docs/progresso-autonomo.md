@@ -98,3 +98,9 @@ Migração NÃO aplicada: regras de acesso apenas propostas, sem alteração de 
 Frontend compilado; suíte local: 117 testes aprovados, 8 testes externos ignorados, zero falhas. Backend compilado no bloco anterior. Docker instalado mas serviço indisponível mesmo após verificação autorizada; migrações continuam sem validação PostgreSQL real.
 Tentativa de push dos cinco commits WhatsApp até dab284e rejeitada pela revisão automática: autorização anterior limitada aos cinco commits já publicados. Nova aprovação solicitada ao utilizador, sem contorno do bloqueio. Produção permanece ee4763d. Transporte e migrações continuam inativos. Trabalho local independente pode continuar enquanto a publicação aguarda.
 
+
+## 03/09/2026 — TASK-0093 parcial: atualização de pedidos
+
+Enquanto publicação/Meta/banco aguardam dependências, avançado bloco independente do plano. A lista de pedidos só carregava ao abrir; agora consulta a cada cinco segundos após terminar a leitura e ao recuperar foco. Atualização após mudança de estado é preservada mesmo com leitura em curso; desmontagem cancela a requisição e ignora resultados tardios. Erros mantêm a lista anterior e mostram aviso. Mantém API autenticada existente e permissões. Modal aberto conserva a revisão do operador; não substitui os seus campos durante edição.
+
+Isto é consulta periódica, não Supabase Realtime: TASK-0093 permanece parcial. Três testes cobrem sobreposição, desmontagem e recuperação. Sem pedidos reais, sem publicação e sem nova tentativa de contornar bloqueio. Próximo: aplicar coordenação equivalente à cozinha e avaliar atualização de estados entre telas.

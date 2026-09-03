@@ -2,8 +2,8 @@ import { api } from "./api";
 
 class OrderService {
 
-    async getOrders() {
-        const { data } = await api.get("/orders");
+    async getOrders(signal?: AbortSignal) {
+        const { data } = await api.get("/orders", { signal });
         return data;
     }
 

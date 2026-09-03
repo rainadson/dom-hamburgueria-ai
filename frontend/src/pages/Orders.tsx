@@ -1,5 +1,6 @@
+import { createRefreshLoop } from "../services/refresh-loop";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { orderService } from "../services/order.service";
 import "../styles/orders.css";
 import StatusBadge from "../components/StatusBadge";
@@ -15,18 +16,25 @@ export default function Orders() {
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const [search, setSearch] = useState("");
 
-    async function loadOrders() {
-        try {
-            const data = await orderService.getOrders();
-            setOrders(data);
-        } catch (error) {
-            console.error(error);
-        }
-
-    }
+    const [refreshError, setRefreshError] = useState(false);
+    const refresh = useRef<() => void>(() => {});
 
     useEffect(() => {
-        loadOrders();
+        const loop = createRefreshLoop<Order[]>({
+            read: (signal) => orderService.getOrders(signal),
+            receive: (data) => { setOrders(data); setRefreshError(false); },
+            failure: () => setRefreshError(true),
+            delay: 5000,
+        });
+        refresh.current = loop.refresh;
+        const onFocus = () => { void loop.refresh(); };
+        window.addEventListener("focus", onFocus);
+        void loop.refresh();
+        return () => {
+            loop.stop();
+            refresh.current = () => {};
+            window.removeEventListener("focus", onFocus);
+        };
     }, []);
 
     const filteredOrders = orders.filter((order) => {
@@ -62,6 +70,8 @@ export default function Orders() {
                 />
 
             </div>
+
+            {refreshError && <p role="status">Não foi possível atualizar os pedidos. Os dados podem estar desatualizados. Tentaremos novamente automaticamente.</p>}
 
             <div className="table-card">
 
@@ -136,7 +146,7 @@ export default function Orders() {
                 open={openModal}
                 order={selectedOrder}
                 onClose={() => setOpenModal(false)}
-                onStatusChanged={loadOrders}
+                onStatusChanged={() => refresh.current()}
             />
         </div>
 
