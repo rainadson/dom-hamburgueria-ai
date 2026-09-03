@@ -2,6 +2,7 @@ import { requireRole } from "../middlewares/auth.middleware";
 import { ProductInputError } from "./product-input";
 import { Router } from "express";
 import { ProductService } from "./product.service";
+import { positiveId } from "../middlewares/http-input";
 
 const router = Router();
 const serviceFor = (req: any) => new ProductService(req.auth.storeId);
@@ -21,7 +22,9 @@ router.get("/", async (req, res) => {
 // Buscar produto por ID
 router.get("/:id", async (req, res) => {
   try {
-    const product = await serviceFor(req).getProduct(Number(req.params.id));
+    const id = positiveId(req.params.id);
+    if (id === null) return res.status(400).json({ message: "Identificador de produto inválido." });
+    const product = await serviceFor(req).getProduct(id);
 
     if (!product) {
       return res.status(404).json({
@@ -52,8 +55,10 @@ router.post("/", requireRole("ADMIN"), async (req, res) => {
 // Atualizar produto
 router.put("/:id", requireRole("ADMIN"), async (req, res) => {
   try {
+    const id = positiveId(req.params.id);
+    if (id === null) return res.status(400).json({ message: "Identificador de produto inválido." });
     const product = await serviceFor(req).updateProduct(
-      Number(req.params.id),
+      id,
       req.body
     );
 
@@ -68,7 +73,9 @@ router.put("/:id", requireRole("ADMIN"), async (req, res) => {
 // Excluir produto
 router.delete("/:id", requireRole("ADMIN"), async (req, res) => {
   try {
-    await serviceFor(req).deleteProduct(Number(req.params.id));
+    const id = positiveId(req.params.id);
+    if (id === null) return res.status(400).json({ message: "Identificador de produto inválido." });
+    await serviceFor(req).deleteProduct(id);
 
     res.status(204).send();
   } catch (error) {

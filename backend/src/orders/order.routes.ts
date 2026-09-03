@@ -5,6 +5,7 @@ import { Router } from "express";
 import { supabase } from "../database/supabase";
 import { OrderRepository, OrderStatusError } from "../orders/order.repository";
 import { kitchenOrder, operationalOrder } from "./order-view";
+import { positiveId } from "../middlewares/http-input";
 
 const router = Router();
 router.get("/manual/capabilities", (_req,res)=>res.json({submit_enabled:process.env.MANUAL_ORDER_SUBMIT_ENABLED==="true"}));
@@ -58,11 +59,12 @@ router.get("/", async (req, res) => {
 });
 router.patch("/:id/status", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = positiveId(req.params.id);
+    if (id === null) return res.status(400).json({ message: "Pedido ou estado inválido." });
     const { status, expected_status } = req.body || {};
 
     const order = await new OrderRepository(req.auth!.storeId).updateStatus(
-      Number(id),
+      id,
       status,
       expected_status
     );

@@ -223,3 +223,9 @@ O backend agora obtém a loja do perfil autenticado e filtra por ela produtos, p
 A Cozinha passa a usar resposta própria sem telefone, pagamento, totais, preços, troco ou metadados internos. Pedidos mantém telefone e resumo financeiro necessários ao atendimento, excluindo valor entregue, troco, `store_id` e campos internos de idempotência. Atualização de estado devolve apenas ID/estado; catálogo deixa de expor `store_id`. Dashboard já restringia faturamento ao ADMIN e Conversas já excluía o rascunho integral.
 
 Contratos puros verificam os campos permitidos e proíbem dados privados em cada resposta. Backend e frontend compilados; suíte completa com 146 aprovações, 8 testes externos ignorados e zero falhas. Próximo: publicação e validação das telas Pedidos/Cozinha em produção sem alterar pedidos.
+
+## 03/09/2026 — TASK-0123: validação consolidada de entradas
+
+Concluída a revisão das entradas do chat, produtos, pedidos manuais, atualização de estado e conversas. IDs recebidos na URL agora aceitam somente inteiros positivos canónicos e seguros; valores como `1e2`, decimais, sinais, listas e objetos são recusados antes de consultar ou alterar dados. Página e busca de conversas deixam de converter ou truncar silenciosamente entradas inválidas; a busca limita tamanho e caracteres que poderiam interferir na sintaxe do filtro.
+
+Matriz completa registrada em `docs/validacao-entradas-task-0123.md`. Backend compilado e suíte completa aprovada: 156 casos, 148 aprovados, 8 integrações externas ignoradas e zero falhas. Nenhum dado real foi criado ou modificado. Próximo: publicar e conferir saúde e telas autenticadas em produção, sem alterar pedidos.
