@@ -171,3 +171,9 @@ Pendências materiais mantidas: autorização de publicação e restrição de r
 Página temporária carregou KitchenOrderCard real com dois pedidos fictícios, sem importar API/autenticação. Árvore de acessibilidade confirmou: itens/observação/morada/mapa e botão de cópia na entrega; retirada sem mapa/cópia; aviso de falha visível e botão Atualizando desativado. Telefone e valores não aparecem. Isto valida renderização/semântica no navegador; não inclui screenshot, avaliação responsiva completa, clipboard real ou alterações de estado.
 Servidor local encerrado e os dois arquivos temporários removidos. Produção, mensagens e pedidos reais intocados. Próximo: validação de entradas do CRUD de produtos, preservando o payload da interface e catálogo atual; aprovações anteriores continuam pendentes.
 
+
+## 03/09/2026 — TASK-0123 parcial: validação de produtos
+
+CRUD valida IDs positivos, nome/preço obrigatórios na criação, campos textuais e booleano ativo; preço finito não negativo com duas casas e limite do NUMERIC(10,2). Atualizações parciais continuam aceites; metadados do payload da interface (id/created_at) não são regravados. Descrição limitada a 4000 caracteres. Erros de entrada retornam 400 e são apresentados no modal. Nenhum preço, produto ou permissão real alterado.
+
+Três testes locais cobrem payload completo da interface, entradas inválidas e validação antes de mutação; backend/frontend compilados. Não cobre nomes duplicados nem regras de alteração conjunta de hambúrguer/Menu; não inventadas neste bloco. Próximo: verificar contrato HTTP e consolidar pendências de produção e testes finais, sem publicar enquanto aprovação estiver pendente.

@@ -46,9 +46,9 @@ export default function ProductModal({
 
       onSaved();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Erro ao salvar produto.");
+      alert(error.response?.data?.message || "Erro ao salvar produto.");
     }
   }
 
@@ -86,6 +86,8 @@ export default function ProductModal({
 
         <input
           type="number"
+          min="0"
+          step="0.01"
           placeholder="Preço"
           value={form.price}
           onChange={(e) =>

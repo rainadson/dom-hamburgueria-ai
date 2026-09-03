@@ -1,3 +1,4 @@
+import { productInput, validateProductId } from "./product-input";
 import { ProductRepository } from "./product.repository";
 
 export class ProductService {
@@ -9,7 +10,7 @@ export class ProductService {
 }
 
     async getProduct(id: number) {
-        return await this.repository.findById(id);
+        return await this.repository.findById(validateProductId(id));
     }
 
     async findProduct(name: string) {
@@ -27,14 +28,14 @@ export class ProductService {
             .join("\n");
     }
     async createProduct(product: any) {
-        return await this.repository.create(product);
+        return await this.repository.create(productInput(product));
     }
 
     async updateProduct(id: number, product: any) {
-        return await this.repository.update(id, product);
+        return await this.repository.update(validateProductId(id), productInput(product, true));
     }
 
     async deleteProduct(id: number) {
-        return await this.repository.delete(id);
+        return await this.repository.delete(validateProductId(id));
     }
 }
