@@ -61,3 +61,12 @@ Após confirmação explícita do utilizador, os cinco commits anteriores foram 
 TASK-0082: tela informativa WhatsApp e endpoint autenticado para ADMIN/LOJA implementados localmente. Mostra explicitamente que não há ligação real, recebimento/envio/mídia pendentes e acesso ao cardápio já publicado. Não lê ou expõe tokens, não infere conexão da existência de variáveis, não modifica o webhook legado e não envia mensagens. Ainda não é um painel de configuração.
 
 0083/0084/0090 dependem da conta/app/número Meta do utilizador. Próxima execução pode preparar 0085–0089 com documentação oficial atual, transporte desativado, testes locais de assinatura e tratamento de mensagens, antes de solicitar a configuração externa. Não reutilizar o webhook legado como se estivesse integrado à Meta. Publicação desta tela ainda não realizada.
+
+
+## 03/09/2026 — TASK-0085: receção autenticada preparada
+
+Fábrica de webhook Meta implementada e testada localmente, NÃO montada em app.ts: verificação GET, assinatura HMAC-SHA256 sobre bytes originais, limites de corpo, validação básica do envelope e resposta 200 apenas após persistência bem-sucedida. Sem callback de persistência durável, responde 503 até à verificação GET. Não lê credenciais reais e não encaminha nada à IA ou cozinha.
+
+Fontes primárias consultadas: [documentação do SDK mantido originalmente pela Meta](https://whatsapp.github.io/WhatsApp-Nodejs-SDK/api-reference/webhooks/start/) descreve challenge e assinatura; o SDK está arquivado e NÃO foi instalado. [Coleção oficial Meta no Postman](https://www.postman.com/meta/whatsapp-business-platform/folder/lboq68h/webhooks) confirma a necessidade de configuração de Webhooks no Meta App. Implementação local usa módulos Node/Express já existentes, sem depender de versão Graph API.
+
+Próximo: persistência da caixa de entrada com ID de evento/mensagem, deduplicação e processamento recuperável. Antes de montar, configurar o caminho antes de express.json e verificar assinatura no ambiente real. Não reconhecer entregas com 200 sem armazenamento durável. 0085 permanece parcial e 0086–0089 ainda sem transporte ativo. Nenhuma alteração de conta, token, permissão ou produção nesta execução.
