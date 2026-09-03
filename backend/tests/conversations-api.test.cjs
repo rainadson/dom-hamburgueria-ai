@@ -8,7 +8,7 @@ test('conversation API requires valid role, supports both roles and excludes raw
  const row={id:1,phone:'fictional',state:'PAYMENT',updated_at:new Date().toISOString(),order_draft:{customer_name:'Teste',total:99},history:[{role:'system',content:'internal'},{role:'user',content:'ola'}]};
  let role='LOJA';let filter='';
  supabase.auth.getUser=async token=>({data:{user:token==='valid'?{id:'test'}:null}});
- supabase.from=table=>{const query={select(){return this},eq(){return this},order(){return this},or(value){filter=value;return this},range:async()=>({data:[row],count:1}),maybeSingle:async()=>({data:row}),single:async()=>({data:{role}})};return query;};
+ supabase.from=table=>{const query={select(){return this},eq(){return this},order(){return this},or(value){filter=value;return this},range:async()=>({data:[row],count:1}),maybeSingle:async()=>({data:row}),single:async()=>({data:{role,store_id:'00000000-0000-4000-8000-000000000001'}})};return query;};
  const express=require('express');const app=express();app.use('/conversations',requireAuth,router);const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));
  const base=`http://127.0.0.1:${server.address().port}/conversations`;
  try{

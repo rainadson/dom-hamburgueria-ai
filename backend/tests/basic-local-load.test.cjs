@@ -5,7 +5,7 @@ const products=require('../dist/products/product.routes').default;const chat=req
 test('basic isolated load serves parallel reads and rejects invalid chat without side effects',async()=>{
  const originals={find:ProductRepository.prototype.findAllAdmin,chat:ConversationService.prototype.processMessage};let reads=0,chats=0;
  ProductRepository.prototype.findAllAdmin=async()=>{reads++;return [{id:1,name:'Fictício',price:1,active:true}];};ConversationService.prototype.processMessage=async()=>{chats++;return {};};
- const express=require('express');const app=express();app.use(express.json());app.use('/products',products);app.use(chat);const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));const base=`http://127.0.0.1:${server.address().port}`;
+ const express=require('express');const app=express();app.use(express.json());app.use((req,_res,next)=>{req.auth={id:'load',role:'LOJA',storeId:'00000000-0000-4000-8000-000000000001'};next()});app.use('/products',products);app.use(chat);const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));const base=`http://127.0.0.1:${server.address().port}`;
  try{
   const requests=[...Array.from({length:200},()=>()=>fetch(base+'/products')),...Array.from({length:200},()=>()=>fetch(base+'/chat',{method:'POST',headers:{'content-type':'application/json'},body:'{}'}))];
   const responses=[];for(let index=0;index<requests.length;index+=20)responses.push(...await Promise.all(requests.slice(index,index+20).map(run=>run())));

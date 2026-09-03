@@ -1,12 +1,15 @@
 import { supabase } from "../database/supabase";
 import { ConversationState } from "./conversation.types";
+import { DOM_STORE_ID } from "../database/store-context";
 
 export class ConversationRepository {
+  constructor(private storeId = DOM_STORE_ID) {}
 
   async findByPhone(phone: string) {
     const { data, error } = await supabase
       .from("conversations")
       .select("*")
+      .eq("store_id", this.storeId)
       .eq("phone", phone)
       .single();
 
@@ -21,6 +24,7 @@ export class ConversationRepository {
     const { data, error } = await supabase
       .from("conversations")
       .insert({
+        store_id: this.storeId,
         phone,
         state: ConversationState.GREETING,
         history: [],
@@ -41,6 +45,7 @@ export class ConversationRepository {
         state,
         updated_at: new Date().toISOString()
       })
+      .eq("store_id", this.storeId)
       .eq("id", id);
 
     if (error) throw error;
@@ -53,6 +58,7 @@ export class ConversationRepository {
         order_draft: draft,
         updated_at: new Date().toISOString()
       })
+      .eq("store_id", this.storeId)
       .eq("id", id);
 
     if (error) throw error;
@@ -65,6 +71,7 @@ export class ConversationRepository {
         history,
         updated_at: new Date().toISOString()
       })
+      .eq("store_id", this.storeId)
       .eq("id", id);
 
     if (error) throw error;

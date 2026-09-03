@@ -4,9 +4,9 @@ import { OrderRepository } from "./order.repository";
 import { ProductRepository } from "../products/product.repository";
 
 export class OrderService {
-
-  private repository = new OrderRepository();
-  private products = new ProductRepository();
+  private repository: OrderRepository;
+  private products: ProductRepository;
+  constructor(storeId?: string) { this.repository = new OrderRepository(storeId); this.products = new ProductRepository(storeId); }
 
   async calculate(items: any[]) {
 

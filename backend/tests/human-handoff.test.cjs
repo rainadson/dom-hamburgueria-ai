@@ -4,11 +4,11 @@ const {supabase}=require('../dist/database/supabase');
 const {HumanHandoffService}=require('../dist/conversation/human-handoff.service');
 const {ConversationService}=require('../dist/conversation/conversation.service');
 const {withConversationLock}=require('../dist/conversation/conversation-lock');
-const owner={id:'owner',role:'LOJA'};const other={id:'other',role:'ADMIN'};
+const owner={id:'owner',role:'LOJA',storeId:'00000000-0000-4000-8000-000000000001'};const other={id:'other',role:'ADMIN',storeId:'00000000-0000-4000-8000-000000000001'};
 function setup(t){
  const row={id:1,phone:'handoff-test',state:'PAYMENT',history:[{role:'assistant',content:'Como deseja pagar?'}],order_draft:{items:[{product:'Dom Tradicional',quantity:1}],checkout_step:'PAYMENT',total:8.99}};
  const original=supabase.from;let writes=0;
- supabase.from=()=>({select(){return this},eq(){return this},maybeSingle:async()=>({data:structuredClone(row)}),update:patch=>({eq:async()=>{writes++;Object.assign(row,structuredClone(patch));return {error:null}}})});
+ supabase.from=()=>({select(){return this},eq(){return this},maybeSingle:async()=>({data:structuredClone(row)}),update:patch=>{const q={eq(){return q},then(resolve){writes++;Object.assign(row,structuredClone(patch));return Promise.resolve({error:null}).then(resolve)}};return q}});
  t.after(()=>{supabase.from=original});
  const service=new HumanHandoffService();const chat=new ConversationService();
  chat.repository={findByPhone:async()=>structuredClone(row),updateHistory:async(_,h)=>row.history=structuredClone(h),updateDraft:async(_,d)=>row.order_draft=structuredClone(d),updateState:async(_,s)=>row.state=s};
@@ -37,7 +37,7 @@ test('simultaneous take requests have one winner in the current instance',async 
 test('duplicate take is idempotent and invalid responses do not write',async t=>{
  const f=setup(t);await f.service.act(1,owner,'take');await f.service.act(1,owner,'take');assert.equal(f.writes(),1);
  for(const text of ['',null,' '.repeat(3),'x'.repeat(4001)])await assert.rejects(f.service.act(1,owner,'draft',text),e=>e.status===400);
- assert.equal(f.writes(),1);await assert.rejects(f.service.act(1,{id:'x',role:'OTHER'},'take'),e=>e.status===403);
+ assert.equal(f.writes(),1);await assert.rejects(f.service.act(1,{id:'x',role:'OTHER',storeId:owner.storeId},'take'),e=>e.status===403);
 });
 test('resume restores payment processing instead of reinterpreting stored messages',async t=>{
  const f=setup(t);await f.service.act(1,owner,'take');await f.chat.processMessage(f.row.phone,'dinheiro');await f.service.act(1,owner,'resume');assert.equal(f.row.state,'PAYMENT');await f.chat.processMessage(f.row.phone,'dinheiro');assert.equal(f.row.state,'CASH_AMOUNT');

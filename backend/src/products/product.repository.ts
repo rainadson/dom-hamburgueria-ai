@@ -1,12 +1,15 @@
 import { normalizeProduct } from "./menu-combos";
 import { supabase } from "../database/supabase";
+import { DOM_STORE_ID } from "../database/store-context";
 
 export class ProductRepository {
+  constructor(private storeId = DOM_STORE_ID) {}
 
   async findAll() {
     const { data, error } = await supabase
       .from("products")
       .select("*")
+      .eq("store_id", this.storeId)
       .eq("active", true)
       .order("name");
 
@@ -19,6 +22,7 @@ export class ProductRepository {
     const { data, error } = await supabase
       .from("products")
       .select("*")
+      .eq("store_id", this.storeId)
       .eq("id", id)
       .single();
 
@@ -29,7 +33,7 @@ export class ProductRepository {
 
   async findByName(name: string) {
 
-    const { data, error } = await supabase.from("products").select("*").eq("active", true);
+    const { data, error } = await supabase.from("products").select("*").eq("store_id", this.storeId).eq("active", true);
     if (error) throw error;
     const aliases: Record<string, string> = {
       "coca cola": "Coca-Cola (lata)",
@@ -49,7 +53,7 @@ export class ProductRepository {
 
     const { data, error } = await supabase
       .from("products")
-      .insert(product)
+      .insert({...product, store_id: this.storeId})
       .select()
       .single();
 
@@ -63,6 +67,7 @@ export class ProductRepository {
     const { data, error } = await supabase
       .from("products")
       .update(product)
+      .eq("store_id", this.storeId)
       .eq("id", id)
       .select()
       .single();
@@ -77,6 +82,7 @@ export class ProductRepository {
     const { error } = await supabase
       .from("products")
       .delete()
+      .eq("store_id", this.storeId)
       .eq("id", id);
 
     if (error) throw error;
@@ -85,6 +91,7 @@ export class ProductRepository {
     const { data, error } = await supabase
       .from("products")
       .select("*")
+      .eq("store_id", this.storeId)
       .order("name");
 
     if (error) throw error;

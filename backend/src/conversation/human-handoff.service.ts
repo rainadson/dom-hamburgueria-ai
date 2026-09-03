@@ -7,8 +7,8 @@ export class HandoffError extends Error {
 }
 
 export class HumanHandoffService {
-  async find(id: number) {
-    const { data, error } = await supabase.from("conversations").select("id,phone,history,order_draft").eq("id", id).maybeSingle();
+  async find(id: number, storeId: string) {
+    const { data, error } = await supabase.from("conversations").select("id,phone,history,order_draft").eq("store_id",storeId).eq("id", id).maybeSingle();
     if (error) throw new HandoffError(500, "Não foi possível carregar a conversa.");
     if (!data) throw new HandoffError(404, "Conversa não encontrada.");
     return data;
@@ -20,9 +20,9 @@ export class HumanHandoffService {
     if (action === "draft" && (typeof text !== "string" || !text.trim() || text.trim().length > 4000)) {
       throw new HandoffError(400, "Escreva uma resposta com até 4000 caracteres.");
     }
-    const initial = await this.find(id);
-    return withConversationLock(initial.phone, async () => {
-      const conversation = await this.find(id);
+    const initial = await this.find(id, actor.storeId);
+    return withConversationLock(`${actor.storeId}:${initial.phone}`, async () => {
+      const conversation = await this.find(id, actor.storeId);
       const draft = conversation.order_draft || {};
       const handoff = draft.handoff;
       if (handoff?.active && handoff.owner_id !== actor.id) {
@@ -38,7 +38,7 @@ export class HumanHandoffService {
       const history = [...(conversation.history || [])];
       // Eventos internos nunca são enviados ao cliente nem apresentados à IA como falas.
       if (action !== "draft") history.push({ role: "event", content: action === "take" ? "Atendimento assumido; IA pausada." : "IA retomada.", actor_id: actor.id, actor_role: actor.role, created_at: now });
-      const { error } = await supabase.from("conversations").update({ order_draft: { ...draft, handoff: next }, history, updated_at: now }).eq("id", id);
+      const { error } = await supabase.from("conversations").update({ order_draft: { ...draft, handoff: next }, history, updated_at: now }).eq("store_id",actor.storeId).eq("id", id);
       if (error) throw new HandoffError(500, "Não foi possível guardar a alteração.");
       return { handoff: next, delivery: "not_sent" };
     });

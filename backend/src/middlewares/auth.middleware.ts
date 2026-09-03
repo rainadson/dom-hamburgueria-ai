@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { supabase } from "../database/supabase";
+import { validStoreId } from "../database/store-context";
 
 export type UserRole = "ADMIN" | "LOJA";
 
@@ -7,6 +8,7 @@ export interface AuthenticatedUser {
   id: string;
   email?: string;
   role: UserRole;
+  storeId: string;
 }
 
 declare global {
@@ -42,11 +44,11 @@ export async function requireAuth(
 
   const { data: profile, error: profileError } = await supabase
     .from("user_profiles")
-    .select("role")
+    .select("role,store_id")
     .eq("user_id", userData.user.id)
     .single();
 
-  if (profileError || (profile?.role !== "ADMIN" && profile?.role !== "LOJA")) {
+  if (profileError || (profile?.role !== "ADMIN" && profile?.role !== "LOJA") || !validStoreId(profile?.store_id)) {
     return res.status(403).json({ message: "Usuário não autorizado para o painel." });
   }
 
@@ -54,6 +56,7 @@ export async function requireAuth(
     id: userData.user.id,
     email: userData.user.email,
     role: profile.role,
+    storeId: profile.store_id,
   };
 
   next();

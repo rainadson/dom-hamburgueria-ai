@@ -2,8 +2,8 @@ import { productInput, validateProductId } from "./product-input";
 import { ProductRepository } from "./product.repository";
 
 export class ProductService {
-
-    private repository = new ProductRepository();
+    private repository: ProductRepository;
+    constructor(storeId?: string) { this.repository = new ProductRepository(storeId); }
 
     async getProducts() {
     return await this.repository.findAllAdmin();

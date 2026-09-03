@@ -3,8 +3,6 @@ import { Router } from "express";
 import { ConversationService } from "../conversation/conversation.service";
 
 const router = Router();
-const conversation = new ConversationService();
-
 router.post("/chat", async (req, res) => {
 
   try {
@@ -12,7 +10,7 @@ router.post("/chat", async (req, res) => {
     if (!validChatInput(req.body)) return res.status(400).json({message:"Informe telefone (até 20 caracteres) e mensagem (até 4000 caracteres)."});
     const { phone, message } = req.body;
 
-    const response = await conversation.processMessage(
+    const response = await new ConversationService(req.auth?.storeId).processMessage(
       phone,
       message
     );

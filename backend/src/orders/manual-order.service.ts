@@ -14,7 +14,8 @@ function cents(value: unknown, label: string): number {
 
 // Apenas preparação: não grava pedidos nem envia para a cozinha.
 export class ManualOrderService {
-  private orders = new OrderService();
+  private orders: OrderService;
+  constructor(storeId?: string) { this.orders = new OrderService(storeId); }
   async preview(input: any) {
     if (!input || typeof input !== "object" || Array.isArray(input)) throw new ManualOrderError("Pedido inválido.");
     const customer_name = requiredText(input.customer_name, "Nome", 150);

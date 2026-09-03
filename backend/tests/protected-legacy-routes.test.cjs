@@ -4,7 +4,7 @@ const {supabase}=require('../dist/database/supabase');const {ConversationService
 test('app removes legacy endpoints and chat requires an authenticated panel role',async()=>{
  const originals={from:supabase.from,user:supabase.auth.getUser,process:ConversationService.prototype.processMessage};let role='LOJA',calls=0;
  supabase.auth.getUser=async token=>({data:{user:token==='valid'?{id:'operator',email:'operator@example.invalid'}:null}});
- supabase.from=table=>{assert.equal(table,'user_profiles');return {select(){return this},eq(){return this},single:async()=>({data:{role},error:null})};};
+ supabase.from=table=>{assert.equal(table,'user_profiles');return {select(){return this},eq(){return this},single:async()=>({data:{role,store_id:'00000000-0000-4000-8000-000000000001'},error:null})};};
  ConversationService.prototype.processMessage=async(phone,message)=>{calls++;return {phone,ai:{reply:message}};};
  const app=require('../dist/app').default;const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));const base=`http://127.0.0.1:${server.address().port}/api`;
  const send=(token)=>fetch(base+'/chat',{method:'POST',headers:{'content-type':'application/json',...(token?{authorization:`Bearer ${token}`}:{})},body:JSON.stringify({phone:'demo-reuniao',message:'Olá'})});

@@ -7,7 +7,7 @@ router.get("/", async (req, res) => {
   const page = Number(req.query.page || 0);
   if (!Number.isSafeInteger(page) || page < 0) return res.status(400).json({ message: "Página inválida." });
   const search = String(req.query.search || "").trim().slice(0, 100).replace(/[^\p{L}\p{N} +@._-]/gu, "");
-  let query = supabase.from("conversations").select("id,phone,state,updated_at,order_draft", {count:"exact"});
+  let query = supabase.from("conversations").select("id,phone,state,updated_at,order_draft", {count:"exact"}).eq("store_id",req.auth!.storeId);
   if (search) query = query.or(`phone.ilike.%${search}%,order_draft->>customer_name.ilike.%${search}%`);
   const {data,error,count} = await query.order("updated_at",{ascending:false}).order("id",{ascending:false}).range(page*30,page*30+29);
   if (error) return res.status(500).json({message:"Não foi possível carregar as conversas."});
@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req,res)=>{
   const id = Number(req.params.id);
   if (!/^\d+$/.test(String(req.params.id)) || !Number.isSafeInteger(id) || id <= 0) return res.status(400).json({message:"Conversa inválida."});
-  const {data,error}=await supabase.from("conversations").select("id,phone,state,updated_at,history,order_draft").eq("id",id).maybeSingle();
+  const {data,error}=await supabase.from("conversations").select("id,phone,state,updated_at,history,order_draft").eq("store_id",req.auth!.storeId).eq("id",id).maybeSingle();
   if(error)return res.status(500).json({message:"Não foi possível carregar o histórico."});
   if(!data)return res.status(404).json({message:"Conversa não encontrada."});
   return res.json({id:data.id,phone:data.phone,state:data.state,updated_at:data.updated_at,name:data.order_draft?.customer_name || null,handoff:data.order_draft?.handoff || null,can_manage:!data.order_draft?.handoff?.active || data.order_draft.handoff.owner_id===req.auth?.id,

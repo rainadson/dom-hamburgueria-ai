@@ -1,4 +1,5 @@
 import { supabase } from "../database/supabase";
+import { DOM_STORE_ID } from "../database/store-context";
 
 export class OrderStatusError extends Error {
   constructor(public statusCode:number, message:string){super(message);}
@@ -6,12 +7,14 @@ export class OrderStatusError extends Error {
 const validStatuses = new Set(["PENDING", "PREPARING", "READY", "DELIVERED", "CANCELLED"]);
 
 export class OrderRepository {
+  constructor(private storeId = DOM_STORE_ID) {}
 
   async findOpen(conversationId: number) {
 
     const { data } = await supabase
       .from("orders")
       .select("*")
+      .eq("store_id", this.storeId)
       .eq("conversation_id", conversationId)
       .eq("status", "OPEN")
       .single();
@@ -35,6 +38,7 @@ export class OrderRepository {
     const { data: order, error } = await supabase
       .from("orders")
       .insert({
+        store_id: this.storeId,
         customer_name: data.customer_name,
         customer_phone: data.customer_phone,
 
@@ -70,7 +74,7 @@ export class OrderRepository {
       || (expectedStatus !== undefined && !validStatuses.has(expectedStatus))) {
       throw new OrderStatusError(400, "Pedido ou estado inválido.");
     }
-    let query = supabase.from("orders").update({status}).eq("id", id);
+    let query = supabase.from("orders").update({status}).eq("store_id", this.storeId).eq("id", id);
     // Comparação no mesmo UPDATE: não há intervalo entre ler e gravar.
     if (expectedStatus !== undefined) query = query.eq("status", expectedStatus);
     const {data,error} = await query.select().maybeSingle();
@@ -85,6 +89,7 @@ export class OrderRepository {
     const { data, error } = await supabase
       .from("orders")
       .select("*")
+      .eq("store_id", this.storeId)
       .order("created_at", {
         ascending: false
       });

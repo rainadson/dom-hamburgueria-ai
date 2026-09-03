@@ -4,12 +4,12 @@ import { Router } from "express";
 import { ProductService } from "./product.service";
 
 const router = Router();
-const service = new ProductService();
+const serviceFor = (req: any) => new ProductService(req.auth.storeId);
 
 // Listar produtos
-router.get("/", async (_, res) => {
+router.get("/", async (req, res) => {
   try {
-    const products = await service.getProducts();
+    const products = await serviceFor(req).getProducts();
     res.json(products);
   } catch (error) {
     if (error instanceof ProductInputError) return res.status(400).json({message:error.message});
@@ -21,7 +21,7 @@ router.get("/", async (_, res) => {
 // Buscar produto por ID
 router.get("/:id", async (req, res) => {
   try {
-    const product = await service.getProduct(Number(req.params.id));
+    const product = await serviceFor(req).getProduct(Number(req.params.id));
 
     if (!product) {
       return res.status(404).json({
@@ -40,7 +40,7 @@ router.get("/:id", async (req, res) => {
 // Criar produto
 router.post("/", requireRole("ADMIN"), async (req, res) => {
   try {
-    const product = await service.createProduct(req.body);
+    const product = await serviceFor(req).createProduct(req.body);
     res.status(201).json(product);
   } catch (error) {
     if (error instanceof ProductInputError) return res.status(400).json({message:error.message});
@@ -52,7 +52,7 @@ router.post("/", requireRole("ADMIN"), async (req, res) => {
 // Atualizar produto
 router.put("/:id", requireRole("ADMIN"), async (req, res) => {
   try {
-    const product = await service.updateProduct(
+    const product = await serviceFor(req).updateProduct(
       Number(req.params.id),
       req.body
     );
@@ -68,7 +68,7 @@ router.put("/:id", requireRole("ADMIN"), async (req, res) => {
 // Excluir produto
 router.delete("/:id", requireRole("ADMIN"), async (req, res) => {
   try {
-    await service.deleteProduct(Number(req.params.id));
+    await serviceFor(req).deleteProduct(Number(req.params.id));
 
     res.status(204).send();
   } catch (error) {

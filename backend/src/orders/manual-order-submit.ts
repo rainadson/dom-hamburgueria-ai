@@ -11,13 +11,14 @@ function stable(value:any):string {
   return JSON.stringify(value) ?? 'null';
 }
 export class ManualOrderSubmit {
-  private calculator = new ManualOrderService();
+  private calculator: ManualOrderService;
+  constructor(private storeId?: string) { this.calculator = new ManualOrderService(storeId); }
   async find(actor:string,key:string){
-    const {data,error}=await supabase.from('orders').select('id,manual_payload_hash').eq('manual_actor_id',actor).eq('manual_request_id',key).maybeSingle();
+    const {data,error}=await supabase.from('orders').select('id,manual_payload_hash').eq('store_id',this.storeId).eq('manual_actor_id',actor).eq('manual_request_id',key).maybeSingle();
     if(error)throw new ManualSubmitError(503,'Não foi possível verificar este envio. Tente novamente sem alterar o pedido.');
     return data;
   }
-  async insert(payload:any){return supabase.from('orders').insert(payload).select('id').single();}
+  async insert(payload:any){return supabase.from('orders').insert({...payload,store_id:this.storeId}).select('id').single();}
   async submit(actor:string,key:unknown,input:any,reviewedTotal:unknown){
     if(typeof key!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(key))throw new ManualSubmitError(400,'Identificador de envio inválido.');
     if(typeof reviewedTotal!=='number'||!Number.isFinite(reviewedTotal)||reviewedTotal<0)throw new ManualSubmitError(400,'Reveja o total antes de confirmar.');

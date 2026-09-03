@@ -211,3 +211,9 @@ Testes locais cobrem LOJA lendo sem gravar e ADMIN nas três mutações. Ainda f
 Confirmado em produção que a chave pública conseguia consultar diretamente `products`, `orders`, `conversations`, `order_items`, `settings` e `user_profiles`. Aplicada migração idempotente que habilita RLS e revoga os privilégios de `anon` e `authenticated` nas tabelas operacionais existentes, sem criar políticas de acesso direto pelo navegador. O backend mantém acesso por `service_role`, guardada apenas no servidor.
 
 Após a migração, todas as seis consultas com chave pública retornaram 401. A API de saúde permaneceu 200 e o painel LOJA autenticado continuou carregando os indicadores pelo backend. O esquema de criação também passa a habilitar RLS e revogar acesso público por padrão. Nenhum registro, pedido, produto ou autenticação foi alterado. Isolamento multiloja permanece na TASK-0121.
+
+## 03/09/2026 — TASK-0121: estrutura e isolamento multiloja
+
+Criada a tabela `stores` e associadas as tabelas operacionais e os perfis atuais à Dom Hamburgueria por `store_id` obrigatório. A migração foi aplicada com sucesso em produção, preservando todos os registros. Telefones de conversas passam a ser únicos por loja, permitindo o mesmo cliente em lojas diferentes.
+
+O backend agora obtém a loja do perfil autenticado e filtra por ela produtos, pedidos, clientes derivados, conversas, handoff e indicadores; criações recebem a mesma loja. Perfil sem loja válida é recusado. Locks de conversa também incluem a loja. Não foi criada uma segunda loja nem interface de gestão. Testes simulam duas lojas e confirmam filtros distintos; validação final de build, publicação e produção segue neste bloco.

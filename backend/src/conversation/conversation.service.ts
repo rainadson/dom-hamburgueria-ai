@@ -7,10 +7,10 @@ import { AIService } from "../services/ai.service";
 import { OrderService } from "../orders/order.service";
 
 export class ConversationService {
-
-  private repository = new ConversationRepository();
+  private repository: ConversationRepository;
   private aiService = new AIService();
-  private orderService = new OrderService();
+  private orderService: OrderService;
+  constructor(private storeId?: string) { this.repository = new ConversationRepository(storeId); this.orderService = new OrderService(storeId); }
 
   // ==========================================
   // BUSCAR OU CRIAR CONVERSA
@@ -34,7 +34,7 @@ export class ConversationService {
   // ==========================================
 
   async processMessage(phone: string, message: string) {
-    return withConversationLock(phone, () => this.processUnlocked(phone, message));
+    return withConversationLock(`${this.storeId || "default"}:${phone}`, () => this.processUnlocked(phone, message));
   }
 
   private async processUnlocked(phone: string, message: string) {

@@ -56,12 +56,32 @@ CREATE TABLE settings (
     pix_key TEXT
 );
 
+-- Loja inicial e vínculo obrigatório dos dados operacionais.
+CREATE TABLE stores (
+    id UUID PRIMARY KEY,
+    slug TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+INSERT INTO stores (id, slug, name)
+VALUES ('00000000-0000-4000-8000-000000000001', 'dom-hamburgueria', 'Dom Hamburgueria');
+
+ALTER TABLE products ADD COLUMN store_id UUID NOT NULL REFERENCES stores(id) DEFAULT '00000000-0000-4000-8000-000000000001';
+ALTER TABLE conversations ADD COLUMN store_id UUID NOT NULL REFERENCES stores(id) DEFAULT '00000000-0000-4000-8000-000000000001';
+ALTER TABLE orders ADD COLUMN store_id UUID NOT NULL REFERENCES stores(id) DEFAULT '00000000-0000-4000-8000-000000000001';
+ALTER TABLE order_items ADD COLUMN store_id UUID NOT NULL REFERENCES stores(id) DEFAULT '00000000-0000-4000-8000-000000000001';
+ALTER TABLE settings ADD COLUMN store_id UUID NOT NULL REFERENCES stores(id) DEFAULT '00000000-0000-4000-8000-000000000001';
+ALTER TABLE conversations DROP CONSTRAINT conversations_phone_key;
+CREATE UNIQUE INDEX conversations_store_phone_unique ON conversations(store_id, phone);
+
 -- Dados operacionais são acessados somente pela API do backend.
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE stores ENABLE ROW LEVEL SECURITY;
 
-REVOKE ALL PRIVILEGES ON TABLE products, conversations, orders, order_items, settings
+REVOKE ALL PRIVILEGES ON TABLE products, conversations, orders, order_items, settings, stores
 FROM anon, authenticated;

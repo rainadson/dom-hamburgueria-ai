@@ -8,7 +8,7 @@ test('status API preserves roles, forwards expected state and hides unexpected e
  const originals={from:supabase.from,user:supabase.auth.getUser,update:OrderRepository.prototype.updateStatus};
  let role='LOJA',mode='ok',calls=0;
  supabase.auth.getUser=async token=>({data:{user:token==='valid'?{id:'actor'}:null}});
- supabase.from=()=>({select(){return this},eq(){return this},single:async()=>({data:{role}})});
+ supabase.from=()=>({select(){return this},eq(){return this},single:async()=>({data:{role,store_id:'00000000-0000-4000-8000-000000000001'}})});
  OrderRepository.prototype.updateStatus=async(id,status,expected)=>{calls++;assert.deepEqual([id,status,expected],[1,'READY','PREPARING']);if(mode==='conflict')throw new OrderStatusError(409,'O pedido mudou.');if(mode==='failure')throw Error('PRIVATE_DATABASE_DETAIL');return {id,status};};
  const app=require('express')();app.use(require('express').json());app.use('/orders',requireAuth,router);
  const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));
