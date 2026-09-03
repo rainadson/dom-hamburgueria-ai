@@ -48,13 +48,13 @@ export default function Kitchen() {
     };
   }, []);
 
-  async function updateStatus(id: number, status: string) {
+  async function updateStatus(id: number, status: string, expectedStatus: string) {
     if (pendingActions.current.has(id)) return;
     pendingActions.current.add(id);
     setUpdating([...pendingActions.current]);
     setActionErrors(errors => ({ ...errors, [id]: "" }));
     try {
-      await api.patch(`/orders/${id}/status`, { status });
+      await api.patch(`/orders/${id}/status`, { status, expected_status: expectedStatus });
     } catch {
       setActionErrors(errors => ({
         ...errors,
@@ -105,7 +105,7 @@ export default function Kitchen() {
                 updating={updating.includes(order.id)}
                 actionError={actionErrors[order.id]}
                 actionLabel="▶ Preparando"
-                onAction={() => updateStatus(order.id, "PREPARING")}
+                onAction={() => updateStatus(order.id, "PREPARING", order.status)}
               />
 
             ))}
@@ -124,7 +124,7 @@ export default function Kitchen() {
                 updating={updating.includes(order.id)}
                 actionError={actionErrors[order.id]}
                 actionLabel="✔ Pronto"
-                onAction={() => updateStatus(order.id, "READY")}
+                onAction={() => updateStatus(order.id, "READY", order.status)}
               />
 
             ))}
@@ -143,7 +143,7 @@ export default function Kitchen() {
                 updating={updating.includes(order.id)}
                 actionError={actionErrors[order.id]}
                 actionLabel="🚚 Entregue"
-                onAction={() => updateStatus(order.id, "DELIVERED")}
+                onAction={() => updateStatus(order.id, "DELIVERED", order.status)}
               />
 
             ))}

@@ -1,5 +1,10 @@
 import { supabase } from "../database/supabase";
 
+export class OrderStatusError extends Error {
+  constructor(public statusCode:number, message:string){super(message);}
+}
+const validStatuses = new Set(["PENDING", "PREPARING", "READY", "DELIVERED", "CANCELLED"]);
+
 export class OrderRepository {
 
   async findOpen(conversationId: number) {
@@ -60,22 +65,18 @@ export class OrderRepository {
     return order;
   }
 
-  async updateStatus(
-    id: number,
-    status: string
-  ) {
-
-    const { data, error } = await supabase
-      .from("orders")
-      .update({
-        status
-      })
-      .eq("id", id)
-      .select()
-      .single();
-
+  async updateStatus(id: number, status: string, expectedStatus?: string) {
+    if (!Number.isSafeInteger(id) || id <= 0 || !validStatuses.has(status)
+      || (expectedStatus !== undefined && !validStatuses.has(expectedStatus))) {
+      throw new OrderStatusError(400, "Pedido ou estado inválido.");
+    }
+    let query = supabase.from("orders").update({status}).eq("id", id);
+    // Comparação no mesmo UPDATE: não há intervalo entre ler e gravar.
+    if (expectedStatus !== undefined) query = query.eq("status", expectedStatus);
+    const {data,error} = await query.select().maybeSingle();
     if (error) throw error;
-
+    if (!data) throw new OrderStatusError(expectedStatus === undefined ? 404 : 409,
+      expectedStatus === undefined ? "Pedido não encontrado." : "O pedido mudou. Atualize e confira o estado antes de tentar novamente.");
     return data;
   }
 

@@ -3,7 +3,7 @@ import { uniqueCustomers } from "./manual-customers";
 import { ManualOrderService, ManualOrderError } from "./manual-order.service";
 import { Router } from "express";
 import { supabase } from "../database/supabase";
-import { OrderRepository } from "../orders/order.repository";
+import { OrderRepository, OrderStatusError } from "../orders/order.repository";
 
 const repository = new OrderRepository();
 
@@ -52,18 +52,19 @@ router.get("/", async (req, res) => {
 router.patch("/:id/status", async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, expected_status } = req.body || {};
 
     const order = await repository.updateStatus(
       Number(id),
-      status
+      status,
+      expected_status
     );
 
     res.json(order);
 
   } catch (error: any) {
-    res.status(500).json({
-      message: error.message
+    res.status(error instanceof OrderStatusError ? error.statusCode : 500).json({
+      message: error instanceof OrderStatusError ? error.message : "Não foi possível atualizar o pedido."
     });
   }
 });

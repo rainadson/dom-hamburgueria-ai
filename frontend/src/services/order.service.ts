@@ -7,10 +7,10 @@ class OrderService {
         return data;
     }
 
-    async updateStatus(id: number, status: string) {
+    async updateStatus(id: number, status: string, expectedStatus?: string) {
         const { data } = await api.patch(
             `/orders/${id}/status`,
-            { status }
+            { status, expected_status: expectedStatus }
         );
 
         return data;

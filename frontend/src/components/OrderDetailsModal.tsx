@@ -19,31 +19,37 @@ export default function OrderDetailsModal({
 }: Props) {
 
     const [status, setStatus] = useState("");
+    const [saveError, setSaveError] = useState("");
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (order) {
             setStatus(order.status);
+            setSaveError("");
         }
     }, [order]);
 
     if (!open || !order) return null;
 
     async function changeStatus() {
+        if (saving) return;
+        setSaving(true);
+        setSaveError("");
         try {
 
             await orderService.updateStatus(
                 order!.id,
-                status
+                status,
+                order!.status
             );
             onStatusChanged();
 
             onClose();
 
-        } catch (error) {
-
-            console.error("Error updating order status:", error);
-
-        }
+        } catch (error: any) {
+            setSaveError(error.response?.data?.message || "Não foi possível confirmar a alteração. Feche e reabra o pedido para conferir o estado.");
+            onStatusChanged();
+        } finally { setSaving(false); }
     }
 
     return (
@@ -156,9 +162,11 @@ export default function OrderDetailsModal({
 
                 <hr />
 
+                {saveError && <p role="alert">{saveError}</p>}
                 <div className="modal-actions">
 
                     <select
+                        disabled={saving}
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
                     >
@@ -171,12 +179,13 @@ export default function OrderDetailsModal({
 
                     <button
                         className="status-button"
+                        disabled={saving}
                         onClick={changeStatus}
                     >
                         Save Status
                     </button>
 
-                    <button onClick={onClose}>
+                    <button disabled={saving} onClick={onClose}>
                         Close
                     </button>
 
