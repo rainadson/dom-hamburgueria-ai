@@ -52,3 +52,12 @@ Próximo bloco independente: inspecionar integração WhatsApp 0082–0092, prep
 ## Autorização de publicação — 03/09/2026
 O utilizador autorizou explicitamente publicar os cinco commits pendentes após ser informado do bloqueio. A autorização mantém o envio manual desativado até validar o banco. Validação final: 104 testes locais aprovados, backend e frontend compilados. Não aplicar a migração nem habilitar MANUAL_ORDER_SUBMIT_ENABLED nesta publicação.
 
+
+
+## 03/09/2026 — publicação e TASK-0082
+
+Após confirmação explícita do utilizador, os cinco commits anteriores foram publicados (ee4763d), com 104 testes aprovados e deploy Vercel/Render verificado. Prévia em produção devolveu Dom Tradicional €8,99 e confirmou envio manual desativado. A restrição antiga de publicação foi resolvida para aquele bloco; manter desativado o envio manual até validar o banco, conforme instrução do utilizador.
+
+TASK-0082: tela informativa WhatsApp e endpoint autenticado para ADMIN/LOJA implementados localmente. Mostra explicitamente que não há ligação real, recebimento/envio/mídia pendentes e acesso ao cardápio já publicado. Não lê ou expõe tokens, não infere conexão da existência de variáveis, não modifica o webhook legado e não envia mensagens. Ainda não é um painel de configuração.
+
+0083/0084/0090 dependem da conta/app/número Meta do utilizador. Próxima execução pode preparar 0085–0089 com documentação oficial atual, transporte desativado, testes locais de assinatura e tratamento de mensagens, antes de solicitar a configuração externa. Não reutilizar o webhook legado como se estivesse integrado à Meta. Publicação desta tela ainda não realizada.

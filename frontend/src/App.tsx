@@ -10,6 +10,7 @@ import Orders from "./pages/Orders";
 import Kitchen from "./pages/Kitchen";
 import Conversations from "./pages/Conversations";
 import ManualOrder from "./pages/ManualOrder";
+import WhatsApp from "./pages/WhatsApp";
 import Demo from "./pages/Demo";
 
 export default function App() {
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/kitchen" element={<Kitchen />} />
         <Route path="/conversations" element={<Conversations />} />
+        <Route path="/whatsapp" element={<WhatsApp />} />
         <Route path="/demo" element={<Demo />} />
       </Route>
 

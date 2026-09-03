@@ -65,7 +65,7 @@ export default function Sidebar({ collapsed }: SidebarProps) {
           {!collapsed && <span>Clientes</span>}
         </NavLink>
 
-        <NavLink to="/whatsapp" className="future-link">
+        <NavLink to="/whatsapp" aria-label="WhatsApp">
           <span className="icon">◉</span>
           {!collapsed && <span>WhatsApp</span>}
         </NavLink>

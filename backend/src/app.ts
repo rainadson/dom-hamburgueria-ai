@@ -12,6 +12,8 @@ import { requireAuth } from "./middlewares/auth.middleware";
 
 import conversationRoutes from "./conversation/conversation.routes";
 
+import whatsappStatusRoutes from "./whatsapp/whatsapp-status.routes";
+
 const app = express();
 
 app.use(cors());
@@ -27,6 +29,7 @@ app.get("/", (req, res) => {
 });
 
 
+app.use("/api/whatsapp", requireAuth, whatsappStatusRoutes);
 app.use("/api/conversations", requireAuth, conversationRoutes);
 app.use("/api/orders", requireAuth, orderRoutes);
 app.use("/api", aiRoutes);

@@ -1,0 +1,3 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+const {whatsappStatus}=require('../dist/whatsapp/whatsapp-status.routes');
+test('status does not claim real delivery or expose configuration values',()=>{const result=whatsappStatus();assert.equal(result.connection,'not_connected');for(const key of ['receiving','sending','media','humanReplies'])assert.equal(result[key],false);assert.deepEqual(Object.keys(result).sort(),['catalogImage','connection','humanReplies','media','receiving','sending']);assert.match(result.catalogImage,/^https:\/\/dom-hamburgueria-ai\.vercel\.app\//);});
