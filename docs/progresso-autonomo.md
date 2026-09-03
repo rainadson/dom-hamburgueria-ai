@@ -41,3 +41,10 @@ Teste unitário verifica deduplicação, prioridade do registo mais recente e au
 Criado endpoint de confirmação autenticado com confirmação explícita, recálculo de catálogo, verificação do total revisto e chave UUID por envio/operador. Nova persistência usa três colunas opcionais e índice único em orders para impedir duplicação em concorrência/repetição. Alteração SQL em database/manual-submit-migration.sql está SOMENTE preparada: não aplicada nem validada num PostgreSQL real. Endpoint permanece desativado por padrão (MANUAL_ORDER_SUBMIT_ENABLED ausente); nenhuma variável de produção foi modificada.
 
 Cinco testes locais simulam repetição, concorrência com conflito único, preço alterado, reutilização indevida e perda da resposta após inserção. Esses testes não substituem a validação da migração real. Ainda falta ligar a confirmação à interface e preservar a chave no navegador após resultado incerto. Não habilitar antes de ambos estarem prontos e validados. Nenhum pedido real foi criado. Publicação permanece bloqueada pela revisão automática.
+
+
+## 03/09/2026 — interface de confirmação manual
+
+Ligada a interface ao contrato desativado: o botão de envio só aparece se o backend anunciar capacidade ativa. Revisão/checkbox obrigatórios; envelope com UUID e dados revistos é guardado em sessionStorage por utilizador ANTES da chamada. Em erro ou recarregamento, preserva o mesmo envio e bloqueia alterações para reduzir duplicação. Recuperação limita-se ao mesmo separador/sessão; fechar o separador pode perder o registo local, embora o banco retenha chaves já gravadas. Validação de migração, teste integrado PostgreSQL e ativação continuam pendentes. Não habilitar apenas porque a interface está pronta.
+
+Próximo bloco independente: inspecionar integração WhatsApp 0082–0092, preparar contratos/testes locais sem enviar mensagens ou mudar credenciais. Pedidos manuais e atendimento humano não foram publicados devido ao bloqueio de aprovação previamente registado.
