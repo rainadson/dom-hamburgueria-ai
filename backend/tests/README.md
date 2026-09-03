@@ -1,13 +1,26 @@
-# Testes de interpretação contextual
+# Testes locais do Dom AI
 
 Execute na pasta `backend`:
 
 ```powershell
 npm run build
-node --test tests/conversation-context.test.cjs tests/upsell-completion.test.cjs tests/menu-orders.test.cjs tests/acai-toppings.test.cjs tests/checkout-flow.test.cjs
+node --test tests/*.test.cjs
 ```
 
-Os testes locais usam o backend compilado, respostas simuladas da IA e repositórios em memória. Não gravam pedidos, não acessam o banco e não chamam o modelo.
+Os testes locais usam o backend compilado, respostas simuladas da IA e repositórios em memória. Alguns abrem servidores HTTP apenas em 127.0.0.1. Não gravam pedidos reais, não acessam o banco e não chamam o modelo. Mantenha RUN_AI_LIVE_TESTS ausente para que os oito testes externos sejam ignorados.
+
+A suíte inclui catálogo/checkout, atendimento humano, pedidos manuais, contratos HTTP, preparação Meta, atualização de telas e resumo de entrega. Os testes de SQL são simulações de contrato: migrações ainda precisam de PostgreSQL isolado.
+
+Para verificar os tipos da interface, a partir da raiz do repositório:
+
+```powershell
+frontend/node_modules/.bin/tsc.cmd --noEmit -p frontend/tsconfig.app.json
+npm --prefix frontend run build
+```
+
+A configuração raiz tsconfig.json só contém referências; executar tsc sem build sobre ela não verifica o código da aplicação. O build Vite também não substitui essa verificação de tipos.
+
+Em 03/09/2026: 131 testes passaram, oito testes externos foram ignorados e a verificação de tipos da interface passou. Isso não comprova deploy, RLS, WhatsApp, banco real ou funcionamento visual no navegador.
 
 Para verificar também o prompt com o modelo configurado:
 

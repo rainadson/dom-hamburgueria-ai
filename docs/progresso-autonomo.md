@@ -160,3 +160,9 @@ Build backend e teste HTTP local aprovados, com serviços simulados: entradas in
 Adicionado tratamento final de erros Express com JSON genérico para falhas inesperadas e respostas claras para JSON inválido/corpo demasiado grande. Pedidos/test-db/Dashboard deixam de devolver objetos de erro internos; produtos deixam de imprimir erros completos. Removidos logs de arranque de URL/presença de chave Supabase (não havia impressão do valor da chave). Dashboard agora rejeita falhas de consulta em vez de mostrar contagens/faturamento zero como se fossem dados válidos.
 
 Build backend e dois testes HTTP locais aprovados: exceção assíncrona, JSON inválido, limite de corpo e indicadores indisponíveis. Nenhuma alteração em credenciais/permissões/produção. Isso não substitui observabilidade com correlação, backup nem revisão completa de secrets; os acessos públicos continuam aguardando autorização específica. Próximo: consolidar testes locais e inventário de dependências restantes, com revisão de validação visual e produção pendente.
+
+## 03/09/2026 — verificação consolidada após tratamento de erros
+
+Suíte completa executada com backend compilado: 139 casos, 131 aprovados, 8 externos ignorados, zero falhas. Verificação real de tipos frontend com tsconfig.app.json aprovada; a chamada inicial sobre tsconfig.json raiz não verificava fontes por conter apenas references. README dos testes atualizado para evitar falsa validação futura. Sem nova publicação ou execução de modelos.
+
+Pendências materiais mantidas: autorização de publicação e restrição de rotas públicas, Meta/numero, banco isolado para migrações, dados/regras da loja, RLS/multiloja, backup/monitorização e validação final real. Ainda há trabalho local seguro: validação visual isolada dos componentes modificados e revisão de inputs de produtos. Próximo bloco: visualização local com dados fictícios, sem usar autenticação ou API de produção.
