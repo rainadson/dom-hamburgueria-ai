@@ -177,3 +177,9 @@ Servidor local encerrado e os dois arquivos temporários removidos. Produção, 
 CRUD valida IDs positivos, nome/preço obrigatórios na criação, campos textuais e booleano ativo; preço finito não negativo com duas casas e limite do NUMERIC(10,2). Atualizações parciais continuam aceites; metadados do payload da interface (id/created_at) não são regravados. Descrição limitada a 4000 caracteres. Erros de entrada retornam 400 e são apresentados no modal. Nenhum preço, produto ou permissão real alterado.
 
 Três testes locais cobrem payload completo da interface, entradas inválidas e validação antes de mutação; backend/frontend compilados. Não cobre nomes duplicados nem regras de alteração conjunta de hambúrguer/Menu; não inventadas neste bloco. Próximo: verificar contrato HTTP e consolidar pendências de produção e testes finais, sem publicar enquanto aprovação estiver pendente.
+
+## 03/09/2026 — contrato HTTP de produtos e inventário final
+
+Teste HTTP local confirmou 400 para entradas inválidas antes de qualquer escrita e compatibilidade de criação, atualização parcial e payload completo da interface, sem regravar id/created_at. Quatro testes de produtos aprovados no conjunto. Nenhum produto real alterado. Inventário em docs/validacao-final-pendente.md diferencia testes locais, integração real, publicação e dependências até 0149; plano não concluído.
+
+Próximo: carga básica local com dependências simuladas (0148) e auditoria de arquivos versionados (0124), sem produção e sem leitura/exposição de valores secretos. Aprovações de publicação e acesso continuam pendentes.
