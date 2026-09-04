@@ -69,7 +69,7 @@ export class AIService {
 
       return {
         intent: "ERROR",
-        reply: content,
+        reply: "Não consegui interpretar a resposta. Tente novamente.",
         items: [],
       };
 

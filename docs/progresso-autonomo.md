@@ -265,3 +265,9 @@ A preparação técnica está concluída, mas o domínio próprio depende da esc
 Render e Vercel responderam em HTTPS com HSTS. O backend já inclui CSP, proteção de frame e `nosniff` pelo Helmet. O frontend passa a declarar em `vercel.json` `nosniff`, bloqueio de frame, política de referência e bloqueio de câmera/microfone/geolocalização, recursos não usados pela aplicação.
 
 Não foi imposta CSP no frontend sem validação das origens necessárias para Supabase e API. A TASK-0129 está concluída no código; os novos cabeçalhos da Vercel precisam ser confirmados depois da publicação. Próximo: TASK-0130, tratamento seguro de erros, já preparado parcialmente e agora a consolidar.
+
+## 04/09/2026 — TASK-0130: respostas de erro seguras
+
+Consolidado o tratamento para JSON inválido, corpo excessivo, endpoint inexistente, falha inesperada e indisponibilidade de dados. Respostas 500 não incluem stack, objeto do banco ou detalhe do provedor. Corrigido o último caminho encontrado: conteúdo bruto e inválido devolvido pelo modelo deixa de ser reenviado ao usuário e passa a gerar orientação genérica.
+
+Erros de entrada conhecidos preservam mensagens específicas. A TASK-0130 está concluída; correlação e monitorização seguem nas tarefas seguintes.
