@@ -4,7 +4,7 @@ const {settingsInput,SettingsInputError}=require('../dist/settings/settings-inpu
 const {SettingsRepository}=require('../dist/settings/settings.repository');
 const {buildSystemPrompt}=require('../dist/prompts/system.prompt');
 test('settings validate official values and reject unsupported payment methods',()=>{
- const value=settingsInput({restaurant_name:' Dom Hamburgueria ',phone:'+351 912 345 678',address:'Rua A',opening_hours:'18h–23h',delivery_fee:2.5,pix_key:null,payment_methods:['DINHEIRO','MULTIBANCO'],ai_greeting:'Olá!',ai_unknown_reply:'Pode repetir?',ai_personality:'Breve e simpática.'});
+ const value=settingsInput({restaurant_name:' Dom Hamburgueria ',phone:'+351 912 345 678',address:'Rua A',opening_hours:'18h–23h',delivery_fee:2.5,payment_methods:['DINHEIRO','MULTIBANCO'],ai_greeting:'Olá!',ai_unknown_reply:'Pode repetir?',ai_personality:'Breve e simpática.'});
  assert.equal(value.restaurant_name,'Dom Hamburgueria');assert.equal(value.delivery_fee,2.5);assert.deepEqual(value.payment_methods,['DINHEIRO','MULTIBANCO']);
  assert.throws(()=>settingsInput({...value,payment_methods:['PIX']}),SettingsInputError);
  assert.throws(()=>settingsInput({...value,delivery_fee:-1}),SettingsInputError);

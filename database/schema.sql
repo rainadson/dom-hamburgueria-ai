@@ -52,8 +52,7 @@ CREATE TABLE settings (
     phone VARCHAR(20),
     address TEXT,
     opening_hours TEXT,
-    delivery_fee NUMERIC(10,2),
-    pix_key TEXT
+    delivery_fee NUMERIC(10,2)
 );
 
 -- Loja inicial e vínculo obrigatório dos dados operacionais.

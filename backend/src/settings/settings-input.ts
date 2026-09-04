@@ -15,5 +15,5 @@ export function settingsInput(value:any){
   if(!Array.isArray(value.payment_methods)||!value.payment_methods.length)throw new SettingsInputError("Escolha ao menos um pagamento.");
   const payment_methods=[...new Set(value.payment_methods)];
   if(payment_methods.some(method=>method!=="DINHEIRO"&&method!=="MULTIBANCO"))throw new SettingsInputError("Pagamento inválido.");
-  return {restaurant_name,phone,address:optionalText(value.address,"Morada",500),opening_hours:optionalText(value.opening_hours,"Horário",1000),delivery_fee:fee==null?null:Math.round(fee*100)/100,pix_key:optionalText(value.pix_key,"Chave PIX",200),payment_methods,ai_greeting:optionalText(value.ai_greeting,"Saudação",500),ai_unknown_reply:optionalText(value.ai_unknown_reply,"Mensagem de dúvida",500),ai_personality:optionalText(value.ai_personality,"Personalidade",1000),updated_at:new Date().toISOString()};
+  return {restaurant_name,phone,address:optionalText(value.address,"Morada",500),opening_hours:optionalText(value.opening_hours,"Horário",1000),delivery_fee:fee==null?null:Math.round(fee*100)/100,payment_methods,ai_greeting:optionalText(value.ai_greeting,"Saudação",500),ai_unknown_reply:optionalText(value.ai_unknown_reply,"Mensagem de dúvida",500),ai_personality:optionalText(value.ai_personality,"Personalidade",1000),updated_at:new Date().toISOString()};
 }
