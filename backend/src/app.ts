@@ -16,6 +16,7 @@ import conversationRoutes from "./conversation/conversation.routes";
 import whatsappStatusRoutes from "./whatsapp/whatsapp-status.routes";
 import realtimeRoutes from "./realtime/realtime.routes";
 import settingsRoutes from "./settings/settings.routes";
+import storeRoutes from "./stores/store.routes";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.get("/api/session", requireAuth, (req, res) => res.json({
 app.use("/api/whatsapp", requireAuth, whatsappStatusRoutes);
 app.use("/api/realtime", requireAuth, realtimeRoutes);
 app.use("/api/settings", requireAuth, settingsRoutes);
+app.use("/api/stores", requireAuth, storeRoutes);
 app.use("/api/conversations", requireAuth, conversationRoutes);
 app.use("/api/orders", requireAuth, orderRoutes);
 app.use("/api/chat", requireAuth);

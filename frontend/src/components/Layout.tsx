@@ -3,18 +3,25 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { authService } from "../services/auth.service";
 import "../styles/layout.css";
+import { useAuth } from "../context/AuthContext";
 
 interface UserProfile {
   id: number;
   user_id: string;
   name: string;
   role: "ADMIN" | "LOJA";
+  store_id: string;
 }
 
 export default function Layout() {
+  const { stores, activeStore, selectStore, createStore } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [storeOpen, setStoreOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [addingStore, setAddingStore] = useState(false);
+  const [newStoreName, setNewStoreName] = useState("");
+  const [storeError, setStoreError] = useState("");
+  const [savingStore, setSavingStore] = useState(false);
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -85,7 +92,7 @@ export default function Layout() {
               </span>
 
               <span>
-                Dom Hamburgueria - Loja 1
+                {activeStore?.name || "Dom Hamburgueria"}
               </span>
 
               <span
@@ -106,26 +113,24 @@ export default function Layout() {
                   Selecionar loja
                 </div>
 
-                <button
-                  className="dropdown-option active"
-                  type="button"
-                >
-
-                  <span>
-                    🏪 Dom Hamburgueria - Loja 1
-                  </span>
-
-                  <span>
-                    ✓
-                  </span>
-
-                </button>
+                {stores.map(store => (
+                  <button
+                    className={`dropdown-option ${store.id === activeStore?.id ? "active" : ""}`}
+                    type="button"
+                    key={store.id}
+                    onClick={() => selectStore(store)}
+                  >
+                    <span>🏪 {store.name}</span>
+                    {store.id === activeStore?.id && <span>✓</span>}
+                  </button>
+                ))}
 
                 {userRole === "ADMIN" && (
 
                   <button
                     className="dropdown-option"
                     type="button"
+                    onClick={() => { setAddingStore(true); setStoreError(""); }}
                   >
                     ＋ Adicionar loja
                   </button>
@@ -137,6 +142,26 @@ export default function Layout() {
             )}
 
           </div>
+
+          {addingStore && (
+            <div className="store-dialog-backdrop" role="presentation" onMouseDown={() => !savingStore && setAddingStore(false)}>
+              <form className="store-dialog" onMouseDown={event => event.stopPropagation()} onSubmit={async event => {
+                event.preventDefault(); setStoreError(""); setSavingStore(true);
+                try { await createStore(newStoreName); }
+                catch (error) { setStoreError(error instanceof Error ? error.message : "Não foi possível criar a loja."); setSavingStore(false); }
+              }}>
+                <h2>Adicionar loja</h2>
+                <p>Crie uma nova unidade para gerir o cardápio, os pedidos e as configurações separadamente.</p>
+                <label htmlFor="new-store-name">Nome da loja</label>
+                <input id="new-store-name" value={newStoreName} maxLength={100} autoFocus onChange={event => setNewStoreName(event.target.value)} placeholder="Ex.: Dom Hamburgueria - Centro" />
+                {storeError && <div className="store-dialog-error">{storeError}</div>}
+                <div className="store-dialog-actions">
+                  <button type="button" onClick={() => setAddingStore(false)} disabled={savingStore}>Cancelar</button>
+                  <button type="submit" disabled={savingStore || newStoreName.trim().length < 2}>{savingStore ? "Criando..." : "Criar loja"}</button>
+                </div>
+              </form>
+            </div>
+          )}
 
           {/* USUÁRIO */}
 

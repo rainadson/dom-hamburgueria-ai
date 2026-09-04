@@ -54,11 +54,35 @@ export async function requireAuth(
     return res.status(403).json({ message: "Usuário não autorizado para o painel." });
   }
 
+  const requestedStoreId = req.header("x-store-id")?.trim();
+  let storeId = profile.store_id;
+
+  if (requestedStoreId) {
+    if (!validStoreId(requestedStoreId)) {
+      return res.status(400).json({ message: "Loja selecionada inválida." });
+    }
+    if (profile.role !== "ADMIN" && requestedStoreId !== profile.store_id) {
+      return res.status(403).json({ message: "Seu perfil não pode acessar esta loja." });
+    }
+    if (profile.role === "ADMIN") {
+      const { data: store, error: storeError } = await supabase
+        .from("stores")
+        .select("id")
+        .eq("id", requestedStoreId)
+        .eq("active", true)
+        .maybeSingle();
+      if (storeError || !store) {
+        return res.status(403).json({ message: "Loja indisponível para este administrador." });
+      }
+      storeId = requestedStoreId;
+    }
+  }
+
   req.auth = {
     id: userData.user.id,
     email: userData.user.email,
     role: profile.role,
-    storeId: profile.store_id,
+    storeId,
     profileId: profile.id,
     name: profile.name,
   };

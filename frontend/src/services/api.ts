@@ -16,6 +16,8 @@ api.interceptors.request.use(async (config) => {
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
+  const storeId = localStorage.getItem("dom-active-store-id");
+  if (storeId) config.headers["X-Store-Id"] = storeId;
 
   return config;
 });
