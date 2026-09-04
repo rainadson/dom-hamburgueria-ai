@@ -7,6 +7,7 @@ import StatusBadge from "../components/StatusBadge";
 import OrderDetailsModal from "../components/OrderDetailsModal";
 import "../styles/modal.css";
 import type { Order } from "../types/order";
+import { connectRealtime } from "../services/realtime-refresh";
 
 
 export default function Orders() {
@@ -29,8 +30,10 @@ export default function Orders() {
         refresh.current = loop.refresh;
         const onFocus = () => { void loop.refresh(); };
         window.addEventListener("focus", onFocus);
+        const disconnect = connectRealtime(["orders"], () => { void loop.refresh(); });
         void loop.refresh();
         return () => {
+            disconnect();
             loop.stop();
             refresh.current = () => {};
             window.removeEventListener("focus", onFocus);

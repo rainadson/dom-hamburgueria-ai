@@ -1,7 +1,7 @@
 import axios from "axios";
 import { supabase } from "../lib/supabase";
 
-const apiBaseUrl =
+export const apiBaseUrl =
   import.meta.env.VITE_API_URL?.trim() ||
   "https://dom-hamburgueria-ai.onrender.com/api";
 

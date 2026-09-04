@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createRefreshLoop } from "../services/refresh-loop";
 import { api } from "../services/api";
 import "../styles/conversations.css";
+import { connectRealtime } from "../services/realtime-refresh";
 type Summary = {id:number;name:string|null;phone:string;state:string;updated_at:string};
 type Detail = Summary & {handoff?:{active:boolean;owner_role:string;response_draft?:string};can_manage:boolean;history:{role:string;content:string}[]};
 const labels:Record<string,string>={GREETING:"Início",WAITING_ORDER:"Em atendimento",UPSELL:"Adicionais",MENU_OFFER:"Oferta de Menu",MENU_DRINK:"Escolha da bebida",DELIVERY_TYPE:"Entrega ou levantamento",ADDRESS:"Morada",PAYMENT:"Pagamento",CASH_AMOUNT:"Troco",CONFIRMATION:"Confirmação",FINISHED:"Concluída",CANCELLED:"Cancelada"};
@@ -21,8 +22,9 @@ export default function Conversations(){
   });
   const onFocus=()=>{void loop.refresh();};
   window.addEventListener('focus',onFocus);
+  const disconnect=connectRealtime(['conversations'],()=>{void loop.refresh();});
   const debounce=setTimeout(()=>{void loop.refresh();},300);
-  return()=>{clearTimeout(debounce);loop.stop();window.removeEventListener('focus',onFocus);};
+  return()=>{disconnect();clearTimeout(debounce);loop.stop();window.removeEventListener('focus',onFocus);};
  },[search,page]);
  useEffect(()=>{setDetail(null);setDetailError("");setReply("");setActionMessage("");},[selected]);
  useEffect(()=>{
@@ -36,8 +38,9 @@ export default function Conversations(){
   });
   const onFocus=()=>{void loop.refresh();};
   window.addEventListener('focus',onFocus);
+  const disconnect=connectRealtime(['conversations'],()=>{void loop.refresh();});
   void loop.refresh();
-  return()=>{loop.stop();window.removeEventListener('focus',onFocus);};
+  return()=>{disconnect();loop.stop();window.removeEventListener('focus',onFocus);};
  },[selected,busy]);
  async function act(action:"take"|"resume"|"draft") {
   if(selected===null||busy)return;

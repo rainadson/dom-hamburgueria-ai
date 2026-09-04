@@ -5,6 +5,7 @@ import { createRefreshLoop } from "../services/refresh-loop";
 import { createOrderArrivalTracker } from "../services/order-arrivals";
 import "../styles/kitchen.css";
 import KitchenOrderCard from "../components/KitchenOrderCard";
+import { connectRealtime } from "../services/realtime-refresh";
 
 const notification = new Audio("/sounds/notification.mp3");
 
@@ -40,8 +41,10 @@ export default function Kitchen() {
     refresh.current = loop.refresh;
     const onFocus = () => { void loop.refresh(); };
     window.addEventListener("focus", onFocus);
+    const disconnect = connectRealtime(["orders"], () => { void loop.refresh(); });
     void loop.refresh();
     return () => {
+      disconnect();
       loop.stop();
       refresh.current = () => {};
       window.removeEventListener("focus", onFocus);
