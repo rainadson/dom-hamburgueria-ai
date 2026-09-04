@@ -1,6 +1,6 @@
 # Validação final e dependências — 03/09/2026
 
-O plano até TASK-0149 não está concluído. O deploy `730af65` foi confirmado como Live no Render. Não aplicar migrações nem ativar funcionalidades por inferência a partir de testes simulados.
+O código do plano até TASK-0149 foi validado e publicado no commit funcional `c9e3cc0`. Render e Vercel foram confirmados em produção; `/health` está configurado como Health Check no Render. Permanecem apenas dependências externas ou dados oficiais descritos abaixo.
 
 | Bloco | Evidência disponível | Trabalho necessário |
 |---|---|---|
@@ -12,9 +12,9 @@ O plano até TASK-0149 não está concluído. O deploy `730af65` foi confirmado 
 | 0103–0109, 0138 | Auditoria em configuracoes-pendentes.md | Dados oficiais da loja, horários, taxa e meios de pagamento; PIX não presumido |
 | 0110–0122, 0145–0146 | Concluídas: papéis, rotas, RLS, associações multiloja e respostas por finalidade publicadas/testadas | Manter validação de regressão na TASK-0149 |
 | 0124 | Concluída: arquivos atuais, histórico e regras de exclusão auditados; nenhum segredo real encontrado | Painéis/logs remotos e política de rotação permanecem como operação externa, sem evidência atual de exposição |
-| 0125–0129, 0134, 0149 | Deploy antigo verificado, HTTPS nos serviços atuais | Publicar após aprovação, confirmar os dois deploys e testar novo estado; domínio próprio depende da escolha do utilizador |
+| 0125–0129, 0134, 0149 | Concluídas: deploys, HTTPS, cabeçalhos, revisão e validação final confirmados | Domínio próprio continua dependente da escolha do utilizador |
 | 0130–0133 | Erros HTTP seguros preparados | Correlação/monitorização, política de backups e restauração isolada; nenhum serviço comprado |
 | 0144 | Concluída no código: handoff e pausa aprovados para ADMIN/LOJA | Entrega da resposta humana pelo WhatsApp fica na TASK-0147 adiada |
 | 0148 | Concluída: carga isolada em lotes de 20, 200 leituras + 200 rejeições, zero falhas | Não bombardear produção; repetir apenas diante de mudança de desempenho |
 
-Próximos passos locais independentes: carga básica dos contratos de leitura em processo isolado e auditoria de arquivos versionados para verificar que .env não está incluído. Depois revisar o inventário, sem inventar novas tarefas para manter a automação ocupada. Não repetir pedidos de aprovação já enviados se não houver informação nova.
+Próximos passos: obter os dados oficiais da TASK-0138; depois executar a etapa específica de WhatsApp/TASK-0147. Domínio e restauração isolada seguem como decisões operacionais separadas.

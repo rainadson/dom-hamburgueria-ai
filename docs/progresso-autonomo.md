@@ -301,3 +301,9 @@ Checklist pós-publicação registrado em `docs/release-task-0134.md`: confirmar
 Executado conjunto focado de 60 testes: checkout, entrega/dinheiro/troco, retirada/Multibanco, cancelamento, negativas, contexto, encerramento de upsell, resumo de entrega, handoff, conflito de estado, papéis, isolamento por loja, RLS e carga básica. Todos os 60 foram aprovados, sem falhas e sem pedidos reais.
 
 Ficam concluídas no código as TASK-0135–0137, 0139–0146 e 0148. A TASK-0138 depende de horário, taxa/regra de entrega e meios oficiais da loja, dados ainda não fornecidos. A TASK-0147, integração real do WhatsApp, foi adiada por instrução explícita do proprietário. Próximo: TASK-0149, validação final da versão publicada.
+
+## 04/09/2026 — TASK-0149: validação final de produção
+
+Commit funcional `c9e3cc0` confirmado Live no Render e publicado na Vercel. Raiz da API e `/health` retornaram 200 com `X-Request-ID`; `/api/orders` sem sessão retornou 401. `/`, `/login` e `/orders` retornaram 200 na Vercel, com `nosniff`, bloqueio de frame e política de referência confirmados. A tela `/orders` autenticada como LOJA carregou a lista após atualização, sem ações de escrita.
+
+O Health Check Path do Render foi configurado como `/health`; o painel confirmou novo deploy bem-sucedido e Live. A TASK-0149 está concluída. Do plano numerado, resta a TASK-0138 por falta de dados oficiais e a TASK-0147 WhatsApp, adiada por instrução. Domínio próprio e restauração isolada continuam como dependências operacionais externas.
