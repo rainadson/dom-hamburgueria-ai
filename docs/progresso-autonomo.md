@@ -295,3 +295,9 @@ Nenhum dado foi exportado ou restaurado. A TASK-0133 permanece parcial até conf
 Revisado o pacote desde `730af65`: não contém migração de banco nem mudança de cardápio/pedidos. Backend e frontend compilaram; suíte backend executou 156 casos, com 148 aprovados, 8 integrações externas ignoradas e zero falhas. `git diff --check` aprovado. O aviso do bundle Vite permanece não bloqueante.
 
 Checklist pós-publicação registrado em `docs/release-task-0134.md`: confirmar Render/Vercel, `/health`, raiz da API, `/login`, tela autenticada e cabeçalhos. A TASK-0134 está concluída como revisão; publicação depende de autorização explícita por acionar produção.
+
+## 04/09/2026 — consolidação TASK-0135–0148 sem WhatsApp
+
+Executado conjunto focado de 60 testes: checkout, entrega/dinheiro/troco, retirada/Multibanco, cancelamento, negativas, contexto, encerramento de upsell, resumo de entrega, handoff, conflito de estado, papéis, isolamento por loja, RLS e carga básica. Todos os 60 foram aprovados, sem falhas e sem pedidos reais.
+
+Ficam concluídas no código as TASK-0135–0137, 0139–0146 e 0148. A TASK-0138 depende de horário, taxa/regra de entrega e meios oficiais da loja, dados ainda não fornecidos. A TASK-0147, integração real do WhatsApp, foi adiada por instrução explícita do proprietário. Próximo: TASK-0149, validação final da versão publicada.
