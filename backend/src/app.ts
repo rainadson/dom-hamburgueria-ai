@@ -23,6 +23,11 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.json());
 
+app.get("/health", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json({ status: "ok" });
+});
+
 app.get("/", (req, res) => {
   res.json({
     success: true,

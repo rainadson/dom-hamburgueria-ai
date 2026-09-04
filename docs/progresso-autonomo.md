@@ -277,3 +277,9 @@ Erros de entrada conhecidos preservam mensagens específicas. A TASK-0130 está 
 Cada requisição passa a receber UUID gerado no backend, devolvido em `X-Request-ID`. Logs genéricos de falha inesperada, produtos e chat incluem esse identificador, permitindo localizar o evento sem registrar telefone, mensagem, pedido, morada, token ou credencial.
 
 O identificador não é aceito do cliente e não altera regras ou respostas de negócio. Persistência, alertas e retenção de logs seguem no bloco de monitorização. A TASK-0131 está concluída.
+
+## 04/09/2026 — TASK-0132: monitorização de disponibilidade
+
+Adicionada `GET /health`, rota pública, sem cache e sem consulta a banco, IA ou dados operacionais. Retorna apenas `{status:"ok"}` e pode ser usada pelo Health Check do Render ou monitor externo. Teste confirma o contrato e ausência de dados adicionais.
+
+A parte versionada está concluída. Ativar alertas exige publicação e escolha de destino/frequência no serviço externo; isso não foi inventado. Próximo: TASK-0133, política de backup e restauração.

@@ -18,6 +18,7 @@ test('every operational API boundary requires authentication and unknown APIs re
   assert.equal(authLookups,0);
   for(const [method,path] of [['GET','/api/not-found'],['GET','/api/test-db'],['POST','/api/webhook']]){const response=await fetch(base+path,{method,headers:{'content-type':'application/json'},...(method==='POST'?{body:'{}'}:{})});assert.equal(response.status,404);assert.deepEqual(await response.json(),{message:'Endpoint não encontrado.'});}
   assert.equal((await fetch(base+'/')).status,200);
+  const health=await fetch(base+'/health');assert.equal(health.status,200);assert.equal(health.headers.get('cache-control'),'no-store');assert.deepEqual(await health.json(),{status:'ok'});
  }finally{server.closeAllConnections();await new Promise(r=>server.close(r));supabase.auth.getUser=original;}
 });
 
