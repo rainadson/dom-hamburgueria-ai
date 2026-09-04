@@ -1,7 +1,6 @@
 import {useAuth} from '../context/AuthContext';
 import {loadPending,savePending,clearPending,type PendingManualOrder} from '../services/manual-pending';
 import {useEffect,useState} from 'react';
-import {flushSync} from 'react-dom';
 import {api} from '../services/api';
 import {authService} from '../services/auth.service';
 import '../styles/manual-order.css';
@@ -21,6 +20,7 @@ export default function ManualOrder(){
   try{setActorId(id);setPending(loadPending(sessionStorage,id));setPendingReady(true);}catch{setError('Não foi possível recuperar o envio anterior. Verifique os pedidos antes de continuar.');}
  })();return()=>{active=false};},[profile?.user_id]);
  const [customerSearch,setCustomerSearch]=useState('');const [customers,setCustomers]=useState<{name:string;phone:string}[]>([]);const [customerError,setCustomerError]=useState('');const [searching,setSearching]=useState(false);
+ const [selectedCustomer,setSelectedCustomer]=useState<{name:string;phone:string}|null>(null);
  const [products,setProducts]=useState<{name:string;active:boolean}[]>([]);
  const [paymentMethods,setPaymentMethods]=useState<string[]>(['DINHEIRO','MULTIBANCO']);const [deliveryFee,setDeliveryFee]=useState<number|null>(null);
  const [form,setForm]=useState({customer_name:'',customer_phone:'',delivery_type:'PICKUP',address:'',payment_method:'MULTIBANCO',amount_paid:''});
@@ -34,6 +34,7 @@ export default function ManualOrder(){
   const timer=setTimeout(async()=>{try{const {data}=await api.get('/orders/manual/customers',{params:{search:customerSearch.trim()},signal:controller.signal});if(active)setCustomers(data.items);}catch(e:any){if(active)setCustomerError(e.response?.data?.message||'Não foi possível buscar. Pode preencher o cliente manualmente.');}finally{if(active)setSearching(false);}},300);
   return()=>{active=false;controller.abort();clearTimeout(timer);};
  },[customerSearch]);
+ useEffect(()=>{if(!selectedCustomer)return;setForm(current=>({...current,customer_name:selectedCustomer.name,customer_phone:String(selectedCustomer.phone)}));setSelectedCustomer(null);},[selectedCustomer]);
  function update(index:number,patch:Partial<Line>){setPreview(null);setLines(current=>current.map((line,i)=>i===index?{...line,...patch}:line));}
  async function review(e:React.FormEvent){
   e.preventDefault();if(pending||busy||sentId)return;setBusy(true);setError('');setPreview(null);setConfirmed(false);
@@ -62,7 +63,7 @@ export default function ManualOrder(){
  <label>Buscar cliente de pedidos anteriores<input value={customerSearch} maxLength={100} placeholder="Nome ou telefone (mínimo 2 caracteres)" onChange={e=>setCustomerSearch(e.target.value)}/></label>
  {searching&&<p role="status">A buscar clientes…</p>}{customerError&&<p role="alert">{customerError}</p>}
  {!searching&&!customerError&&customerSearch.trim().length>=2&&!customers.length&&<p>Nenhum cliente encontrado. Preencha o nome e telefone abaixo.</p>}
- {customers.length>0&&<ul aria-label="Clientes encontrados">{customers.map(customer=><li key={customer.phone}><button type="button" onClick={()=>{setPreview(null);flushSync(()=>setForm(current=>({...current,customer_name:customer.name,customer_phone:String(customer.phone)})));setCustomerSearch('');}}>{customer.name||'Cliente sem nome'} — {customer.phone}</button></li>)}</ul>}
+ {customers.length>0&&<ul aria-label="Clientes encontrados">{customers.map(customer=><li key={customer.phone}><button type="button" onClick={()=>{setPreview(null);setCustomerSearch('');setSelectedCustomer(customer);}}>{customer.name||'Cliente sem nome'} — {customer.phone}</button></li>)}</ul>}
  <label>Nome<input required maxLength={150} value={form.customer_name} onChange={e=>field('customer_name',e.target.value)}/></label><label>Telefone<input required type="tel" maxLength={20} value={form.customer_phone} onChange={e=>field('customer_phone',e.target.value)}/></label></fieldset>
  <fieldset disabled={busy||!!pending||!!sentId||!pendingReady}><legend>Produtos</legend>{lines.map((line,i)=><div className="manual-line" key={i}>
  <label>Produto {i+1}<select required value={line.product} onChange={e=>update(i,{...emptyLine(),product:e.target.value})}><option value="">Escolha um produto</option>{products.map(p=><option key={p.name}>{p.name}</option>)}</select></label>
