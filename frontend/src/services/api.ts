@@ -1,8 +1,12 @@
 import axios from "axios";
 import { supabase } from "../lib/supabase";
 
+const apiBaseUrl =
+  import.meta.env.VITE_API_URL?.trim() ||
+  "https://dom-hamburgueria-ai.onrender.com/api";
+
 export const api = axios.create({
-  baseURL: "https://dom-hamburgueria-ai.onrender.com/api",
+  baseURL: apiBaseUrl,
 });
 
 api.interceptors.request.use(async (config) => {

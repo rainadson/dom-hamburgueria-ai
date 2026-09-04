@@ -253,3 +253,15 @@ Permanece apenas o aviso não bloqueante de bundle principal com cerca de 545 kB
 Conferidos, somente pelos nomes, os contratos de ambiente do Render e da Vercel. Backend usa `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`, `MANUAL_ORDER_SUBMIT_ENABLED` e `PORT`; frontend usa apenas `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY`. Os exemplos versionados cobrem o conjunto correto e não contêm valores reais.
 
 Removido o arquivo órfão `backend/src/config/supabase.ts`, que não era importado e referenciava a variável antiga `SUPABASE_KEY`. Nenhum valor de painel foi exibido ou alterado. A TASK-0127 está concluída no contrato versionado. Próximo: TASK-0128, domínio público.
+
+## 04/09/2026 — TASK-0128 parcial: domínio público
+
+Frontend e backend funcionam nos endereços padrão HTTPS da Vercel e do Render. Não existe domínio próprio escolhido ou documentado. Para permitir a troca futura sem editar código, o frontend agora aceita `VITE_API_URL`, mantendo a API atual do Render como fallback compatível.
+
+A preparação técnica está concluída, mas o domínio próprio depende da escolha e registro pelo proprietário. Até lá, os endereços padrão permanecem oficiais. Próximo trabalho independente: TASK-0129, verificação HTTPS e cabeçalhos básicos.
+
+## 04/09/2026 — TASK-0129: HTTPS e cabeçalhos
+
+Render e Vercel responderam em HTTPS com HSTS. O backend já inclui CSP, proteção de frame e `nosniff` pelo Helmet. O frontend passa a declarar em `vercel.json` `nosniff`, bloqueio de frame, política de referência e bloqueio de câmera/microfone/geolocalização, recursos não usados pela aplicação.
+
+Não foi imposta CSP no frontend sem validação das origens necessárias para Supabase e API. A TASK-0129 está concluída no código; os novos cabeçalhos da Vercel precisam ser confirmados depois da publicação. Próximo: TASK-0130, tratamento seguro de erros, já preparado parcialmente e agora a consolidar.

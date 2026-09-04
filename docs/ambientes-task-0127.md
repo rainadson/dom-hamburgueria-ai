@@ -16,6 +16,7 @@
 | --- | --- | --- |
 | `VITE_SUPABASE_URL` | autenticação Supabase no navegador | pública por definição do Vite |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | chave publicável do Supabase | pública; protegida por autenticação/RLS |
+| `VITE_API_URL` | base pública da API, terminada em `/api` | pública; usa o Render atual como fallback |
 
 O frontend não contém nem referencia a chave `service_role`. O backend não utiliza variáveis com prefixo `VITE_`.
 
