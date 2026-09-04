@@ -229,3 +229,9 @@ Contratos puros verificam os campos permitidos e proíbem dados privados em cada
 Concluída a revisão das entradas do chat, produtos, pedidos manuais, atualização de estado e conversas. IDs recebidos na URL agora aceitam somente inteiros positivos canónicos e seguros; valores como `1e2`, decimais, sinais, listas e objetos são recusados antes de consultar ou alterar dados. Página e busca de conversas deixam de converter ou truncar silenciosamente entradas inválidas; a busca limita tamanho e caracteres que poderiam interferir na sintaxe do filtro.
 
 Matriz completa registrada em `docs/validacao-entradas-task-0123.md`. Backend compilado e suíte completa aprovada: 156 casos, 148 aprovados, 8 integrações externas ignoradas e zero falhas. Nenhum dado real foi criado ou modificado. Próximo: publicar e conferir saúde e telas autenticadas em produção, sem alterar pedidos.
+
+## 04/09/2026 — TASK-0124: auditoria de segredos
+
+Verificados os arquivos atuais e todo o histórico Git por nomes sensíveis e padrões de chave, token, conexão e chave privada, sem imprimir valores. Nenhum `.env`, certificado, chave privada ou credencial real está versionado. Os dois `.env.example` contêm somente placeholders; URLs e tokens encontrados nos testes são fictícios. `SUPABASE_SERVICE_ROLE_KEY` permanece lida somente pelo backend.
+
+O `.gitignore` agora bloqueia variantes `.env.*`, certificados, chaves e arquivos comuns de credenciais, preservando `.env.example`. A TASK-0124 está concluída no escopo do repositório. Painéis, logs remotos e política de rotação são operações externas e não foram inferidos como falha sem evidência de exposição. Próximo: TASK-0125, conferência do pipeline/deploy.

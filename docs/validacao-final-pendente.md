@@ -1,6 +1,6 @@
 # Validação final e dependências — 03/09/2026
 
-O plano até TASK-0149 não está concluído. O último deploy verificado é ee4763d. Commits posteriores estão locais e aguardam aprovação de publicação; não aplicar migrações nem ativar funcionalidades por inferência a partir de testes simulados.
+O plano até TASK-0149 não está concluído. O deploy `730af65` foi confirmado como Live no Render. Não aplicar migrações nem ativar funcionalidades por inferência a partir de testes simulados.
 
 | Bloco | Evidência disponível | Trabalho necessário |
 |---|---|---|
@@ -11,7 +11,7 @@ O plano até TASK-0149 não está concluído. O último deploy verificado é ee4
 | 0100–0102 | Resumo copiável, DELIVERED existente | Clipboard/fluxo operacional; partilha real é ação explícita do atendente |
 | 0103–0109, 0138 | Auditoria em configuracoes-pendentes.md | Dados oficiais da loja, horários, taxa e meios de pagamento; PIX não presumido |
 | 0110–0122, 0145–0146 | Roles existentes e testes de rotas locais | Modelo multiloja, RLS/associações e revisão financeira; aprovação da correção de rotas públicas |
-| 0124 | Remoção de logs desnecessários | Auditoria controlada de arquivos versionados sem revelar valores; não equivale a rotação de credenciais |
+| 0124 | Concluída: arquivos atuais, histórico e regras de exclusão auditados; nenhum segredo real encontrado | Painéis/logs remotos e política de rotação permanecem como operação externa, sem evidência atual de exposição |
 | 0125–0129, 0134, 0149 | Deploy antigo verificado, HTTPS nos serviços atuais | Publicar após aprovação, confirmar os dois deploys e testar novo estado; domínio próprio depende da escolha do utilizador |
 | 0130–0133 | Erros HTTP seguros preparados | Correlação/monitorização, política de backups e restauração isolada; nenhum serviço comprado |
 | 0144 | Handoff e pausa testados com simulações | Resposta humana real depende de WhatsApp e validação integrada |

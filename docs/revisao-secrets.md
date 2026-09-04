@@ -8,4 +8,10 @@ Auditoria limitada aos nomes de arquivos rastreados e referências a variáveis 
 - MANUAL_ORDER_SUBMIT_ENABLED permanece false no exemplo. PORT é opcional.
 - `backend/src/config/supabase.ts` referencia SUPABASE_KEY, mas não possui importador localizado; não removido nesta auditoria.
 
-Limitações: não foi analisado histórico Git, plataforma de deploy, logs remotos, validade/rotação de credenciais ou arquivos ignorados. Assim, TASK-0124 continua parcial. Rotação exige ação no fornecedor e aprovação; exemplos não substituem gestão de secrets.
+## Fechamento da TASK-0124
+
+Arquivos atuais e todo o histórico Git foram verificados por nomes sensíveis e padrões de alto risco sem imprimir valores. Não há `.env`, certificado, chave privada ou arquivo de credenciais versionado. Os únicos arquivos de ambiente rastreados são `backend/.env.example` e `frontend/.env.example`, ambos com placeholders. As ocorrências nos testes são URLs e tokens fictícios; o cliente Supabase privilegiado lê `SUPABASE_SERVICE_ROLE_KEY` exclusivamente do ambiente do backend.
+
+O `.gitignore` passou a cobrir variantes `.env.*`, preservando apenas `.env.example`, além de certificados, chaves e arquivos comuns de credenciais. A TASK-0124 fica concluída para o repositório Git.
+
+Limites: esta verificação não comprova a ausência de segredos nos painéis, logs remotos ou computadores de operadores, nem a validade ou rotação das credenciais atuais. Rotação é uma operação externa e só deve ocorrer diante de exposição confirmada ou política definida.
