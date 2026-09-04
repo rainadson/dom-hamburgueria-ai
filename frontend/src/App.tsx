@@ -13,6 +13,7 @@ import Conversations from "./pages/Conversations";
 import ManualOrder from "./pages/ManualOrder";
 import WhatsApp from "./pages/WhatsApp";
 import Demo from "./pages/Demo";
+import Settings from "./pages/Settings";
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/conversations" element={<Conversations />} />
         <Route path="/whatsapp" element={<WhatsApp />} />
         <Route path="/demo" element={<Demo />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
       {/* Qualquer rota inexistente */}

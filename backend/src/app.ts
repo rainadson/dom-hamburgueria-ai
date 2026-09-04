@@ -15,6 +15,7 @@ import conversationRoutes from "./conversation/conversation.routes";
 
 import whatsappStatusRoutes from "./whatsapp/whatsapp-status.routes";
 import realtimeRoutes from "./realtime/realtime.routes";
+import settingsRoutes from "./settings/settings.routes";
 
 const app = express();
 
@@ -36,9 +37,18 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/api/session", requireAuth, (req, res) => res.json({
+  id: req.auth!.profileId,
+  user_id: req.auth!.id,
+  name: req.auth!.name,
+  role: req.auth!.role,
+  store_id: req.auth!.storeId,
+}));
+
 
 app.use("/api/whatsapp", requireAuth, whatsappStatusRoutes);
 app.use("/api/realtime", requireAuth, realtimeRoutes);
+app.use("/api/settings", requireAuth, settingsRoutes);
 app.use("/api/conversations", requireAuth, conversationRoutes);
 app.use("/api/orders", requireAuth, orderRoutes);
 app.use("/api/chat", requireAuth);

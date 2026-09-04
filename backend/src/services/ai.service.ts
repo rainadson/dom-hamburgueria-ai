@@ -4,15 +4,17 @@ import { buildConversationContext, ConversationContext } from "../conversation/c
 import { buildSystemPrompt } from "../prompts/system.prompt";
 import { OrderService } from "../orders/order.service";
 import { ProductService } from "../products/product.service";
+import { SettingsService } from "../settings/settings.service";
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
 const orderService = new OrderService();
-const productService = new ProductService();
-
 export class AIService {
+  private productService: ProductService;
+  private settingsService?: SettingsService;
+  constructor(storeId?: string) { this.productService = new ProductService(storeId); if(storeId)this.settingsService=new SettingsService(storeId); }
 
   async generateResponse(
     message: string,
@@ -21,7 +23,8 @@ export class AIService {
   ) {
 
     // Busca o cardápio atual
-    const menu = await productService.getMenuPrompt();
+    const menu = await this.productService.getMenuPrompt();
+    const settings = this.settingsService ? await this.settingsService.get() : undefined;
 
     const completion = await groq.chat.completions.create({
       model: "openai/gpt-oss-120b",
@@ -30,7 +33,7 @@ export class AIService {
       messages: [
         {
           role: "system",
-          content: buildSystemPrompt(menu) + (context ? buildConversationContext(context, history) : ""),
+          content: buildSystemPrompt(menu, settings) + (context ? buildConversationContext(context, history) : ""),
         },
 
         ...history.filter(entry => ["user", "assistant"].includes(entry.role))
@@ -69,7 +72,7 @@ export class AIService {
 
       return {
         intent: "ERROR",
-        reply: "Não consegui interpretar a resposta. Tente novamente.",
+        reply: settings?.ai_unknown_reply || "Não consegui interpretar a resposta. Tente novamente.",
         items: [],
       };
 

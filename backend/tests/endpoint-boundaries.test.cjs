@@ -8,7 +8,7 @@ test('every operational API boundary requires authentication and unknown APIs re
  const requests=[
   ['GET','/api/whatsapp/status'],['GET','/api/conversations'],['GET','/api/conversations/1'],
   ['POST','/api/conversations/1/take'],['POST','/api/conversations/1/draft'],['POST','/api/conversations/1/resume'],
-  ['GET','/api/orders'],['GET','/api/orders/kitchen'],['GET','/api/orders/manual/capabilities'],['GET','/api/orders/manual/customers'],['GET','/api/realtime?topics=orders'],
+  ['GET','/api/session'],['GET','/api/settings'],['PUT','/api/settings'],['GET','/api/orders'],['GET','/api/orders/kitchen'],['GET','/api/orders/manual/capabilities'],['GET','/api/orders/manual/customers'],['GET','/api/realtime?topics=orders'],
   ['POST','/api/orders/manual/preview'],['POST','/api/orders/manual/confirm'],['PATCH','/api/orders/1/status'],
   ['GET','/api/products'],['GET','/api/products/1'],['POST','/api/products'],['PUT','/api/products/1'],['DELETE','/api/products/1'],
   ['GET','/api/dashboard'],['POST','/api/chat']

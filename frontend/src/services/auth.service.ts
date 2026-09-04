@@ -35,25 +35,13 @@ export const authService = {
   },
 
   async getProfile() {
-
-    const user = await this.getUser();
-
-    if (!user) {
-      return null;
-    }
-
-    const { data, error } = await supabase
-      .from("user_profiles")
-      .select("id, user_id, name, role")
-      .eq("user_id", user.id)
-      .single();
-
-    if (error) {
-      console.error("Erro ao buscar perfil:", error);
-      return null;
-    }
-
-    return data;
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) return null;
+    const base=import.meta.env.VITE_API_URL?.trim()||"https://dom-hamburgueria-ai.onrender.com/api";
+    const response=await fetch(`${base}/session`,{headers:{Authorization:`Bearer ${token}`}});
+    if(!response.ok)return null;
+    return response.json();
   },
 
 };

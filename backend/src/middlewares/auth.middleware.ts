@@ -9,6 +9,8 @@ export interface AuthenticatedUser {
   email?: string;
   role: UserRole;
   storeId: string;
+  profileId?: number;
+  name?: string;
 }
 
 declare global {
@@ -44,7 +46,7 @@ export async function requireAuth(
 
   const { data: profile, error: profileError } = await supabase
     .from("user_profiles")
-    .select("role,store_id")
+    .select("id,name,role,store_id")
     .eq("user_id", userData.user.id)
     .single();
 
@@ -57,6 +59,8 @@ export async function requireAuth(
     email: userData.user.email,
     role: profile.role,
     storeId: profile.store_id,
+    profileId: profile.id,
+    name: profile.name,
   };
 
   next();

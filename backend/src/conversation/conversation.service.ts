@@ -5,12 +5,15 @@ import { ConversationRepository } from "./conversation.repository";
 import { ConversationState } from "./conversation.types";
 import { AIService } from "../services/ai.service";
 import { OrderService } from "../orders/order.service";
+import { SettingsService } from "../settings/settings.service";
+import { DOM_STORE_ID } from "../database/store-context";
 
 export class ConversationService {
   private repository: ConversationRepository;
-  private aiService = new AIService();
+  private aiService: AIService;
   private orderService: OrderService;
-  constructor(private storeId?: string) { this.repository = new ConversationRepository(storeId); this.orderService = new OrderService(storeId); }
+  private settingsService: SettingsService;
+  constructor(private storeId?: string) { this.repository = new ConversationRepository(storeId); this.orderService = new OrderService(storeId); this.aiService = new AIService(storeId); this.settingsService = new SettingsService(storeId||DOM_STORE_ID); }
 
   // ==========================================
   // BUSCAR OU CRIAR CONVERSA
@@ -56,8 +59,10 @@ export class ConversationService {
     const firstGreeting = !conversation.history?.length && !conversation.order_draft?.items?.length &&
       ["oi", "ola", "bom dia", "boa tarde", "boa noite"].includes(normalizeShortReply(message));
     if (menuRequest || firstGreeting) {
+      const settings=await this.settingsService.get();
       const lastQuestion = [...(conversation.history || [])].reverse().find((entry: any) => entry.role === "assistant")?.content;
-      const reply = "Aqui está o cardápio da Dom Hamburgueria! 🍔\nO Menu inclui batata e Coca-Cola normal ou Zero em lata por mais € 3,50. O açaí inclui até 2 toppings.\n\n" +
+      const intro=firstGreeting&&settings.ai_greeting?settings.ai_greeting:`Aqui está o cardápio da ${settings.restaurant_name}! 🍔`;
+      const reply = intro+"\nO Menu inclui batata e Coca-Cola normal ou Zero em lata por mais € 3,50. O açaí inclui até 2 toppings.\n\n" +
         (conversation.order_draft?.items?.length && lastQuestion ? lastQuestion : "O que deseja pedir?");
       if (!conversation.order_draft?.items?.length && !conversation.order_draft?.checkout_step) {
         await this.repository.updateState(conversation.id, ConversationState.WAITING_ORDER);

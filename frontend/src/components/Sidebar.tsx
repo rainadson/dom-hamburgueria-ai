@@ -77,7 +77,7 @@ export default function Sidebar({ collapsed }: SidebarProps) {
           {!collapsed && <span>Relatórios</span>}
         </NavLink>
 
-        <NavLink to="/settings" className="future-link">
+        <NavLink to="/settings">
           <span className="icon">⚙</span>
           {!collapsed && <span>Configurações</span>}
         </NavLink>
