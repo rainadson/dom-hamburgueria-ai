@@ -1,4 +1,5 @@
 import type { ErrorRequestHandler } from "express";
+import { reportFailure } from "./request-context.middleware";
 
 export const handleApiError: ErrorRequestHandler = (error, _req, res, next) => {
   if (res.headersSent) { next(error); return; }
@@ -10,6 +11,6 @@ export const handleApiError: ErrorRequestHandler = (error, _req, res, next) => {
     res.status(413).json({message:"A requisição excede o tamanho permitido."});
     return;
   }
-  console.error("Falha interna ao atender requisição da API.");
+  reportFailure(res, "Falha interna ao atender requisição da API.");
   res.status(500).json({message:"Não foi possível concluir a requisição."});
 };

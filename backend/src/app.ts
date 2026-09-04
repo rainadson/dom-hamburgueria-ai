@@ -9,6 +9,7 @@ import orderRoutes from "./orders/order.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import { requireAuth } from "./middlewares/auth.middleware";
 import { apiNotFound } from "./middlewares/not-found.middleware";
+import { requestContext } from "./middlewares/request-context.middleware";
 
 import conversationRoutes from "./conversation/conversation.routes";
 
@@ -16,6 +17,7 @@ import whatsappStatusRoutes from "./whatsapp/whatsapp-status.routes";
 
 const app = express();
 
+app.use(requestContext);
 app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));

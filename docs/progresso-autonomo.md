@@ -271,3 +271,9 @@ Não foi imposta CSP no frontend sem validação das origens necessárias para S
 Consolidado o tratamento para JSON inválido, corpo excessivo, endpoint inexistente, falha inesperada e indisponibilidade de dados. Respostas 500 não incluem stack, objeto do banco ou detalhe do provedor. Corrigido o último caminho encontrado: conteúdo bruto e inválido devolvido pelo modelo deixa de ser reenviado ao usuário e passa a gerar orientação genérica.
 
 Erros de entrada conhecidos preservam mensagens específicas. A TASK-0130 está concluída; correlação e monitorização seguem nas tarefas seguintes.
+
+## 04/09/2026 — TASK-0131: correlação segura de logs
+
+Cada requisição passa a receber UUID gerado no backend, devolvido em `X-Request-ID`. Logs genéricos de falha inesperada, produtos e chat incluem esse identificador, permitindo localizar o evento sem registrar telefone, mensagem, pedido, morada, token ou credencial.
+
+O identificador não é aceito do cliente e não altera regras ou respostas de negócio. Persistência, alertas e retenção de logs seguem no bloco de monitorização. A TASK-0131 está concluída.

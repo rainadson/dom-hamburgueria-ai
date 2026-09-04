@@ -3,6 +3,7 @@ import { ProductInputError } from "./product-input";
 import { Router } from "express";
 import { ProductService } from "./product.service";
 import { positiveId } from "../middlewares/http-input";
+import { reportFailure } from "../middlewares/request-context.middleware";
 
 const router = Router();
 const serviceFor = (req: any) => new ProductService(req.auth.storeId);
@@ -14,7 +15,7 @@ router.get("/", async (req, res) => {
     res.json(products);
   } catch (error) {
     if (error instanceof ProductInputError) return res.status(400).json({message:error.message});
-    console.error("Falha na operação de produtos.");
+    reportFailure(res, "Falha na operação de produtos.");
     res.status(500).json({ message: "Erro ao listar produtos" });
   }
 });
@@ -35,7 +36,7 @@ router.get("/:id", async (req, res) => {
     res.json(product);
   } catch (error) {
     if (error instanceof ProductInputError) return res.status(400).json({message:error.message});
-    console.error("Falha na operação de produtos.");
+    reportFailure(res, "Falha na operação de produtos.");
     res.status(500).json({ message: "Erro ao buscar produto" });
   }
 });
@@ -47,7 +48,7 @@ router.post("/", requireRole("ADMIN"), async (req, res) => {
     res.status(201).json(product);
   } catch (error) {
     if (error instanceof ProductInputError) return res.status(400).json({message:error.message});
-    console.error("Falha na operação de produtos.");
+    reportFailure(res, "Falha na operação de produtos.");
     res.status(500).json({ message: "Erro ao criar produto" });
   }
 });
@@ -65,7 +66,7 @@ router.put("/:id", requireRole("ADMIN"), async (req, res) => {
     res.json(product);
   } catch (error) {
     if (error instanceof ProductInputError) return res.status(400).json({message:error.message});
-    console.error("Falha na operação de produtos.");
+    reportFailure(res, "Falha na operação de produtos.");
     res.status(500).json({ message: "Erro ao atualizar produto" });
   }
 });
@@ -80,7 +81,7 @@ router.delete("/:id", requireRole("ADMIN"), async (req, res) => {
     res.status(204).send();
   } catch (error) {
     if (error instanceof ProductInputError) return res.status(400).json({message:error.message});
-    console.error("Falha na operação de produtos.");
+    reportFailure(res, "Falha na operação de produtos.");
     res.status(500).json({ message: "Erro ao excluir produto" });
   }
 });

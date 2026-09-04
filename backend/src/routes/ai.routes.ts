@@ -1,6 +1,7 @@
 import { validChatInput } from "../conversation/chat-input";
 import { Router } from "express";
 import { ConversationService } from "../conversation/conversation.service";
+import { reportFailure } from "../middlewares/request-context.middleware";
 
 const router = Router();
 router.post("/chat", async (req, res) => {
@@ -19,7 +20,7 @@ router.post("/chat", async (req, res) => {
 
   } catch (error: any) {
 
-    console.error("Falha ao processar mensagem no chat.");
+    reportFailure(res, "Falha ao processar mensagem no chat.");
 
     res.status(500).json({
       message: "Não foi possível processar a mensagem. Verifique a conversa antes de tentar novamente.",
