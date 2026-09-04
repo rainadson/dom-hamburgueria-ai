@@ -289,3 +289,9 @@ A parte versionada está concluída. Ativar alertas exige publicação e escolha
 Criado procedimento que cobre dados operacionais, associação por loja, autenticação, catálogo e migrações. Antes de alterações de esquema, exige confirmação de backup e exportação cifrada fora do Git. A restauração deve ocorrer primeiro em Supabase/PostgreSQL isolado, com conferência de relações, contagens e RLS.
 
 Nenhum dado foi exportado ou restaurado. A TASK-0133 permanece parcial até confirmar a política disponível no plano Supabase e executar restauração isolada; recuperação sobre produção exige autorização e janela de manutenção. Próximo trabalho independente: TASK-0134, revisão do lançamento atual.
+
+## 04/09/2026 — TASK-0134: revisão de lançamento
+
+Revisado o pacote desde `730af65`: não contém migração de banco nem mudança de cardápio/pedidos. Backend e frontend compilaram; suíte backend executou 156 casos, com 148 aprovados, 8 integrações externas ignoradas e zero falhas. `git diff --check` aprovado. O aviso do bundle Vite permanece não bloqueante.
+
+Checklist pós-publicação registrado em `docs/release-task-0134.md`: confirmar Render/Vercel, `/health`, raiz da API, `/login`, tela autenticada e cabeçalhos. A TASK-0134 está concluída como revisão; publicação depende de autorização explícita por acionar produção.
