@@ -34,11 +34,10 @@ export default function ManualOrder(){
   const timer=setTimeout(async()=>{try{const {data}=await api.get('/orders/manual/customers',{params:{search:customerSearch.trim()},signal:controller.signal});if(active)setCustomers(data.items);}catch(e:any){if(active)setCustomerError(e.response?.data?.message||'Não foi possível buscar. Pode preencher o cliente manualmente.');}finally{if(active)setSearching(false);}},300);
   return()=>{active=false;controller.abort();clearTimeout(timer);};
  },[customerSearch]);
- useEffect(()=>{if(!selectedCustomer)return;setForm(current=>({...current,customer_name:selectedCustomer.name,customer_phone:String(selectedCustomer.phone)}));setSelectedCustomer(null);},[selectedCustomer]);
  function update(index:number,patch:Partial<Line>){setPreview(null);setLines(current=>current.map((line,i)=>i===index?{...line,...patch}:line));}
  async function review(e:React.FormEvent){
   e.preventDefault();if(pending||busy||sentId)return;setBusy(true);setError('');setPreview(null);setConfirmed(false);
-  const input={...form,amount_paid:form.payment_method==='DINHEIRO'?Number(form.amount_paid.replace(',','.')):null,items:lines.map(line=>({product:line.product,quantity:line.quantity,notes:line.notes,drink:line.drink||undefined,toppings:line.noToppings?[]:line.toppings.length?line.toppings:undefined}))};
+  const input={...form,customer_phone:selectedCustomer?.phone||form.customer_phone,amount_paid:form.payment_method==='DINHEIRO'?Number(form.amount_paid.replace(',','.')):null,items:lines.map(line=>({product:line.product,quantity:line.quantity,notes:line.notes,drink:line.drink||undefined,toppings:line.noToppings?[]:line.toppings.length?line.toppings:undefined}))};
   try{const {data}=await api.post('/orders/manual/preview',input);setPreview(data.order);setReviewedInput(input);}catch(e:any){setError(e.response?.data?.message||'Não foi possível preparar o pedido.');}finally{setBusy(false);}
  }
  async function submit(){
@@ -63,8 +62,8 @@ export default function ManualOrder(){
  <label>Buscar cliente de pedidos anteriores<input value={customerSearch} maxLength={100} placeholder="Nome ou telefone (mínimo 2 caracteres)" onChange={e=>setCustomerSearch(e.target.value)}/></label>
  {searching&&<p role="status">A buscar clientes…</p>}{customerError&&<p role="alert">{customerError}</p>}
  {!searching&&!customerError&&customerSearch.trim().length>=2&&!customers.length&&<p>Nenhum cliente encontrado. Preencha o nome e telefone abaixo.</p>}
- {customers.length>0&&<ul aria-label="Clientes encontrados">{customers.map(customer=><li key={customer.phone}><button type="button" onClick={()=>{setPreview(null);setCustomerSearch('');setSelectedCustomer(customer);}}>{customer.name||'Cliente sem nome'} — {customer.phone}</button></li>)}</ul>}
- <label>Nome<input required maxLength={150} value={form.customer_name} onChange={e=>field('customer_name',e.target.value)}/></label><label>Telefone<input required type="tel" maxLength={20} value={form.customer_phone} onChange={e=>field('customer_phone',e.target.value)}/></label></fieldset>
+ {customers.length>0&&<ul aria-label="Clientes encontrados">{customers.map(customer=><li key={customer.phone}><button type="button" onClick={()=>{setPreview(null);setForm(current=>({...current,customer_name:customer.name}));setSelectedCustomer(customer);setCustomerSearch('');}}>{customer.name||'Cliente sem nome'} — {customer.phone}</button></li>)}</ul>}
+ <label>Nome<input required maxLength={150} value={form.customer_name} onChange={e=>field('customer_name',e.target.value)}/></label><label>Telefone<input required type="tel" maxLength={20} value={selectedCustomer?.phone||form.customer_phone} onChange={e=>{setSelectedCustomer(null);field('customer_phone',e.target.value);}}/></label></fieldset>
  <fieldset disabled={busy||!!pending||!!sentId||!pendingReady}><legend>Produtos</legend>{lines.map((line,i)=><div className="manual-line" key={i}>
  <label>Produto {i+1}<select required value={line.product} onChange={e=>update(i,{...emptyLine(),product:e.target.value})}><option value="">Escolha um produto</option>{products.map(p=><option key={p.name}>{p.name}</option>)}</select></label>
  <label>Quantidade<input required type="number" min={1} max={99} value={line.quantity} onChange={e=>update(i,{quantity:Number(e.target.value)})}/></label>
