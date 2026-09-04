@@ -1,6 +1,7 @@
 import {useAuth} from '../context/AuthContext';
 import {loadPending,savePending,clearPending,type PendingManualOrder} from '../services/manual-pending';
 import {useEffect,useState} from 'react';
+import {flushSync} from 'react-dom';
 import {api} from '../services/api';
 import {authService} from '../services/auth.service';
 import '../styles/manual-order.css';
@@ -61,7 +62,7 @@ export default function ManualOrder(){
  <label>Buscar cliente de pedidos anteriores<input value={customerSearch} maxLength={100} placeholder="Nome ou telefone (mínimo 2 caracteres)" onChange={e=>setCustomerSearch(e.target.value)}/></label>
  {searching&&<p role="status">A buscar clientes…</p>}{customerError&&<p role="alert">{customerError}</p>}
  {!searching&&!customerError&&customerSearch.trim().length>=2&&!customers.length&&<p>Nenhum cliente encontrado. Preencha o nome e telefone abaixo.</p>}
- {customers.length>0&&<ul aria-label="Clientes encontrados">{customers.map(customer=><li key={customer.phone}><button type="button" onClick={()=>{setPreview(null);setForm(current=>({...current,customer_name:customer.name,customer_phone:customer.phone}));setCustomerSearch('');}}>{customer.name||'Cliente sem nome'} — {customer.phone}</button></li>)}</ul>}
+ {customers.length>0&&<ul aria-label="Clientes encontrados">{customers.map(customer=><li key={customer.phone}><button type="button" onClick={()=>{setPreview(null);flushSync(()=>setForm(current=>({...current,customer_name:customer.name,customer_phone:String(customer.phone)})));setCustomerSearch('');}}>{customer.name||'Cliente sem nome'} — {customer.phone}</button></li>)}</ul>}
  <label>Nome<input required maxLength={150} value={form.customer_name} onChange={e=>field('customer_name',e.target.value)}/></label><label>Telefone<input required type="tel" maxLength={20} value={form.customer_phone} onChange={e=>field('customer_phone',e.target.value)}/></label></fieldset>
  <fieldset disabled={busy||!!pending||!!sentId||!pendingReady}><legend>Produtos</legend>{lines.map((line,i)=><div className="manual-line" key={i}>
  <label>Produto {i+1}<select required value={line.product} onChange={e=>update(i,{...emptyLine(),product:e.target.value})}><option value="">Escolha um produto</option>{products.map(p=><option key={p.name}>{p.name}</option>)}</select></label>
