@@ -283,3 +283,9 @@ O identificador não é aceito do cliente e não altera regras ou respostas de n
 Adicionada `GET /health`, rota pública, sem cache e sem consulta a banco, IA ou dados operacionais. Retorna apenas `{status:"ok"}` e pode ser usada pelo Health Check do Render ou monitor externo. Teste confirma o contrato e ausência de dados adicionais.
 
 A parte versionada está concluída. Ativar alertas exige publicação e escolha de destino/frequência no serviço externo; isso não foi inventado. Próximo: TASK-0133, política de backup e restauração.
+
+## 04/09/2026 — TASK-0133 parcial: backup e restauração
+
+Criado procedimento que cobre dados operacionais, associação por loja, autenticação, catálogo e migrações. Antes de alterações de esquema, exige confirmação de backup e exportação cifrada fora do Git. A restauração deve ocorrer primeiro em Supabase/PostgreSQL isolado, com conferência de relações, contagens e RLS.
+
+Nenhum dado foi exportado ou restaurado. A TASK-0133 permanece parcial até confirmar a política disponível no plano Supabase e executar restauração isolada; recuperação sobre produção exige autorização e janela de manutenção. Próximo trabalho independente: TASK-0134, revisão do lançamento atual.
