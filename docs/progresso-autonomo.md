@@ -235,3 +235,21 @@ Matriz completa registrada em `docs/validacao-entradas-task-0123.md`. Backend co
 Verificados os arquivos atuais e todo o histórico Git por nomes sensíveis e padrões de chave, token, conexão e chave privada, sem imprimir valores. Nenhum `.env`, certificado, chave privada ou credencial real está versionado. Os dois `.env.example` contêm somente placeholders; URLs e tokens encontrados nos testes são fictícios. `SUPABASE_SERVICE_ROLE_KEY` permanece lida somente pelo backend.
 
 O `.gitignore` agora bloqueia variantes `.env.*`, certificados, chaves e arquivos comuns de credenciais, preservando `.env.example`. A TASK-0124 está concluída no escopo do repositório. Painéis, logs remotos e política de rotação são operações externas e não foram inferidos como falha sem evidência de exposição. Próximo: TASK-0125, conferência do pipeline/deploy.
+
+## 04/09/2026 — TASK-0125: deploy do backend
+
+Confirmado no Render que o commit `730af65` está Live no serviço Node ligado à branch `main`. Os comandos versionados compilam TypeScript e iniciam `dist/server.js`; a porta usa `process.env.PORT`. A consulta pública à raiz da API retornou HTTP 200 com JSON. O serviço é configurado no painel, sem `render.yaml` versionado.
+
+Nenhuma variável secreta foi exibida ou alterada e nenhum endpoint de escrita foi chamado. A TASK-0125 está concluída para o backend atual. Próximo: TASK-0126, deploy do frontend na Vercel.
+
+## 04/09/2026 — TASK-0126: deploy do frontend
+
+Confirmados HTTP 200 em `/`, `/login`, `/dashboard`, `/orders` e `/conversations` na Vercel. O rewrite SPA de `frontend/vercel.json` entrega `index.html` também em acesso direto, corrigindo o 404 original; a sessão autenticada já aberta continua exibindo `/orders`. O build local da Vite aprovou 178 módulos.
+
+Permanece apenas o aviso não bloqueante de bundle principal com cerca de 545 kB antes de gzip. A TASK-0126 está concluída. Próximo: TASK-0127, inventário das variáveis necessárias por ambiente sem exibir valores.
+
+## 04/09/2026 — TASK-0127: contrato de ambientes
+
+Conferidos, somente pelos nomes, os contratos de ambiente do Render e da Vercel. Backend usa `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`, `MANUAL_ORDER_SUBMIT_ENABLED` e `PORT`; frontend usa apenas `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY`. Os exemplos versionados cobrem o conjunto correto e não contêm valores reais.
+
+Removido o arquivo órfão `backend/src/config/supabase.ts`, que não era importado e referenciava a variável antiga `SUPABASE_KEY`. Nenhum valor de painel foi exibido ou alterado. A TASK-0127 está concluída no contrato versionado. Próximo: TASK-0128, domínio público.
