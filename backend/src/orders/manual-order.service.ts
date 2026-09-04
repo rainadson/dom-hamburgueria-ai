@@ -27,6 +27,8 @@ export class ManualOrderService {
     if (!/^\+?[0-9 ()-]{6,20}$/.test(customer_phone)) throw new ManualOrderError("Telefone inválido.");
     if (!["DELIVERY", "PICKUP"].includes(input.delivery_type)) throw new ManualOrderError("Escolha entrega ou levantamento.");
     const address = input.delivery_type === "DELIVERY" ? requiredText(input.address, "Morada", 500) : null;
+    const distanceKm=input.delivery_type==="DELIVERY"?Number(input.delivery_distance_km):0;
+    if(input.delivery_type==="DELIVERY"&&(!Number.isFinite(distanceKm)||distanceKm<=0||distanceKm>12))throw new ManualOrderError("Escolha uma faixa de entrega até 12 km.");
     if (!settings.payment_methods.includes(input.payment_method)) throw new ManualOrderError("Escolha uma forma de pagamento disponível.");
     if (input.delivery_fee !== undefined) throw new ManualOrderError("A taxa de entrega é calculada pela loja.");
     if (!Array.isArray(input.items) || !input.items.length || input.items.length > 50) throw new ManualOrderError("Adicione entre 1 e 50 linhas de produtos.");
@@ -41,12 +43,13 @@ export class ManualOrderService {
     catch (error) { throw new ManualOrderError(error instanceof Error ? error.message : "Não foi possível calcular o pedido."); }
     if (pendingMenu(priced.items)) throw new ManualOrderError("Escolha a Coca-Cola normal ou Zero de cada Menu.");
     for (const item of priced.items) if (isAcai(item.product) && item.toppings === undefined) throw new ManualOrderError("Escolha até dois toppings do açaí ou indique sem toppings.");
-    const deliveryFee=input.delivery_type==="DELIVERY"?Number(settings.delivery_fee||0):0;
+    const rules=Array.isArray(settings.delivery_fee_rules)?settings.delivery_fee_rules:[];
+    const deliveryFee=input.delivery_type==="DELIVERY"?Number(rules.find((rule:any)=>distanceKm<=rule.max_km)?.fee??settings.delivery_fee??0):0;
     const totalCents = cents(Number(priced.total)+deliveryFee, "Total");
     const amountCents = input.payment_method === "DINHEIRO" ? cents(input.amount_paid, "Valor entregue") : null;
     if (amountCents !== null && amountCents < totalCents) throw new ManualOrderError("O valor entregue é inferior ao total.");
     return {
-      customer_name, customer_phone, delivery_type:input.delivery_type, address,
+      customer_name, customer_phone, delivery_type:input.delivery_type, address, delivery_distance_km:distanceKm||null,
       payment_method:input.payment_method, delivery_fee:deliveryFee,
       amount_paid:amountCents === null ? null : amountCents/100,
       change:amountCents === null ? 0 : (amountCents-totalCents)/100,
