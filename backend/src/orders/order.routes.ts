@@ -8,7 +8,10 @@ import { kitchenOrder, operationalOrder } from "./order-view";
 import { positiveId } from "../middlewares/http-input";
 
 const router = Router();
-router.get("/manual/capabilities", (_req,res)=>res.json({submit_enabled:process.env.MANUAL_ORDER_SUBMIT_ENABLED==="true"}));
+router.get("/manual/capabilities", (_req,res)=>{
+  res.set("Cache-Control","no-store");
+  return res.json({submit_enabled:process.env.MANUAL_ORDER_SUBMIT_ENABLED==="true"});
+});
 router.post("/manual/confirm", async (req,res)=>{
   if(process.env.MANUAL_ORDER_SUBMIT_ENABLED!=="true") return res.status(503).json({message:"O envio de pedidos manuais ainda não está disponível."});
   if(!req.auth)return res.status(401).json({message:"Autenticação necessária."});

@@ -2,16 +2,23 @@ import {useAuth} from '../context/AuthContext';
 import {loadPending,savePending,clearPending,type PendingManualOrder} from '../services/manual-pending';
 import {useEffect,useState} from 'react';
 import {api} from '../services/api';
+import {authService} from '../services/auth.service';
 import '../styles/manual-order.css';
 type Line={product:string;quantity:number;notes:string;drink:string;toppings:string[];noToppings:boolean};
 const emptyLine=():Line=>({product:'',quantity:1,notes:'',drink:'',toppings:[],noToppings:false});
 const toppings=['Leite condensado','Leite em pó','Granola','Paçoca','Nutella','Banana'];
 export default function ManualOrder(){
  const {profile}=useAuth();
+ const [actorId,setActorId]=useState('');
  const [pending,setPending]=useState<PendingManualOrder|null>(null);const [pendingReady,setPendingReady]=useState(false);
  const [submitEnabled,setSubmitEnabled]=useState(false);const [sentId,setSentId]=useState<number|null>(null);const [confirmed,setConfirmed]=useState(false);const [reviewedInput,setReviewedInput]=useState<unknown>(null);
- useEffect(()=>{let active=true;api.get('/orders/manual/capabilities').then(({data})=>{if(active)setSubmitEnabled(data.submit_enabled===true);}).catch(()=>{});return()=>{active=false};},[]);
- useEffect(()=>{setPendingReady(false);if(!profile?.user_id)return;try{setPending(loadPending(sessionStorage,profile.user_id));setPendingReady(true);}catch{setError('Não foi possível recuperar o envio anterior. Verifique os pedidos antes de continuar.');}},[profile?.user_id]);
+ useEffect(()=>{let active=true;api.get('/orders/manual/capabilities',{params:{_ts:Date.now()}}).then(({data})=>{if(active)setSubmitEnabled(data.submit_enabled===true);}).catch(()=>{});return()=>{active=false};},[]);
+ useEffect(()=>{let active=true;setPendingReady(false);(async()=>{
+  const id=profile?.user_id||(await authService.getUser())?.id||'';
+  if(!active)return;
+  if(!id){setError('Não foi possível identificar o operador. Entre novamente para continuar.');return;}
+  try{setActorId(id);setPending(loadPending(sessionStorage,id));setPendingReady(true);}catch{setError('Não foi possível recuperar o envio anterior. Verifique os pedidos antes de continuar.');}
+ })();return()=>{active=false};},[profile?.user_id]);
  const [customerSearch,setCustomerSearch]=useState('');const [customers,setCustomers]=useState<{name:string;phone:string}[]>([]);const [customerError,setCustomerError]=useState('');const [searching,setSearching]=useState(false);
  const [products,setProducts]=useState<{name:string;active:boolean}[]>([]);
  const [form,setForm]=useState({customer_name:'',customer_phone:'',delivery_type:'PICKUP',address:'',payment_method:'MULTIBANCO',amount_paid:''});
@@ -31,16 +38,16 @@ export default function ManualOrder(){
   try{const {data}=await api.post('/orders/manual/preview',input);setPreview(data.order);setReviewedInput(input);}catch(e:any){setError(e.response?.data?.message||'Não foi possível preparar o pedido.');}finally{setBusy(false);}
  }
  async function submit(){
-  if(!profile?.user_id||!pendingReady||busy||sentId||!submitEnabled)return;
+  if(!actorId||!pendingReady||busy||sentId||!submitEnabled)return;
   if(!pending&&(!preview||!confirmed||!reviewedInput))return;
   setBusy(true);setError('');
   try{
    const request=pending||{request_id:crypto.randomUUID(),order:reviewedInput,reviewed_total:preview!.total,confirmed:true as const};
    // Persistir antes da rede: a mesma chave é reutilizada mesmo após recarregar.
-   savePending(sessionStorage,profile.user_id,request);setPending(request);
+   savePending(sessionStorage,actorId,request);setPending(request);
    const {data}=await api.post('/orders/manual/confirm',request);
    if(!Number.isSafeInteger(Number(data.id))||Number(data.id)<=0)throw Error('Resposta inesperada');
-   setSentId(Number(data.id));clearPending(sessionStorage,profile.user_id);setPending(null);
+   setSentId(Number(data.id));clearPending(sessionStorage,actorId);setPending(null);
   }catch(e:any){setError(e.response?.data?.message||'Não foi possível confirmar o resultado. Verifique os pedidos ou tente novamente com o mesmo envio.');}
   finally{setBusy(false);}
  }

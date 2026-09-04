@@ -1,5 +1,5 @@
--- TASK-0081: preparação local; NÃO aplicada em produção.
--- Executar antes de habilitar MANUAL_ORDER_SUBMIT_ENABLED.
+-- TASK-0081: aplicada em produção em 04/09/2026.
+-- Script idempotente para reconstrução ou validação de outros ambientes.
 -- Adição compatível com pedidos existentes, sem mudar políticas ou permissões.
 BEGIN;
 ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS manual_request_id uuid;

@@ -19,3 +19,11 @@ test('HTTP confirmation is disabled by default and requires auth and explicit re
  try{assert.equal((await fetch(url,{method:'POST'})).status,503);process.env.MANUAL_ORDER_SUBMIT_ENABLED='true';assert.equal((await fetch(url,{method:'POST'})).status,401);assert.equal((await fetch(url,{method:'POST',headers:{'x-test-auth':'yes','content-type':'application/json'},body:'{}'})).status,400);}
  finally{if(previous===undefined)delete process.env.MANUAL_ORDER_SUBMIT_ENABLED;else process.env.MANUAL_ORDER_SUBMIT_ENABLED=previous;server.closeAllConnections();await new Promise(r=>server.close(r));}
 });
+test('manual capability is never cached and reflects the active flag',async()=>{
+ const express=require('express');const router=require('../dist/orders/order.routes').default;
+ const app=express();app.use('/orders',router);
+ const previous=process.env.MANUAL_ORDER_SUBMIT_ENABLED;process.env.MANUAL_ORDER_SUBMIT_ENABLED='true';
+ const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));const url=`http://127.0.0.1:${server.address().port}/orders/manual/capabilities`;
+ try{const response=await fetch(url);assert.equal(response.headers.get('cache-control'),'no-store');assert.deepEqual(await response.json(),{submit_enabled:true});}
+ finally{if(previous===undefined)delete process.env.MANUAL_ORDER_SUBMIT_ENABLED;else process.env.MANUAL_ORDER_SUBMIT_ENABLED=previous;server.closeAllConnections();await new Promise(r=>server.close(r));}
+});
