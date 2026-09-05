@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { authService } from "../services/auth.service";
 import "../styles/layout.css";
@@ -14,8 +14,9 @@ interface UserProfile {
 }
 
 export default function Layout() {
+  const location = useLocation();
   const { stores, activeStore, selectStore, createStore } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => window.matchMedia("(max-width: 900px)").matches);
   const [storeOpen, setStoreOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [addingStore, setAddingStore] = useState(false);
@@ -42,6 +43,10 @@ export default function Layout() {
     loadProfile();
   }, []);
 
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 900px)").matches) setCollapsed(true);
+  }, [location.pathname]);
+
   async function handleLogout() {
     try {
       await authService.logout();
@@ -59,6 +64,8 @@ export default function Layout() {
 
       <Sidebar collapsed={collapsed} />
 
+      {!collapsed && <button className="sidebar-backdrop" type="button" aria-label="Fechar menu" onClick={() => setCollapsed(true)} />}
+
       <div className="main-area">
 
         <header className="topbar">
@@ -68,6 +75,7 @@ export default function Layout() {
             onClick={() => setCollapsed(!collapsed)}
             type="button"
             aria-label="Alternar menu"
+            aria-expanded={!collapsed}
           >
             ☰
           </button>

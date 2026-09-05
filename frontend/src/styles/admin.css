@@ -8,6 +8,7 @@ body {
   padding: 40px;
   width: 100%;
   max-width: none;
+  box-sizing: border-box;
 }
 
 .admin-header {
@@ -40,13 +41,15 @@ body {
   width: 100%;
   background: white;
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 2px 10px rgba(0,0,0,.08);
 }
 
-table {
+.admin-container table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 680px;
 }
 
 thead {
@@ -94,6 +97,7 @@ tbody tr:hover {
     outline:none;
 
     transition:.2s;
+    box-sizing:border-box;
 }
 
 .search-input:focus{
@@ -230,4 +234,14 @@ tbody tr:hover {
 .delete-button:hover{
     background:#475569;
     transform:translateY(-2px);
+}
+
+@media (max-width: 700px) {
+  .admin-container { padding: 0; }
+  .admin-header { align-items: stretch; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+  .admin-title { font-size: 25px; margin: 0; }
+  .new-button, .filter-select { width: 100%; min-height: 44px; }
+  .search-container, .filter-container { margin-bottom: 12px; }
+  .table-card { border-radius: 10px; }
+  .admin-container th, .admin-container td { padding: 12px 10px; white-space: nowrap; }
 }
